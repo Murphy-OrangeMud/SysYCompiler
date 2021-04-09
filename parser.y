@@ -9,11 +9,16 @@
 %%
 
 Number: INT_CONST;
-
-FuncRParams: Exp {"," Exp}
+FuncRParamsR: "," Exp
         |
         ;
-LVal: IDENT { "[" Exp "]" };
+FuncRParams: Exp FuncRParamsR
+        |
+        ;
+LVarR: "[" Exp "]" LVarR
+        |
+        ;
+LVal: IDENT LVarR;
 PrimaryExp: "(" Exp ")"
         | LVal
         | Number
@@ -98,32 +103,59 @@ BlockItem: Decl
         ;
 Block: "{" BlockItem "}"
         ;
+FuncFParamR: "[" ConstExp "]" FuncFParamR
+        |
+        ;
 FuncFParam: BType IDENT 
-        | BType IDENT "[" "]" {"[" ConstExp "]"};
-FuncFParams: FuncFParam {"," FuncFParam}
+        | BType IDENT "[" "]" FuncFParamR;
+FuncFParamsR: "," FuncFParam FuncFParamsR
+        | 
+        ;
+FuncFParams: FuncFParam FuncFParamsR
         |
         ;
 FuncType: VOID
         | INT
         ;
 FuncDef: FuncType IDENT "(" FuncFParams ")" Block;
-InitVal: Exp 
-        | "{" [InitVal {"," InitVal}] "}"
+InitValR: "," InitVal InitValR
+        |
         ;
-LVarDef: IDENT {"[" ConstExp "]"}
+InitValM: InitVal InitValR
+        |
+        ;
+InitVal: Exp 
+        | "{" InitValM "}"
+        ;
+ConstExpR: "[" ConstExp "]" ConstExpR
+        |
+        ;
+LVarDef: IDENT ConstExpR
         ;
 VarDef: LVarDef | LVarDef "=" InitVal
         ;
-VarDecl: BType VarDef {"," VarDef} ";"
+VarDefR: "," VarDef VarDefR
+        |
+        ;
+VarDecl: BType VarDef VarDefR ";"
+        ;
+ConstInitValR: "," ConstInitVal ConstInitValR
+        |
+        ;
+ConstInitValM: ConstInitVal ConstInitValR
+        |
         ;
 ConstInitVal: ConstExp
-        | "{" [ConstInitVal {"," ConstInitVal}] "}"
+        | "{" ConstInitValM "}"
         ;
-ConstDef: IDENT {"[" ConstExp "]"} "=" ConstInitVal
+ConstDef: LVarDef "=" ConstInitVal
+        ;
+ConstDefR: "," ConstDef ConstDefR
+        |
         ;
 BType: INT
         ;
-ConstDecl: CONST BType ConstDef {"," ConstDef} ";"
+ConstDecl: CONST BType ConstDef ConstDefR ";"
         ;
 Decl: ConstDecl
         |
