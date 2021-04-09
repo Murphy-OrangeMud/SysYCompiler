@@ -3,78 +3,110 @@
     using namespace std;
 %}
 
+%token PLUS MINUS MUL DIV MOD EQ NE NOT LT GT LE GE
+%token IF WHILE BREAK CONTINUE RETURN ELSE OR AND
+%token VOID INT CONST 
 %%
 
 Number: INT_CONST;
 
 FuncRParams: Exp {"," Exp}
+        |
         ;
 LVal: IDENT { "[" Exp "]" };
 PrimaryExp: "(" Exp ")"
         | LVal
         | Number
         ;
-UnaryOp: "+"
-        | "-"
-        | "!"
+UnaryOp: PLUS
+        | MINUS
+        | NOT
         ;
 UnaryExp: PrimaryExp 
-        | IDENT "(" [FuncRParams] ")" 
+        | IDENT "(" FuncRParams ")" 
         | UnaryOp UnaryExp
         ;
-RMulExp: ("*" | "/" | "%%") UnaryExp RMulExp 
-        | %empty
+MulOp: MUL
+        |
+        DIV
+        |
+        MOD
+        ;
+RMulExp: MulOp UnaryExp RMulExp 
+        |
         ;
 MulExp: UnaryExp RMulExp
         ;
 RAddExp: "+" MulExp RAddExp 
-        | %empty
+        |
         ;
 AddExp: MulExp RAddExp
         ;
-RRelExp: ("<" | ">" | "<=" | ">=") AddExp RRelExp
-        | %empty
+RelOp: LT
+        |
+        LE
+        |
+        GT
+        |
+        GE
+        ;
+RRelExp: RelOp AddExp RRelExp
+        |
         ;
 RelExp: AddExp RRelExp;
-REqExp: ("==" | "!=") RelExp REqExp
-        | %empty
+EqOp: EQ
+        |
+        NEQ
+        ;
+REqExp: EqOp RelExp REqExp
+        |
         ;
 EqExp: RelExp REqExp
         ;
-*Exp: AddExp;
-*ConstExp: AddExp;
-RLAndExp: "&&" EqExp RLAndExp
-        | %empty
+Exp: AddExp;
+ConstExp: AddExp;
+RLAndExp: AND EqExp RLAndExp
+        |
         ;
 LAndExp: EqExp RLAndExp
         ;
-RLOrExp: "||" LAndExp RLOrExp
-        | %empty
+RLOrExp: OR LAndExp RLOrExp
+        |
         ;
 LOrExp: LAndExp RLOrExp
         ;
 Cond: LOrExp
         ;
+IfStmt: IF "(" Cond ")" Stmt
+        ;
+IfElseStmt: IfStmt ELSE Stmt
+        ;
 Stmt: LVal "=" Exp ";"
-        | [Exp] ";"
+        | Exp ";"
+        | ";"
         | Block
-        | "if" "(" Cond ")" Stmt ["else" Stmt]
-        | "while" "(" Cond ")" Stmt
-        | "break" ";"
-        | "continue" ";"
-        | "return" [Exp] ";"
+        | IfStmt
+        | IfElseStmt
+        | WHILE "(" Cond ")" Stmt
+        | BREAK ";"
+        | CONTINUE ";"
+        | RETURN ";"
+        | RETURN Exp ";"
         ;
 BlockItem: Decl
         | Stmt
         ;
 Block: "{" BlockItem "}"
         ;
-FuncFParam: BType IDENT [ "[" "]" {"[" ConstExp "]"}];
+FuncFParam: BType IDENT 
+        | BType IDENT "[" "]" {"[" ConstExp "]"};
 FuncFParams: FuncFParam {"," FuncFParam}
+        |
         ;
-FuncType: "void" | "int"
+FuncType: VOID
+        | INT
         ;
-FuncDef: FuncType IDENT "(" [FuncFParams] ")" Block;
+FuncDef: FuncType IDENT "(" FuncFParams ")" Block;
 InitVal: Exp 
         | "{" [InitVal {"," InitVal}] "}"
         ;
@@ -89,15 +121,18 @@ ConstInitVal: ConstExp
         ;
 ConstDef: IDENT {"[" ConstExp "]"} "=" ConstInitVal
         ;
-BType: "int"
+BType: INT
         ;
-ConstDecl: "const" BType ConstDef {"," ConstDef} ";"
+ConstDecl: CONST BType ConstDef {"," ConstDef} ";"
         ;
 Decl: ConstDecl
         |
         VarDecl
         ;
-CompUnit: (Decl | FuncDef) [CompUnit]
+CompUnit: Decl CompUnit
+        | FuncDef CompUnit
+        | Decl
+        | FuncDef
         ;
 
 %%
