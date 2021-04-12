@@ -3,11 +3,15 @@
 
 class Lexer {
 public:
+    Lexer() {}
+    ~Lexer() {}
+
     Token NextToken();
     Operator getOp() { return op; }
     long long getVal() { return value; }
     std::string getName() { return name; }
     Type getType() { return type; }
+
 private:
     Token parseInt();
     Token parseIDKeyword();

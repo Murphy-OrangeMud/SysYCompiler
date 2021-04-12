@@ -28,8 +28,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/lexer.l" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/parser.y" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/lexer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/lexer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,6 +70,8 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\cheng\SysYCompiler\src\front" />
+      <recent name="C:\Users\cheng\SysYCompiler\src\define" />
       <recent name="C:\Users\cheng\SysYCompiler\src" />
     </key>
   </component>
@@ -91,7 +95,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1617979741035</updated>
-      <workItem from="1617979742179" duration="58839000" />
+      <workItem from="1617979742179" duration="65990000" />
     </task>
     <servers />
   </component>
@@ -114,6 +118,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="245" y="52" key="#SSH_Configurations/0.0.1280.760@0.0.1280.760" timestamp="1617980837172" />
+    <state x="96" y="35" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1618191364266">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state x="96" y="35" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.760@0.0.1280.760" timestamp="1618191364266" />
     <state x="421" y="135" key="FileChooserDialogImpl" timestamp="1618110387166">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
@@ -126,9 +134,9 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1617982388716" />
-    <state x="304" y="83" width="672" height="678" key="search.everywhere.popup" timestamp="1618105564850">
+    <state x="305" y="84" width="672" height="678" key="search.everywhere.popup" timestamp="1618190440421">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="304" y="83" width="672" height="678" key="search.everywhere.popup/0.0.1280.760@0.0.1280.760" timestamp="1618105564850" />
+    <state x="305" y="84" width="672" height="678" key="search.everywhere.popup/0.0.1280.760@0.0.1280.760" timestamp="1618190440421" />
   </component>
 </project>

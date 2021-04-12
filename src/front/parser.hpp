@@ -7,15 +7,22 @@
 #include <map>
 #include "../define/ast.hpp"
 #include "lexer.hpp"
-using namespace std;
+#include "logger.hpp"
+#include <cstdlib>
+#include <ctime>
 
 class Parser {
 private:
     Lexer lexer;
+    Logger logger;
     Token current;
-    std::vector<std::pair<std::string, long long>> constVals;
-    std::vector<std::string> definedVals;
 public:
+    Parser() {
+        srand(std::time(0));
+        lexer = new Lexer();
+        std::string path = "..\\..\\logs\\log_" + std::to_string(rand()%10000);
+        logger = new logger(path);
+    }
     void NextToken();
     ASTPtr ParseBinary(std::function<ASTPtr()> parser, std::initializer_list<Operator> ops);
     ASTPtr ParseRelExp();
