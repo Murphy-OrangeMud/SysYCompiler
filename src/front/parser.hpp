@@ -21,7 +21,8 @@ public:
         srand(std::time(0));
         lexer = new Lexer();
         std::string path = "..\\..\\logs\\log_" + std::to_string(rand()%10000);
-        logger = new logger(path);
+        std::cout << path << std::endl;
+        logger = Logger(path);
     }
     void NextToken();
     ASTPtr ParseBinary(std::function<ASTPtr()> parser, std::initializer_list<Operator> ops);

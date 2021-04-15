@@ -120,7 +120,7 @@ class IdAST: public BaseAST {
 private:
     std::string name;
     VarType type;
-    ASTPtrList dim;
+    ASTPtrList dim; // exps: binaryExp, unaryExp
     bool Const;
 public:
      IdAST(std::string _name, VarType _type, bool _const=false, std::vector<int> _dim=std::vector<int>{}):
@@ -205,6 +205,7 @@ public:
 class StmtAST: public BaseAST {
 private:
     ASTPtr stmt;
+    // type
 public:
     StmtAST(ASTPtr _stmt): stmt(std::move(_stmt)) {}
 
@@ -239,20 +240,6 @@ public:
 
     const std::string &getName() const { return name; }
     const ASTPtrList &getArgs() const { return args; }
-
-    std::optional<int> Eval(Interpreter &intp) const override;
-    ValPtr GenerateIR(IRGenerator &gen) const override;
-};
-
-class AssignAST: public BaseAST {
-private:
-    ASTPtr lhs;
-    ASTPtr rhs;
-public:
-    AssignAST(ASTPtr _lhs, ASTPtr _rhs): lhs(std::move(_lhs)), rhs(std::move(rhs)) {}
-
-    const ASTPtr &getLHS() const { return lhs; }
-    const ASTPtr &getRHS() const { return rhs; }
 
     std::optional<int> Eval(Interpreter &intp) const override;
     ValPtr GenerateIR(IRGenerator &gen) const override;
