@@ -10,11 +10,13 @@ private:
     std::string function;
 public:
     Logger(const std::string path) {
-        loggger.open(path, ios::out);
+#ifndef OJ
+        logger.open(path, ios::out);
         if (!logger) {
             std::cerr << "Cannot open log file: " << path << std::endl;
             return;
         }
+#endif
     }
     void SetFunc(std::string funcName);
     void UnSetFunc(std::string funcName);
@@ -22,7 +24,9 @@ public:
     void Info(std::string message);
     void Error(std::string message);
     ~Logger() {
+#ifndef OJ
         logger.close();
+#endif
     }
 };
 

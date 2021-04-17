@@ -178,10 +178,10 @@ ASTPtr Parser::ParseUnaryExp() {
                 }
                 NextToken();
             }
-            ASTPtr LVal = std::make_unique<LValAST>(name, pos);
+            ASTPtr LVal = std::make_unique<LValAST>(name, VarType::ARRAY, pos);
             return LVal;
         } else {
-            return std::make_unique<LValAST>(name);
+            return std::make_unique<LValAST>(name, VarType::VAR);
         }
     }
 }

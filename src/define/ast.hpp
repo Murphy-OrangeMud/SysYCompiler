@@ -77,7 +77,7 @@ private:
     ASTPtr elseStmt;
 
 public:
-    IfElseAST(ASTPtr _cond, ASTPtr  _then, ASTPtr _else=nullptr)
+    IfElseAST(ASTPtr _cond, ASTPtr _then, ASTPtr _else=nullptr)
     : cond(std::move(_cond)), thenStmt(std::move(_then)), elseStmt(std::move(_else)) {}
 
     std::optional<int> Eval(Interpreter &intp) const override;
@@ -116,6 +116,25 @@ public:
     const long long &getVal() const { return value; }
 };
 
+class ProcessedIdAST: public BaseAST {
+private:
+    std::string name;
+    VarType type;
+    std::vector<int> dim; // exps: binaryExp, unaryExp
+    bool Const;
+public:
+    ProcessedIdAST(std::string _name, VarType _type, bool _const=false, std::vector<int> _dim=std::vector<int>{}):
+    Const(_const), name(std::move(_name)), type(_type), dim(std::move(_dim)) {}
+
+    std::optional<int> Eval(Interpreter &intp) const override;
+    ValPtr GenerateIR(IRGenerator &gen) const override;
+
+    const std::string &getName() const { return std::move(name); }
+    const VarType &getType() const { return type; }
+    const std::vector<int> &getDim() const { return dim; }
+    const bool isConst() const { return Const; }
+};
+
 class IdAST: public BaseAST {
 private:
     std::string name;
@@ -123,15 +142,15 @@ private:
     ASTPtrList dim; // exps: binaryExp, unaryExp
     bool Const;
 public:
-     IdAST(std::string _name, VarType _type, bool _const=false, std::vector<int> _dim=std::vector<int>{}):
+     IdAST(std::string _name, VarType _type, bool _const=false, ASTPtrList _dim=ASTPtrList{}):
      Const(_const), name(std::move(_name)), type(_type), dim(std::move(_dim)) {}
 
      std::optional<int> Eval(Interpreter &intp) const override;
      ValPtr GenerateIR(IRGenerator &gen) const override;
 
      const std::string &getName() const { return std::move(name); }
-     const VarType &getType() const { return type; }
-     const std::vector<int> &getDim() const { return dim; }
+     const VarType getType() const { return type; }
+     const ASTPtrList &getDim() const { return dim; }
      const bool isConst() const { return Const; }
 };
 
@@ -184,6 +203,8 @@ public:
         }
     }
 
+    const ASTPtr &getReturnExp() const { return returnExp; }
+
     std::optional<int> Eval(Interpreter &intp) const override;
     ValPtr GenerateIR(IRGenerator &gen) const override;
 };
@@ -218,13 +239,15 @@ public:
 class LValAST: public BaseAST {
 private:
     std::string name;
+    VarType type;
     ASTPtrList position;
 public:
-    LValAST(const std::string _name, ASTPtrList _pos=ASTPtrList{}):
-    name(std::move(_name)), position(std::move(_pos)) {}
+    LValAST(const std::string _name, VarType _type, ASTPtrList _pos=ASTPtrList{}):
+    name(std::move(_name)), type(_type), position(std::move(_pos)) {}
 
     const ASTPtrList &getPosition() const { return position; }
     const std::string &getName() const { return name; }
+    const VarType getType() const { return type; }
 
     std::optional<int> Eval(Interpreter &intp) const override;
     ValPtr GenerateIR(IRGenerator &gen) const override;

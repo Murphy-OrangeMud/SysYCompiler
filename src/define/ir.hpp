@@ -1,0 +1,6 @@
+
+
+class IRGenerator {
+private:
+public:
+};
