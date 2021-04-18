@@ -78,13 +78,13 @@ public:
 
     ASTPtr EvalLOrExp(BinaryExpAST &exp);
 
-    std::unique_ptr<CompUnitAST> EvalCompUnit(CompUnitAST unit);
+    std::unique_ptr<CompUnitAST> EvalCompUnit(CompUnitAST &unit);
 
-    ASTPtr EvalEqExp(BinaryExpAST exp);
+    ASTPtr EvalEqExp(BinaryExpAST &exp);
 
-    std::unique_ptr<StmtAST> EvalStmt(StmtAST stmt);
+    std::unique_ptr<StmtAST> EvalStmt(StmtAST &stmt);
 
-    std::unique_ptr<InitValAST> EvalInitVal(InitValAST init);
+    std::unique_ptr<InitValAST> EvalInitVal(InitValAST &init);
 };
 
 #endif
