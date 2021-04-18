@@ -8,8 +8,9 @@
 #include <optional>
 #include <string>
 #include "token.hpp"
+#include "../mid/typeck.hpp"
 
-class Interpreter;
+class TypeCheck;
 class IRGenerator;
 
 class BaseAST {
@@ -32,7 +33,9 @@ public:
     FuncDefAST(Type _type, const std::string &_name, ASTPtrList _args, ASTPtr _body)
     :type(_type), name(_name), args(_args), body(std::move(_body)) {}
 
-    std::optional<int> Eval(Interpreter &intp) const override;
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        return checker.EvalFuncDef(*this);
+    }
     ValPtr GenerateIR(IRGenerator &gen) const override;
 
     const Type &getType() const { return type; }
@@ -47,7 +50,9 @@ private:
 public:
     BlockAST(ASTPtrList _stmts): stmts(std::move(_stmts)) {};
 
-    std::optional<int> Eval(Interpreter &intp) const override;
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        return checker.EvalBlock(*this);
+    }
     ValPtr GenerateIR(IRGenerator &gen) const override;
 
     const ASTPtrList &getStmts() const { return stmts; };
@@ -58,7 +63,33 @@ public:
     BinaryExpAST(Operator _opcode, ASTPtr _left, ASTPtr _right)
     : op(_opcode), left(std::move(_left)), right(std::move(_right)) {}
 
-    std::optional<int> Eval(Interpreter &intp) const override;
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        std::initializer_list<Operator> opAdd = {Operator::ADD, Operator::SUB};
+        std::initializer_list<Operator> opMul = {Operator::MUL, Operator::DIV, Operator::MOD};
+        std::initializer_list<Operator> opRel = {Operator::LE, Operator::GE, Operator::LT, Operator::LE};
+        std::initializer_list<Operator> opEq = {Operator::EQ, Operator::NEQ};
+        std::initializer_list<Operator> opLAnd = {Operator::AND};
+        std::initializer_list<Operator> opLOr = {Operator::OR};
+
+        if (std::find(opLOr.begin(), opLOr.end(), op)) {
+            return checker.EvalLOrExp(*this);
+        }
+        else if (std::find(opLAnd.begin(), opLAnd.end(), op)) {
+            return checker.EvalLAndExp(*this);
+        }
+        else if (std::find(opEq.begin(), opEq.end(), op)) {
+            return checker.EvalEqExp(*this);
+        }
+        else if (std::find(opRel.begin(), opRel.end(), op)) {
+            return checker.EvalRelExp(*this);
+        }
+        else if (std::find(opAdd.begin(), opAdd.end(), op)) {
+            return checker.EvalAddExp(*this);
+        }
+        else if (std::find(opMul.begin(), opMul.end(), op)) {
+            return checker.EvalMulExp(*this);
+        }
+    }
     ValPtr GenerateIR(IRGenerator &gen) const override;
 
     const Operator &getOp() const { return op; }
@@ -205,7 +236,9 @@ public:
 
     const ASTPtr &getReturnExp() const { return returnExp; }
 
-    std::optional<int> Eval(Interpreter &intp) const override;
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        return checker.EvalControl(*this);
+    }
     ValPtr GenerateIR(IRGenerator &gen) const override;
 };
 
@@ -219,7 +252,9 @@ public:
     const ASTPtr &getLeft() const { return left; }
     const ASTPtr &getRight() const { return right; }
 
-    std::optional<int> Eval(Interpreter &intp) const override;
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        // return checker
+    }
     ValPtr GenerateIR(IRGenerator &gen) const override;
 };
 
@@ -232,7 +267,9 @@ public:
 
     const ASTPtr &getStmt() const { return stmt; }
 
-    std::optional<int> Eval(Interpreter &intp) const override;
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        return checker.EvalStmt(*this);
+    }
     ValPtr GenerateIR(IRGenerator &gen) const override;
 };
 
@@ -249,7 +286,9 @@ public:
     const std::string &getName() const { return name; }
     const VarType getType() const { return type; }
 
-    std::optional<int> Eval(Interpreter &intp) const override;
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        return checker.EvalLVal(*this);
+    };
     ValPtr GenerateIR(IRGenerator &gen) const override;
 };
 
@@ -264,7 +303,9 @@ public:
     const std::string &getName() const { return name; }
     const ASTPtrList &getArgs() const { return args; }
 
-    std::optional<int> Eval(Interpreter &intp) const override;
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        return checker.EvalFuncCall(*this);
+    }
     ValPtr GenerateIR(IRGenerator &gen) const override;
 };
 
@@ -278,7 +319,9 @@ public:
     const ASTPtrList &getVarDefs() const { return varDefs; }
     const bool isConst() const { return Const; }
 
-    std::optional<int> Eval(Interpreter &intp) const override;
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        return checker.EvalVarDecl(*this);
+    }
     ValPtr GenerateIR(IRGenerator &gen) const override;
 };
 
@@ -295,7 +338,9 @@ public:
     const ASTPtr &getInitVal() const { return init; }
     const bool isConst() const { return Const; }
 
-    std::optional<int> Eval(Interpreter &intp) const override;
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        return checker.EvalVarDef(*this);
+    }
     ValPtr GenerateIR(IRGenerator &gen) const override;
 };
 
@@ -309,7 +354,9 @@ public:
     const VarType getType() const { return type; }
     const ASTPtrList &getValues() const { return values; }
 
-    std::optional<int> Eval(Interpreter &intp) const override;
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        return checker.EvalInitVal(*this);
+    }
     ValPtr GenerateIR(IRGenerator &gen) const override;
 };
 
@@ -321,7 +368,9 @@ public:
 
     const ASTPtrList &getNodes() const { return nodes; }
 
-    std::optional<int> Eval(Interpreter &intp) const override;
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        return checker.EvalCompUnit(*this);
+    }
     ValPtr GenerateIR(IRGenerator &gen) const override;
 };
 
