@@ -890,7 +890,7 @@ ASTPtr TypeCheck::EvalUnaryExp(UnaryExpAST exp) {
     }
 }
 
-ASTPtr TypeCheck::EvalFuncDef(FuncDefAST funcDef) {
+std::unique_ptr<FuncDefAST> TypeCheck::EvalFuncDef(FuncDefAST funcDef) {
     logger.SetFunc("EvalFuncDef");
     currentFunc = funcDef.getName();
     ASTPtrList newArgs;
@@ -1011,7 +1011,7 @@ ASTPtr TypeCheck::EvalLOrExp(BinaryExpAST exp) {
     }
 }
 
-ASTPtr TypeCheck::EvalCompUnit(CompUnitAST unit) {
+std::unique_ptr<CompUnitAST> TypeCheck::EvalCompUnit(CompUnitAST unit) {
     logger.SetFunc("EvalCompUnit");
     ASTPtrList newNodes;
     for (auto node: unit.getNodes()) {
@@ -1054,7 +1054,7 @@ ASTPtr TypeCheck::EvalEqExp(BinaryExpAST exp) {
     }
 }
 
-ASTPtr TypeCheck::EvalStmt(StmtAST &stmt) {
+std::unique_ptr<StmtAST> TypeCheck::EvalStmt(StmtAST &stmt) {
     logger.SetFunc("EvalStmt");
     if (!stmt.getStmt())
         return stmt;
