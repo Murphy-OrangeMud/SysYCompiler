@@ -13,15 +13,19 @@ private:
     int l_num;
     std::string tab;
     std::map<std::string, int> SymbolTable;
-    std::vector<std::pair<std::string, VarType>> ReverseSymbolTable;
+    std::vector <std::pair<std::string, VarType>> ReverseSymbolTable;
     std::string currentFunc;
-    std::map<std::string, std::map<std::string, int>> FuncArgTable;
-    std::map<std::string, std::map<std::string, int> /*编号*/> FuncVarTable;
-    std::map<std::string, std::vector<int> /*dims*/> ArrayTable;
-    std::map<std::string, std::map<std::string, std::vector<int> /*dims*/>> FuncArrayTable;
+    std::map <std::string, std::map<std::string, int>> FuncArgTable;
+    std::map <std::string, std::map<std::string, int> /*编号*/> FuncVarTable;
+    std::map <std::string, std::vector<int> /*dims*/> ArrayTable;
+    std::map <std::string, std::map<std::string, std::vector < int> /*dims*/>> FuncArrayTable;
 public:
-    // TODO: initialize ArrayTable using Typecheck's ArrayTable, ConstArrayTable, FuncArrayTable and FuncConstArrayTable, in main.cpp
-    IRGenerator(std::map<std::string, std::vector<int>> _table): ArrayTable(_table) {
+    IRGenerator(std::map <std::string, std::vector<int>> _table1,
+                std::map <std::string, std::map<std::string, std::vector < int>>
+
+    > _table2):
+
+    ArrayTable (std::move(_table1)), FuncArrayTable(std::move(_table2)) {
         t_num = 0;
         T_num = 0;
         l_num = 0;

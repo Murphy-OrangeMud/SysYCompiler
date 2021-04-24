@@ -65,9 +65,12 @@ std::unique_ptr <VarDeclAST> TypeCheck::EvalVarDecl(VarDeclAST &varDecl) {
     } else {
         ASTPtrList list;
         for (auto def: varDecl.getVarDefs()) {
-            auto nDef = def->Eval(*this);  // 常量折叠，只是储存常量，不放入语法树
+            auto nDef = def->Eval(*this);  // 变量常量折叠，不放入语法树
             logger.UnSetFunc("EvalVarDecl");
-            list.push_back(nDef);
+            if (dynamic_cast<ProcessedIdAST *>(dynamic_cast<VarDefAST *>(nDef.get())->getVar())->getType() ==
+                VarType::ARRAY) {
+                list.push_back(nDef);
+            }
         }
         return std::make_unique<VarDeclAST>(std::move(list));
     }
@@ -80,7 +83,7 @@ std::unique_ptr <ProcessedIdAST> TypeCheck::EvalId(IdAST &id) {
             ndim.push_back(dynamic_cast<NumberAST *>(exp.get())->getVal())
         } else if (dynamic_cast<BinaryExpAST>(exp)) {
             auto result = dynamic_cast<BinaryExpAST *>(exp.get())->Eval(*this);
-            logger.UnSetFunc("EvalVarDef");
+            logger.UnSetFunc("EvalId");
             if (!dynamic_cast<NumberAST *>(result.get())) {
                 logger.Error("Declare array with variable size");
                 return nullptr;
@@ -88,7 +91,7 @@ std::unique_ptr <ProcessedIdAST> TypeCheck::EvalId(IdAST &id) {
             ndim.push_back(dynamic_cast<NumberAST *>(result.get())->getVal());
         } else if (dynamic_cast<UnaryExpAST *>(exp.get())) {
             auto result = dynamic_cast<UnaryExpAST *>(exp.get())->Eval(this);
-            logger.UnSetFunc("EvalVarDef");
+            logger.UnSetFunc("EvalId");
             if (!dynamic_cast<NumberAST *>(result.get())) {
                 logger.Error("Declare array with variable size");
                 return nullptr;
@@ -99,11 +102,9 @@ std::unique_ptr <ProcessedIdAST> TypeCheck::EvalId(IdAST &id) {
     return std::make_unique<ProcessedIdAST>(id.getName(), id.getType(), id.isConst(), std::move(ndim));
 }
 
-
-
+// FillInValue没用，只是用来检查初始值是否都是常量
 std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
     logger.SetFunc("EvalVarDef");
-
     if (varDef.isConst()) {
         if (!varDef.getInitVal()) {
             logger.Error("Uninitialized const variable");
@@ -131,17 +132,34 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
             }
             logger.UnSetFunc("EvalVarDef");
             if (currentFunc != "") {
-                if (FuncConstArrayTable[currentFunc].find(id.getName()) != FuncConstArrayTable.end()) {
+                if (FuncConstArrayTable[currentFunc].find(id.getName()) != FuncConstArrayTable[currentFunc].end()) {
                     std::string message = "Repeated definition: " + id.getName();
                     logger.Error(message);
                     return nullptr;
                 }
-                if (FuncArrayTable[currentFunc].find(id.getName()) != FuncArrayTable.end()) {
+                if (FuncArrayTable[currentFunc].find(id.getName()) != FuncArrayTable[currentFunc].end()) {
                     std::string message = "Repeated definition: " + id.getName();
                     logger.Error(message);
                     return nullptr;
                 }
-                FuncConstArrayTable[currentFunc][id.getName()] = std::make_pair(ndim, arrayVal);
+                if (FuncConstVarTable[currentFunc].find(id.getName()) != FuncConstVarTable[currentFunc].end()) {
+                    std::string message = "Repeated definition: " + id.getName();
+                    logger.Error(message);
+                    return nullptr;
+                }
+                if (FuncVarTable[currentFunc].find(id.getName()) != FuncVarTable[currentFunc].end()) {
+                    std::string message = "Repeated definition: " + id.getName();
+                    logger.Error(message);
+                    return nullptr;
+                }
+                for (int i = 0; i < FuncTable[currentFunc].second.size(); i++) {
+                    if (FuncTable[currentFunc].second[i].first == id.getName()) {
+                        std::string message = "Repeated definition: " + id.getName();
+                        logger.Error(message);
+                        return nullptr;
+                    }
+                }
+                FuncConstArrayTable[currentFunc][id.getName()] = ndim;
             } else {
                 if (ConstArrayTable.find(id.getName()) != ConstArrayTable.end()) {
                     std::string message = "Repeated definition: " + id.getName();
@@ -153,21 +171,52 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                     logger.Error(message);
                     return nullptr;
                 }
+                if (ConstVarTable.find(id.getName()) != ConstVarTable.end()) {
+                    std::string message = "Repeated definition: " + id.getName();
+                    logger.Error(message);
+                    return nullptr;
+                }
+                if (VarTable.find(id.getName()) != VarTable.end()) {
+                    std::string message = "Repeated definition: " + id.getName();
+                    logger.Error(message);
+                    return nullptr;
+                }
                 ConstArrayTable[id.getName()] = ndim;
             }
         } else {
             if (currentFunc != "") {
-                if (FuncConstVarTable[currentFunc].find(id.getName()) != FuncConstVarTable.end()) {
+                if (FuncConstVarTable[currentFunc].find(id.getName()) != FuncConstVarTable[currentFunc].end()) {
                     std::string message = "Repeated definition: " + id.getName();
                     logger.Error(message);
                     return nullptr;
                 }
-                if (FuncVarTable[currentFunc].find(id.getName()) != FuncVarTable.end()) {
+                if (FuncVarTable[currentFunc].find(id.getName()) != FuncVarTable[currentFunc].end()) {
                     std::string message = "Repeated definition: " + id.getName();
                     logger.Error(message);
                     return nullptr;
                 }
-                FuncConstVarTable[currentFunc][id.getName()] = initVal;
+                if (FuncConstArrayTable[currentFunc].find(id.getName()) != FuncConstArrayTable[currentFunc].end()) {
+                    std::string message = "Repeated definition: " + id.getName();
+                    logger.Error(message);
+                    return nullptr;
+                }
+                if (FuncArrayTable[currentFunc].find(id.getName()) != FuncArrayTable[currentFunc].end()) {
+                    std::string message = "Repeated definition: " + id.getName();
+                    logger.Error(message);
+                    return nullptr;
+                }
+                for (int i = 0; i < FuncTable[currentFunc].second.size(); i++) {
+                    if (FuncTable[currentFunc].second[i].first == id.getName()) {
+                        std::string message = "Repeated definition: " + id.getName();
+                        logger.Error(message);
+                        return nullptr;
+                    }
+                }
+                if (!dynamic_cast<NumberAST *>(initVal)) {
+                    logger.Error("Initialize constant variable with inconstant value");
+                    return nullptr;
+                }
+                FuncConstVarTable[currentFunc][id.getName()] = dynamic_cast<NumberAST *>(initVal)->getVal();
             } else {
                 if (ConstVarTable.find(id.getName()) != ConstVarTable.end()) {
                     std::string message = "Repeated definition: " + id.getName();
@@ -179,7 +228,21 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                     logger.Error(message);
                     return nullptr;
                 }
-                ConstVarTable[id.getName()] = initVal;
+                if (ConstArrayTable.find(id.getName()) != ConstArrayTable.end()) {
+                    std::string message = "Repeated definition: " + id.getName();
+                    logger.Error(message);
+                    return nullptr;
+                }
+                if (ArrayTable.find(id.getName()) != ArrayTable.end()) {
+                    std::string message = "Repeated definition: " + id.getName();
+                    logger.Error(message);
+                    return nullptr;
+                }
+                if (!dynamic_cast<NumberAST *>(initVal)) {
+                    logger.Error("Initialize constant variable with inconstant value");
+                    return nullptr;
+                }
+                ConstVarTable[id.getName()] = dynamic_cast<NumberAST *>(initVal)->getVal();
             }
         }
 
@@ -197,7 +260,7 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
             }
             // 在类型检查步骤不需要为变量定义求值
             if (currentFunc != "") {
-                FuncArrayTable[currentFunc].insert(ndim);
+                FuncArrayTable[currentFunc][id.getName()] = ndim;
                 auto initVal = varDef.getInitVal()->Eval(*this);
                 logger.UnSetFunc("EvalVarDef");
                 return std::make_unique<ValDefAST>(false, id, std::make_unique<ProcessedInitValAST>(
@@ -229,7 +292,7 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                             logger.Error(message);
                             return nullptr;
                         }
-                        ArrayTable[id.getName()] = std::make_pair(ndim, arrayVal);
+                        ArrayTable[id.getName()] = ndim;
                     }
                     return std::make_unique<ValDefAST>(false, id, std::make_unique<ProcessedInitValAST>(
                             dynamic_cast<InitValAST *>(initVal.get())->getType(),
@@ -248,6 +311,23 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                     std::string message = "Repeated definition: " + id.getName();
                     logger.Error(message);
                     return nullptr;
+                }
+                if (FuncConstArrayTable[currentFunc].find(id.getName()) != FuncConstArrayTable[currentFunc].end()) {
+                    std::string message = "Repeated definition: " + id.getName();
+                    logger.Error(message);
+                    return nullptr;
+                }
+                if (FuncArrayTable[currentFunc].find(id.getName()) != FuncArrayTable[currentFunc].end()) {
+                    std::string message = "Repeated definition: " + id.getName();
+                    logger.Error(message);
+                    return nullptr;
+                }
+                for (int i = 0; i < FuncTable[currentFunc].second.size(); i++) {
+                    if (FuncTable[currentFunc].second[i].first == id.getName()) {
+                        std::string message = "Repeated definition: " + id.getName();
+                        logger.Error(message);
+                        return nullptr;
+                    }
                 }
                 FuncVarTable[currentFunc].insert(id.getName());
                 return std::make_unique<VarDefAST>(id, varDef.getInitVal());
@@ -287,8 +367,10 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                         return nullptr;
                     }
                     VarTable[id.getName()] = 0;
-                    return std::make_unique<VarDefAST>(id, std::make_unique<ProcessedInitValAST>(VarType::VAR, ASTPtrList{
-                            std::make_unique<NumberAST>(0)}, std::vector<int>{}));
+                    return std::make_unique<VarDefAST>(id,
+                                                       std::make_unique<ProcessedInitValAST>(VarType::VAR, ASTPtrList{
+                                                                                                     std::make_unique<NumberAST>(0)},
+                                                                                             std::vector < int > {}));
                 }
             }
         }
@@ -586,6 +668,30 @@ std::unique_ptr <AssignAST> TypeCheck::EvalAssign(AssignAST &assign) {
     logger.UnSetFunc("EvalAssign");
     if (!lhs) {
         logger.Error("Eval lhs failed for assignment");
+        return nullptr;
+    }
+    if (!dynamic_cast<LValAST *>(lhs.get())) {
+        logger.Error("Cannot assign value to a right value");
+        return nullptr;
+    }
+    if (currentFunc != "") {
+        if (FuncConstArrayTable[currentFunc].find(dynamic_cast<LValAST *>(lhs.get())->getName()) !=
+            FuncConstArrayTable[currentFunc].end()) {
+            logger.Error("Cannot change the value of a constant array");
+            return nullptr;
+        }
+        if (FuncConstVarTable[currentFunc].find(dynamic_cast<LValAST *>(lhs.get())->getName()) !=
+            FuncConstVarTable[currentFunc].end()) {
+            logger.Error("Cannot change the value of a constant variable");
+            return nullptr;
+        }
+    }
+    if (ConstArrayTable.find(dynamic_cast<LValAST *>(lhs.get())->getName()) != ConstArrayTable.end()) {
+        logger.Error("Cannot change the value of a constant array");
+        return nullptr;
+    }
+    if (ConstVarTable.find(dynamic_cast<LValAST *>(lhs.get())->getName()) != ConstVarTable.end()) {
+        logger.Error("Cannot change the value of a constant variable");
         return nullptr;
     }
     auto rhs = assign.getRight()->Eval(*this);

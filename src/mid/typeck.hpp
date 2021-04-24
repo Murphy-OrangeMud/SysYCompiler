@@ -21,20 +21,18 @@ private:
 public:
     std::map<std::string, int> VarTable;
     std::map<std::string, int> ConstVarTable;
-    std::map<std::string, std::vector<int>> ArrayTable;
-    std::map<std::string, std::vector<int>> ConstArrayTable;
-    //std::map<std::string, std::pair<std::vector < int>/*dim*/, int *>> ArrayTable;
-    //std::map<std::string, std::pair<std::vector < int>/*dim*/, int *>> ConstArrayTable;
+    std::map <std::string, std::vector<int>> ArrayTable;
+    std::map <std::string, std::vector<int>> ConstArrayTable;
 
-    // TODO:检查函数参数和函数内部的局部变量是否重名
     std::map <std::string, std::pair<Type,
             std::vector < std::pair < std::string, std::pair < VarType, std::vector < int>/*dims*/>>>/* Arg table */>>
     FuncTable;
     std::map <std::string, std::set<std::string>> FuncVarTable;
     std::map <std::string, std::map<std::string, int>> FuncConstVarTable;
-    std::map <std::string, std::map<std::string, std::vector < int>>> FuncArrayTable;
-    std::map <std::string, std::map<std::string, std::vector < int>>> FuncConstArrayTable;
-    // std::map<std::string, std::map<std::string, std::pair < std::vector < int>, int *>>> FuncConstArrayTable;
+    std::map <std::string, std::map<std::string, std::vector < int>>>
+    FuncArrayTable;
+    std::map <std::string, std::map<std::string, std::vector < int>>>
+    FuncConstArrayTable;
 
     TypeCheck() {
         std::string path = "..\\..\\logs\\log_" + std::to_string(rand() % 10000);
@@ -46,23 +44,27 @@ public:
         FuncTable["getch"] = std::make_pair(Type::INT, std::vector < std::pair < std::string, std::pair < VarType,
                                             std::vector < int >/*dims*/>>>{});
         FuncTable["getarray"] = std::make_pair(Type::INT, std::vector < std::pair < std::string, std::pair < VarType,
-                                               std::vector < int >/*dims*/>>>{ std::make_pair("a", std::make_pair(
+                                               std::vector < int >/*dims*/>>>{
+            std::make_pair("a", std::make_pair(
                     VarType::ARRAY, std::vector < int > {0}))
         });
         FuncTable["putint"] = std::make_pair(Type::VOID, std::vector < std::pair < std::string, std::pair < VarType,
-                                             std::vector < int >/*dims*/>>>{ std::make_pair("a",
-                                                                                            std::make_pair(VarType::VAR,
-                                                                                                           std::vector <
-                                                                                                           int > {}))
+                                             std::vector < int >/*dims*/>>>{
+            std::make_pair("a",
+                           std::make_pair(VarType::VAR,
+                                          std::vector <
+                                          int > {}))
         });
         FuncTable["putch"] = std::make_pair(Type::VOID, std::vector < std::pair < std::string, std::pair < VarType,
-                                            std::vector < int >/*dims*/>>>{ std::make_pair("a",
-                                                                                           std::make_pair(VarType::VAR,
-                                                                                                          std::vector <
-                                                                                                          int > {}))
+                                            std::vector < int >/*dims*/>>>{
+            std::make_pair("a",
+                           std::make_pair(VarType::VAR,
+                                          std::vector <
+                                          int > {}))
         });
         FuncTable["putarray"] = std::make_pair(Type::VOID, std::vector < std::pair < std::string, std::pair < VarType,
-                                               std::vector < int >/*dims*/>>>{ std::make_pair("a", std::make_pair(
+                                               std::vector < int >/*dims*/>>>{
+            std::make_pair("a", std::make_pair(
                     VarType::VAR, std::vector < int > {})), std::make_pair("b", std::make_pair(VarType::ARRAY,
                                                                                                std::vector < int > {0}))
         });
