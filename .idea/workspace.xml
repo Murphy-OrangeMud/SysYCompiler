@@ -30,9 +30,6 @@
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/define/ast.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/ast.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/front/parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/front/parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/typeck.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/typeck.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.hpp" afterDir="false" />
     </list>
@@ -80,9 +77,9 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -95,7 +92,8 @@
       <option name="presentableId" value="Default" />
       <updated>1617979741035</updated>
       <workItem from="1617979742179" duration="69126000" />
-      <workItem from="1618464254646" duration="17305000" />
+      <workItem from="1618464254646" duration="75851000" />
+      <workItem from="1619183989074" duration="27248000" />
     </task>
     <servers />
   </component>
@@ -119,10 +117,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="245" y="52" key="#SSH_Configurations/0.0.1280.760@0.0.1280.760" timestamp="1617980837172" />
-    <state x="96" y="35" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1618191364266">
+    <state x="96" y="35" width="1086" height="713" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1618734079411">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="96" y="35" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.760@0.0.1280.760" timestamp="1618191364266" />
+    <state x="96" y="35" width="1086" height="713" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.760@0.0.1280.760" timestamp="1618734079411" />
     <state x="421" y="135" key="FileChooserDialogImpl" timestamp="1618110387166">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
@@ -131,13 +129,17 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="147" y="10" key="SettingsEditor/0.0.1280.760@0.0.1280.760" timestamp="1617983215330" />
+    <state width="498" height="446" key="SwitcherDM" timestamp="1619232530665">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state width="498" height="446" key="SwitcherDM/0.0.1280.760@0.0.1280.760" timestamp="1619232530665" />
     <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1618489252887">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1618489252887" />
-    <state x="305" y="84" width="672" height="678" key="search.everywhere.popup" timestamp="1618190440421">
+    <state x="309" y="88" width="672" height="678" key="search.everywhere.popup" timestamp="1619184329970">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="305" y="84" width="672" height="678" key="search.everywhere.popup/0.0.1280.760@0.0.1280.760" timestamp="1618190440421" />
+    <state x="309" y="88" width="672" height="678" key="search.everywhere.popup/0.0.1280.760@0.0.1280.760" timestamp="1619184329970" />
   </component>
 </project>
