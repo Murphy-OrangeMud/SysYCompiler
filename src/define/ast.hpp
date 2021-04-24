@@ -360,6 +360,24 @@ public:
     ValPtr GenerateIR(IRGenerator &gen) const override;
 };
 
+class ProcessedInitValAST: public InitValAST {
+private:
+    std::vector<int> dims;
+public:
+    ProcessedInitValAST(VarType _type, ASTPtrList list, std::vector<int> _dims): InitValAST(_type, std::move(list)), dims(std::move(_dims)) {}
+
+    const VarType getType() const { return type; }
+    const ASTPtrList &getValues() const { return values; }
+    const std::vector<int> getDims() const { return dims; }
+
+    std::optional<int> Eval(TypeCheck &checker) const override {
+        return checker.EvalInitVal(*this);
+    }
+    ValPtr GenerateIR(IRGenerator &gen) const override {
+        return gen.GenInitVal(*this);
+    }
+};
+
 class CompUnitAST: public BaseAST {
 private:
     ASTPtrList nodes;

@@ -24,6 +24,7 @@ public:
     std::map<std::string, std::pair<std::vector < int>/*dim*/, int *>> ArrayTable;
     std::map<std::string, std::pair<std::vector < int>/*dim*/, int *>> ConstArrayTable;
 
+    // TODO:检查函数参数和函数内部的局部变量是否重名
     std::map <std::string, std::pair<Type,
             std::vector < std::pair < std::string, std::pair < VarType, std::vector < int>/*dims*/>>>/* Arg table */>>
     FuncTable;

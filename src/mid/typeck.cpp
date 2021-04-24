@@ -18,7 +18,7 @@ bool TypeCheck::FillInValue(int *memory, InitValAST &init, std::vector<int> &dim
             }
         } else {
             for (int j = 0; j < dim[i]; j++) {
-                if(!FillInValue(memory, nullptr, dim, i + 1))
+                if (!FillInValue(memory, nullptr, dim, i + 1))
                     return false;
                 logger.UnSetFunc("FillInValue");
             }
@@ -27,11 +27,11 @@ bool TypeCheck::FillInValue(int *memory, InitValAST &init, std::vector<int> &dim
         for (auto initval: init.getValues()) {
             idx++;
             if (dynamic_cast<InitValAST *>(initval.get())) {
-                if(!FillInValue(memory, dynamic_cast<InitValAST *>(initval.get()), dim, i + 1))
+                if (!FillInValue(memory, *dynamic_cast<InitValAST *>(initval.get()), dim, i + 1))
                     return false;
                 logger.UnSetFunc("FillInValue");
             } else {
-                if (!dynamic_cast<NumberAST*>(initval.get())) {
+                if (!dynamic_cast<NumberAST *>(initval.get())) {
                     logger.Error("Initialize const variable with inconstant value");
                     return false;
                 }
@@ -81,7 +81,7 @@ std::unique_ptr <ProcessedIdAST> TypeCheck::EvalId(IdAST &id) {
         } else if (dynamic_cast<BinaryExpAST>(exp)) {
             auto result = dynamic_cast<BinaryExpAST *>(exp.get())->Eval(*this);
             logger.UnSetFunc("EvalVarDef");
-            if (!dynamic_cast<NumberAST*>(result.get())) {
+            if (!dynamic_cast<NumberAST *>(result.get())) {
                 logger.Error("Declare array with variable size");
                 return nullptr;
             }
@@ -89,7 +89,7 @@ std::unique_ptr <ProcessedIdAST> TypeCheck::EvalId(IdAST &id) {
         } else if (dynamic_cast<UnaryExpAST *>(exp.get())) {
             auto result = dynamic_cast<UnaryExpAST *>(exp.get())->Eval(this);
             logger.UnSetFunc("EvalVarDef");
-            if (!dynamic_cast<NumberAST*>(result.get())) {
+            if (!dynamic_cast<NumberAST *>(result.get())) {
                 logger.Error("Declare array with variable size");
                 return nullptr;
             }
@@ -106,7 +106,8 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
             logger.Error("Uninitialized const variable");
             return nullptr;
         }
-        auto id = varDef.getVar()->Eval(*this);
+        auto id = varDef.getVar()->Eval(*this); // ProcessedIdAST
+        std::vector<int> ndim = dynamic_cast<ProcessedIdAST *>(id.get())->getDim();
         logger.UnSetFunc("EvalVarDef");
         auto initVal = varDef.getInitVal()->Eval(*this);
         logger.UnSetFunc("EvalVarDef");
@@ -178,9 +179,13 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                 ConstVarTable[id.getName()] = initVal;
             }
         }
-        return std::make_unique<ValDefAST>(true, id, initVal);
+
+        return std::make_unique<ValDefAST>(true, id, std::make_unique<ProcessedInitValAST>(
+                dynamic_cast<InitValAST *>(initVal.get())->getType(),
+                dynamic_cast<InitValAST *>(initVal.get())->getValues(), ndim));
     } else {
         auto id = varDef.getVar()->Eval(*this);
+        std::vector<int> ndim = dynamic_cast<ProcessedIdAST *>(id.get())->getDim();
         logger.UnSetFunc("EvalVarDef");
         if (dynamic_cast<ProcessedIdAST *>(id.get())->getType() == VarType::ARRAY) {
             int size = 1;
@@ -192,8 +197,11 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                 FuncArrayTable[currentFunc].insert(ndim);
                 auto initVal = varDef.getInitVal()->Eval(*this);
                 logger.UnSetFunc("EvalVarDef");
-                return std::make_unique<VarDefAST>(false, id, initVal);
+                return std::make_unique<ValDefAST>(false, id, std::make_unique<ProcessedInitValAST>(
+                        dynamic_cast<InitValAST *>(initVal.get())->getType(),
+                        dynamic_cast<InitValAST *>(initVal.get())->getValues(), ndim));
             } else {
+                // global must initialize with constant value
                 if (varDef.getInitVal()) {
                     auto initVal = varDef.getInitVal()->Eval(*this);
                     logger.UnSetFunc("EvalVarDef");
@@ -203,7 +211,7 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                     } else {
                         int *arrayVal = (int *) malloc(size * sizeof(int));
                         int *tmp = arrayVal;
-                        if(!FillInValue(tmp, dynamic_cast<InitValAST *>(initVal.get()), ndim, 0)) {
+                        if (!FillInValue(tmp, dynamic_cast<InitValAST *>(initVal.get()), ndim, 0)) {
                             logger.Error("Initialize const variable with inconstant value");
                             return nullptr;
                         }
@@ -220,7 +228,9 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                         }
                         ArrayTable[id.getName()] = std::make_pair(ndim, arrayVal);
                     }
-                    return std::make_unique<VarDefAST>(false, id, initVal);
+                    return std::make_unique<ValDefAST>(false, id, std::make_unique<ProcessedInitValAST>(
+                            dynamic_cast<InitValAST *>(initVal.get())->getType(),
+                            dynamic_cast<InitValAST *>(initVal.get())->getValues(), ndim));
                 }
                 return std::make_unique<VarDefAST>(false, id);
             }
@@ -274,8 +284,8 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                         return nullptr;
                     }
                     VarTable[id.getName()] = 0;
-                    return std::make_unique<VarDefAST>(id, std::make_unique<InitValAST>(VarType::VAR, ASTPtrList{
-                            std::make_unique<NumberAST>(0)}));
+                    return std::make_unique<VarDefAST>(id, std::make_unique<ProcessedInitValAST>(VarType::VAR, ASTPtrList{
+                            std::make_unique<NumberAST>(0)}, std::vector<int>{}));
                 }
             }
         }
@@ -308,7 +318,7 @@ std::unique_ptr <FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                     logger.Error("Unmatched parameter type: int[] and returned int");
                     return nullptr;
                 }
-                if (dynamic_cast<UnaryExpAST*>(arg.get())) {
+                if (dynamic_cast<UnaryExpAST *>(arg.get())) {
                     logger.Error("Unmatched parameter type: int[] and unary exp");
                     return nullptr;
                 }
@@ -397,10 +407,9 @@ std::unique_ptr <FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                         }
                     }
                 }
-            }
-            else {
-                if (dynamic_cast<LValAST*>(arg.get())) {
-                    if (dynamic_cast<LValAST*>(arg.get())->getType() == VarType::ARRAY) {
+            } else {
+                if (dynamic_cast<LValAST *>(arg.get())) {
+                    if (dynamic_cast<LValAST *>(arg.get())->getType() == VarType::ARRAY) {
                         if (currentFunc != "") {
                             std::map < std::string, std::pair < std::vector < int >/*dim*/, int * >> ::iterator
                             i2 = FuncArrayTable[currentFunc].find(dynamic_cast<LValAST *>(arg.get())->getName());
@@ -530,7 +539,7 @@ std::unique_ptr <IfElseAST> TypeCheck::EvalIfElse(IfElseAST &stmt) {
     return std::make_unique<IfElseAST>(cond, then);
 }
 
-std::unique_ptr<WhileAST> TypeCheck::EvalWhile(WhileAST &stmt) {
+std::unique_ptr <WhileAST> TypeCheck::EvalWhile(WhileAST &stmt) {
     logger.SetFunc("EvalWhile");
     auto cond = stmt.getCond()->Eval(this);
     logger.UnSetFunc("EvalWhile");
@@ -547,7 +556,7 @@ std::unique_ptr<WhileAST> TypeCheck::EvalWhile(WhileAST &stmt) {
     return std::make_unique<WhileAST>(cond, body);
 }
 
-std::unique_ptr<ControlAST> TypeCheck::EvalControl(ControlAST &stmt) {
+std::unique_ptr <ControlAST> TypeCheck::EvalControl(ControlAST &stmt) {
     logger.SetFunc("EvalControl");
     if (stmt.getControl() == Token::RETURN) {
         if (FuncTable[currentFunc].first == Type::VOID) {
@@ -568,7 +577,7 @@ std::unique_ptr<ControlAST> TypeCheck::EvalControl(ControlAST &stmt) {
     return stmt;
 }
 
-std::unique_ptr<AssignAST> TypeCheck::EvalAssign(AssignAST &assign) {
+std::unique_ptr <AssignAST> TypeCheck::EvalAssign(AssignAST &assign) {
     logger.SetFunc("EvalAssign");
     auto lhs = assign.getLeft()->Eval(*this);
     logger.UnSetFunc("EvalAssign");
@@ -634,7 +643,7 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
         }
         int volume = 1;
         for (int i = pos.size() - 1; i >= 0; i--) {
-            if (!dynamic_cast<NumberAST*>(pos[i].get())->getVal()) {
+            if (!dynamic_cast<NumberAST *>(pos[i].get())->getVal()) {
                 return std::make_unique<LValAST>(lval.getName(), lval.getType(), pos);
             }
             if (pos[i] >= iter->second.first[i]) {
@@ -665,7 +674,7 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
             std::map<std::string, int>::iterator iter = ConstVarTable.find(name);
             if (iter == ConstVarTable.end()) {
                 iter = VarTable.find(name);
-                if(iter == VarTable.end()) {
+                if (iter == VarTable.end()) {
                     logger.Error("Undefined identifier :" + name);
                     return nullptr;
                 } else {
@@ -701,7 +710,7 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
     }
 }
 
-std::unique_ptr<InitValAST> TypeCheck::EvalInitVal(InitValAST &init) {
+std::unique_ptr <InitValAST> TypeCheck::EvalInitVal(InitValAST &init) {
     logger.SetFunc("EvalInitVal");
     ASTPtrList newInitVals;
     for (auto val: init.getValues()) {
@@ -730,7 +739,7 @@ ASTPtr TypeCheck::EvalAddExp(BinaryExpAST exp) {
         logger.Error("Parse rhs for eval_mul_exp failed");
         return nullptr;
     }
-    if (!dynamic_cast<NumberAST*>(lval) || !dynamic_cast<NumberAST*>(rval)) {
+    if (!dynamic_cast<NumberAST *>(lval) || !dynamic_cast<NumberAST *>(rval)) {
         return std::make_unique<BinaryExpAST>(exp.getOp(), lval, rval)
     }
     switch (exp.getOp()) {
@@ -764,7 +773,7 @@ ASTPtr TypeCheck::EvalMulExp(BinaryExpAST exp) {
         logger.Error("Parse rhs for eval_mul_exp failed");
         return nullptr;
     }
-    if (!dynamic_cast<NumberAST*>(lval) || !dynamic_cast<NumberAST*>(rval)) {
+    if (!dynamic_cast<NumberAST *>(lval) || !dynamic_cast<NumberAST *>(rval)) {
         return std::make_unique<BinaryExpAST>(exp.getOp(), lval, rval)
     }
     switch (exp.getOp()) {
@@ -821,8 +830,8 @@ ASTPtr TypeCheck::EvalUnaryExp(UnaryExpAST exp) {
             logger.Error("Eval lval failed");
             return nullptr;
         }
-        if (dynamic_cast<NumberAST*>(lval.get())) {
-            int value = dynamic_cast<NumberAST*>(lval.get())->getVal();
+        if (dynamic_cast<NumberAST *>(lval.get())) {
+            int value = dynamic_cast<NumberAST *>(lval.get())->getVal();
             switch (exp.getOp()) {
                 case Operator::NOT:
                     return std::make_unique<NumberAST>(value);
@@ -836,8 +845,7 @@ ASTPtr TypeCheck::EvalUnaryExp(UnaryExpAST exp) {
                     logger.Error("Invalid unary exp operator");
                     return nullptr;
             }
-        }
-        else {
+        } else {
             return std::make_unique<UnaryExpAST>(lval, exp.getOp());
         }
     } else if (dynamic_cast<BinaryExpAST>(exp.getNode())) {
@@ -847,10 +855,10 @@ ASTPtr TypeCheck::EvalUnaryExp(UnaryExpAST exp) {
             logger.Error("Eval exp failed");
             return nullptr;
         }
-        if (!dynamic_cast<NumberAST*>(val.get())) {
+        if (!dynamic_cast<NumberAST *>(val.get())) {
             return std::make_unique<UnaryExpAST>(lval, exp.getOp());
         }
-        int value = dynamic_cast<NumberAST*>(val.get())->getVal();
+        int value = dynamic_cast<NumberAST *>(val.get())->getVal();
         switch (exp.getOp()) {
             case Operator::NOT:
                 return std::make_unique<NumberAST>(value);
@@ -870,7 +878,7 @@ ASTPtr TypeCheck::EvalUnaryExp(UnaryExpAST exp) {
             logger.Error("Eval unary exp failed");
             return nullptr;
         }
-        if (!dynamic_cast<NumberAST*>(val.get())) {
+        if (!dynamic_cast<NumberAST *>(val.get())) {
             return std::make_unique<UnaryExpAST>(lval, exp.getOp());
         }
         int value = dynamic_cast<NumberAST>(val)->getVal();
@@ -890,32 +898,35 @@ ASTPtr TypeCheck::EvalUnaryExp(UnaryExpAST exp) {
     }
 }
 
-std::unique_ptr<FuncDefAST> TypeCheck::EvalFuncDef(FuncDefAST funcDef) {
+std::unique_ptr <FuncDefAST> TypeCheck::EvalFuncDef(FuncDefAST funcDef) {
     logger.SetFunc("EvalFuncDef");
     currentFunc = funcDef.getName();
     ASTPtrList newArgs;
     std::vector < std::pair < std::string, std::pair < VarType, std::vector < int >/*dims*/>>> args;
     for (auto arg: funcDef.getArgs()) {
         //语义要求函数定义中变量维度数一定是常量
-        if (dynamic_cast<IdAST*>(arg.get())->getType() == VarType::ARRAY) {
+        if (dynamic_cast<IdAST *>(arg.get())->getType() == VarType::ARRAY) {
             std::vector<int> dims;
             dims.push_back(0);
-            for (auto exp: dynamic_cast<IdAST*>(arg.get())->getDim()) {
+            for (auto exp: dynamic_cast<IdAST *>(arg.get())->getDim()) {
                 auto res = exp->Eval(*this);
                 logger.UnSetFunc("EvalFuncDef");
-                if (!res || !dynamic_cast<NumberAST*>(res.get())) {
+                if (!res || !dynamic_cast<NumberAST *>(res.get())) {
                     logger.Error("Inconstant value for typed array arg dim");
                     return nullptr;
                 }
                 dims.push_back(dynamic_cast<NumberAST>(res)->getVal());
             }
             newArgs.push_back(
-                    std::make_unique<ProcessedIdAST>(dynamic_cast<IdAST*>(arg.get())->getName(), VarType::ARRAY, false, dims));
-            args.push_back(std::make_pair(dynamic_cast<IdAST*>(arg.get())->getName(), std::make_pair(VarType::ARRAY, dims)));
+                    std::make_unique<ProcessedIdAST>(dynamic_cast<ProcessedIdAST *>(arg.get())->getName(),
+                                                     VarType::ARRAY, false, dims));
+            args.push_back(
+                    std::make_pair(dynamic_cast<IdAST *>(arg.get())->getName(), std::make_pair(VarType::ARRAY, dims)));
         } else {
             newArgs.push_back(
-                    std::make_unique<ProcessedIdAST>(dynamic_cast<ProcessedIdAST*>(arg)->getName(), VarType::VAR, false));
-            args.push_back(std::make_pair(dynamic_cast<IdAST*>(arg.get())->getName(),
+                    std::make_unique<ProcessedIdAST>(dynamic_cast<ProcessedIdAST *>(arg)->getName(), VarType::VAR,
+                                                     false));
+            args.push_back(std::make_pair(dynamic_cast<ProcessedIdAST *>(arg.get())->getName(),
                                           std::make_pair(VarType::VAR, std::vector < int > {})));
         }
     }
@@ -949,7 +960,7 @@ ASTPtr TypeCheck::EvalRelExp(BinaryExpAST exp) {
             logger.Error("Eval rhs failed for rel exp");
             return nullptr;
         }
-        if (!dynamic_cast<NumberAST*>(lval) || !dynamic_cast<NumberAST*>(rval)) {
+        if (!dynamic_cast<NumberAST *>(lval) || !dynamic_cast<NumberAST *>(rval)) {
             return std::make_unique<BinaryExpAST>(exp.getOp(), lval, rval)
         }
         switch (exp.getOp()) {
@@ -1011,7 +1022,7 @@ ASTPtr TypeCheck::EvalLOrExp(BinaryExpAST exp) {
     }
 }
 
-std::unique_ptr<CompUnitAST> TypeCheck::EvalCompUnit(CompUnitAST unit) {
+std::unique_ptr <CompUnitAST> TypeCheck::EvalCompUnit(CompUnitAST unit) {
     logger.SetFunc("EvalCompUnit");
     ASTPtrList newNodes;
     for (auto node: unit.getNodes()) {
@@ -1022,6 +1033,10 @@ std::unique_ptr<CompUnitAST> TypeCheck::EvalCompUnit(CompUnitAST unit) {
             return nullptr;
         }
         newNodes.push_back(newNode);
+    }
+    if (FuncTable.find("main") == FuncTable.end()) {
+        logger.Error("Main function not found");
+        return nullptr;
     }
     return std::make_unique<CompUnitAST>(newNodes);
 }
@@ -1040,21 +1055,21 @@ ASTPtr TypeCheck::EvalEqExp(BinaryExpAST exp) {
         logger.Error("Eval rhs failed for eq exp");
         return nullptr;
     }
-    if (!dynamic_cast<NumberAST*>(lhs) || !dynamic_cast<NumberAST*>(rhs)) {
+    if (!dynamic_cast<NumberAST *>(lhs) || !dynamic_cast<NumberAST *>(rhs)) {
         return std::make_unique<BinaryExpAST>(exp.getOp(), lhs, rhs)
     }
     switch (exp.getOp()) {
         case Operator::EQ:
-            return dynamic_cast<NumberAST*>(lhs.get())->getVal() == dynamic_cast<NumberAST*>(rhs.get())->getVal();
+            return dynamic_cast<NumberAST *>(lhs.get())->getVal() == dynamic_cast<NumberAST *>(rhs.get())->getVal();
         case Operator::NEQ:
-            return dynamic_cast<NumberAST*>(lhs.get())->getVal() != dynamic_cast<NumberAST*>(rhs.get())->getVal();
+            return dynamic_cast<NumberAST *>(lhs.get())->getVal() != dynamic_cast<NumberAST *>(rhs.get())->getVal();
         default:
             logger.Error("Invalid operator");
             return nullptr;
     }
 }
 
-std::unique_ptr<StmtAST> TypeCheck::EvalStmt(StmtAST &stmt) {
+std::unique_ptr <StmtAST> TypeCheck::EvalStmt(StmtAST &stmt) {
     logger.SetFunc("EvalStmt");
     if (!stmt.getStmt())
         return stmt;
