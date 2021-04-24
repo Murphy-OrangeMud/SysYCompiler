@@ -99,8 +99,11 @@ std::unique_ptr <ProcessedIdAST> TypeCheck::EvalId(IdAST &id) {
     return std::make_unique<ProcessedIdAST>(id.getName(), id.getType(), id.isConst(), std::move(ndim));
 }
 
+
+
 std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
     logger.SetFunc("EvalVarDef");
+
     if (varDef.isConst()) {
         if (!varDef.getInitVal()) {
             logger.Error("Uninitialized const variable");
@@ -150,7 +153,7 @@ std::unique_ptr <VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                     logger.Error(message);
                     return nullptr;
                 }
-                ConstArrayTable[id.getName()] = std::make_pair(ndim, arrayVal);
+                ConstArrayTable[id.getName()] = ndim;
             }
         } else {
             if (currentFunc != "") {

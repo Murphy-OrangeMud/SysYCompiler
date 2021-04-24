@@ -21,8 +21,10 @@ private:
 public:
     std::map<std::string, int> VarTable;
     std::map<std::string, int> ConstVarTable;
-    std::map<std::string, std::pair<std::vector < int>/*dim*/, int *>> ArrayTable;
-    std::map<std::string, std::pair<std::vector < int>/*dim*/, int *>> ConstArrayTable;
+    std::map<std::string, std::vector<int>> ArrayTable;
+    std::map<std::string, std::vector<int>> ConstArrayTable;
+    //std::map<std::string, std::pair<std::vector < int>/*dim*/, int *>> ArrayTable;
+    //std::map<std::string, std::pair<std::vector < int>/*dim*/, int *>> ConstArrayTable;
 
     // TODO:检查函数参数和函数内部的局部变量是否重名
     std::map <std::string, std::pair<Type,
@@ -30,10 +32,9 @@ public:
     FuncTable;
     std::map <std::string, std::set<std::string>> FuncVarTable;
     std::map <std::string, std::map<std::string, int>> FuncConstVarTable;
-    std::map <std::string, std::map<std::string, std::vector < int>>>
-    FuncArrayTable;
-    std::map<std::string, std::map<std::string, std::pair < std::vector < int>, int *>>>
-    FuncConstArrayTable;
+    std::map <std::string, std::map<std::string, std::vector < int>>> FuncArrayTable;
+    std::map <std::string, std::map<std::string, std::vector < int>>> FuncConstArrayTable;
+    // std::map<std::string, std::map<std::string, std::pair < std::vector < int>, int *>>> FuncConstArrayTable;
 
     TypeCheck() {
         std::string path = "..\\..\\logs\\log_" + std::to_string(rand() % 10000);

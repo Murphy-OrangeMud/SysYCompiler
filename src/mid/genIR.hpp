@@ -11,6 +11,7 @@ private:
     int t_num;
     int T_num;
     int l_num;
+    std::string tab;
     std::map<std::string, int> SymbolTable;
     std::vector<std::pair<std::string, VarType>> ReverseSymbolTable;
     std::string currentFunc;
@@ -26,43 +27,43 @@ public:
         l_num = 0;
     }
 
-    void GenerateValue(int idx, InitValAST &init, std::vector<int> &dim, int i);
+    void GenerateValue(int idx, InitValAST &init, std::vector<int> &dim, int i, std::string &code);
 
-    void GenVarDecl(VarDeclAST &varDecl);
+    void GenVarDecl(VarDeclAST &varDecl, std::string &code);
 
-    std::string GenId(ProcessedIdAST &id);
+    std::string GenId(ProcessedIdAST &id, std::stirng &code);
 
-    std::string GenNumber(NumberAST &num);
+    std::string GenNumber(NumberAST &num, std::string &code);
 
-    std::string GenVarDef(VarDefAST &varDef);
+    std::string GenVarDef(VarDefAST &varDef, std::string &code);
 
-    std::string GenAssign(AssignAST &assign);
+    std::string GenAssign(AssignAST &assign, std::string &code);
 
-    std::string GenBinaryExp(BinaryExpAST &exp);
+    std::string GenBinaryExp(BinaryExpAST &exp, std::string &code);
 
-    std::string GenInitVal(InitValAST &init);
+    std::string GenInitVal(ProcessedInitValAST &init, std::string &code);
 
     std::string op2char(Operator op);
 
-    void GenBlock(BlockAST &block);
+    void GenBlock(BlockAST &block, std::string &code);
 
-    void GenFuncCall(FuncCallAST &func);
+    void GenFuncCall(FuncCallAST &func, std::string &code);
 
-    std::string GenLVal(LValAST &lval);
+    std::string GenLVal(LValAST &lval, std::string &code);
 
-    std::string GenUnaryExp(BinaryExpAST &exp);
+    std::string GenUnaryExp(UnaryExpAST &exp, std::string &code);
 
-    std::string GenFuncDef(FuncDefAST &funcDef);
+    void GenFuncDef(FuncDefAST &funcDef, std::string &code);
 
-    void GenCompUnit(CompUnitAST &unit);
+    void GenCompUnit(CompUnitAST &unit, std::string &code);
 
-    void GenIfElse(IfElseAST &stmt);
+    void GenIfElse(IfElseAST &stmt, std::string &code);
 
-    void GenWhile(WhileAST &stmt);
+    void GenWhile(WhileAST &stmt, std::string &code);
 
-    void GenControl(ControlAST &stmt);
+    void GenControl(ControlAST &stmt, std::string &code);
 
-    void GenStmt(StmtAST &stmt);
+    void GenStmt(StmtAST &stmt, std::string &code);
 };
 
 #endif

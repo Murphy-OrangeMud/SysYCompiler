@@ -6,7 +6,7 @@
 
 class Logger {
 private:
-    ofstream logger;
+    std::ofstream logger;
     std::string function;
 public:
     Logger(const std::string path) {
@@ -18,11 +18,17 @@ public:
         }
 #endif
     }
+
     void SetFunc(std::string funcName);
+
     void UnSetFunc(std::string funcName);
+
     void Warning(std::string message);
+
     void Info(std::string message);
+
     void Error(std::string message);
+
     ~Logger() {
 #ifndef OJ
         logger.close();
