@@ -1,6 +1,0 @@
-
-
-class IRGenerator {
-private:
-public:
-};

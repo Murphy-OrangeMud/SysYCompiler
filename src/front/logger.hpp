@@ -8,26 +8,38 @@ class Logger {
 private:
     std::ofstream logger;
     std::string function;
+    std::string path;
 public:
-    Logger(const std::string path) {
-#ifndef OJ
-        logger.open(path, ios::out);
-        if (!logger) {
-            std::cerr << "Cannot open log file: " << path << std::endl;
-            return;
-        }
-#endif
+    Logger() = default;
+    explicit Logger(const std::string& _path) {
+        path = _path;
     }
 
-    void SetFunc(std::string funcName);
+    bool open() {
+#ifndef OJ
+        logger.open(path, std::ios::out);
+        if (!logger) {
+            std::cerr << "Cannot open log file: " << path << std::endl;
+            return false;
+        }
+#endif
+        return true;
+    }
 
-    void UnSetFunc(std::string funcName);
+    Logger &operator = (const Logger & other) {
+        this->path = other.path;
+        return *this;
+    }
 
-    void Warning(std::string message);
+    void SetFunc(const std::string& funcName);
 
-    void Info(std::string message);
+    void UnSetFunc(const std::string& funcName);
 
-    void Error(std::string message);
+    void Warn(const std::string& message);
+
+    void Info(const std::string& message);
+
+    void Error(const std::string& message);
 
     ~Logger() {
 #ifndef OJ

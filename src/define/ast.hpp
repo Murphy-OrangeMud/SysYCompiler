@@ -8,20 +8,20 @@
 #include <optional>
 #include <string>
 #include "token.hpp"
-#include "../mid/typeck.hpp"
 
 class TypeCheck;
 class IRGenerator;
+class BaseAST;
+
+using ASTPtr = std::unique_ptr<BaseAST>;
+using ASTPtrList = std::vector<ASTPtr>;
 
 class BaseAST {
     public:
     virtual ~BaseAST() = default;
-    virtual std::optional<int> Eval(Interpreter &intp) const = 0;
-    virtual ValPtr GenerateIR(IRGenerator &gen) const = 0; 
+    virtual ASTPtr Eval(TypeCheck &checker) = 0;
+    virtual std::string GenerateIR(IRGenerator &gen, std::string &code) = 0;
 };
-
-using ASTPtr = std::unique_ptr<BaseAST>;
-using ASTPtrList = std::vector<ASTPtr>;
 
 class FuncDefAST: public BaseAST {
 private:
@@ -33,10 +33,8 @@ public:
     FuncDefAST(Type _type, const std::string &_name, ASTPtrList _args, ASTPtr _body)
     :type(_type), name(_name), args(_args), body(std::move(_body)) {}
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        return checker.EvalFuncDef(*this);
-    }
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
     const Type &getType() const { return type; }
     const std::string &getName() const { return name; }
@@ -50,10 +48,8 @@ private:
 public:
     BlockAST(ASTPtrList _stmts): stmts(std::move(_stmts)) {};
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        return checker.EvalBlock(*this);
-    }
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
     const ASTPtrList &getStmts() const { return stmts; };
 };
@@ -63,34 +59,8 @@ public:
     BinaryExpAST(Operator _opcode, ASTPtr _left, ASTPtr _right)
     : op(_opcode), left(std::move(_left)), right(std::move(_right)) {}
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        std::initializer_list<Operator> opAdd = {Operator::ADD, Operator::SUB};
-        std::initializer_list<Operator> opMul = {Operator::MUL, Operator::DIV, Operator::MOD};
-        std::initializer_list<Operator> opRel = {Operator::LE, Operator::GE, Operator::LT, Operator::LE};
-        std::initializer_list<Operator> opEq = {Operator::EQ, Operator::NEQ};
-        std::initializer_list<Operator> opLAnd = {Operator::AND};
-        std::initializer_list<Operator> opLOr = {Operator::OR};
-
-        if (std::find(opLOr.begin(), opLOr.end(), op)) {
-            return checker.EvalLOrExp(*this);
-        }
-        else if (std::find(opLAnd.begin(), opLAnd.end(), op)) {
-            return checker.EvalLAndExp(*this);
-        }
-        else if (std::find(opEq.begin(), opEq.end(), op)) {
-            return checker.EvalEqExp(*this);
-        }
-        else if (std::find(opRel.begin(), opRel.end(), op)) {
-            return checker.EvalRelExp(*this);
-        }
-        else if (std::find(opAdd.begin(), opAdd.end(), op)) {
-            return checker.EvalAddExp(*this);
-        }
-        else if (std::find(opMul.begin(), opMul.end(), op)) {
-            return checker.EvalMulExp(*this);
-        }
-    }
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
     const Operator &getOp() const { return op; }
     const ASTPtr &getLHS() const { return left; }
@@ -111,8 +81,8 @@ public:
     IfElseAST(ASTPtr _cond, ASTPtr _then, ASTPtr _else=nullptr)
     : cond(std::move(_cond)), thenStmt(std::move(_then)), elseStmt(std::move(_else)) {}
 
-    std::optional<int> Eval(Interpreter &intp) const override;
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
     const ASTPtr &getCond() const { return cond; }
     const ASTPtr &getThenStmt() const { return thenStmt; }
@@ -128,8 +98,8 @@ public:
     WhileAST(ASTPtr _cond, ASTPtr _stmt)
     : cond(std::move(_cond)), stmt(std::move(_stmt)) {}
 
-    std::optional<int> Eval(Interpreter &intp) const override;
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
     const ASTPtr &getCond() const { return cond; }
     const ASTPtr &getStmt() const { return stmt; }
@@ -137,33 +107,14 @@ public:
 
 class NumberAST: public BaseAST {
 private:
-    long long value;
+    int value;
 public:
-    NumberAST(long long _val): value(_val) {}
+    NumberAST(int _val): value(_val) {}
 
-    std::optional<int> Eval(Interpreter &intp) const override;
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
-    const long long &getVal() const { return value; }
-};
-
-class ProcessedIdAST: public BaseAST {
-private:
-    std::string name;
-    VarType type;
-    std::vector<int> dim; // exps: binaryExp, unaryExp
-    bool Const;
-public:
-    ProcessedIdAST(std::string _name, VarType _type, bool _const=false, std::vector<int> _dim=std::vector<int>{}):
-    Const(_const), name(std::move(_name)), type(_type), dim(std::move(_dim)) {}
-
-    std::optional<int> Eval(Interpreter &intp) const override;
-    ValPtr GenerateIR(IRGenerator &gen) const override;
-
-    const std::string &getName() const { return std::move(name); }
-    const VarType &getType() const { return type; }
-    const std::vector<int> &getDim() const { return dim; }
-    const bool isConst() const { return Const; }
+    const int &getVal() const { return value; }
 };
 
 class IdAST: public BaseAST {
@@ -176,13 +127,32 @@ public:
      IdAST(std::string _name, VarType _type, bool _const=false, ASTPtrList _dim=ASTPtrList{}):
      Const(_const), name(std::move(_name)), type(_type), dim(std::move(_dim)) {}
 
-     std::optional<int> Eval(Interpreter &intp) const override;
-     ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
      const std::string &getName() const { return std::move(name); }
      const VarType getType() const { return type; }
      const ASTPtrList &getDim() const { return dim; }
      const bool isConst() const { return Const; }
+};
+
+class ProcessedIdAST: public BaseAST {
+private:
+    std::string name;
+    VarType type;
+    std::vector<int> dim; // exps: binaryExp, unaryExp
+    bool Const;
+public:
+    ProcessedIdAST(std::string _name, VarType _type, bool _const=false, std::vector<int> _dim=std::vector<int>{}):
+            Const(_const), name(std::move(_name)), type(_type), dim(std::move(_dim)) {}
+
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
+
+    const std::string &getName() const { return std::move(name); }
+    const VarType &getType() const { return type; }
+    const std::vector<int> &getDim() const { return dim; }
+    const bool isConst() const { return Const; }
 };
 
 class UnaryExpAST: public BaseAST {
@@ -195,8 +165,8 @@ public:
     const ASTPtr &getNode() const { return unaryExp; }
     const Operator getOp() const { return op; }
 
-    std::optional<int> Eval(Interpreter &intp) const override;
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 };
 
 class ControlAST: public BaseAST {
@@ -236,10 +206,8 @@ public:
 
     const ASTPtr &getReturnExp() const { return returnExp; }
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        return checker.EvalControl(*this);
-    }
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 };
 
 class AssignAST: public BaseAST {
@@ -252,10 +220,8 @@ public:
     const ASTPtr &getLeft() const { return left; }
     const ASTPtr &getRight() const { return right; }
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        // return checker
-    }
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 };
 
 class StmtAST: public BaseAST {
@@ -263,14 +229,12 @@ private:
     ASTPtr stmt;
     // type
 public:
-    StmtAST(ASTPtr _stmt): stmt(std::move(_stmt)) {}
+    explicit StmtAST(ASTPtr _stmt): stmt(std::move(_stmt)) {}
 
     const ASTPtr &getStmt() const { return stmt; }
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        return checker.EvalStmt(*this);
-    }
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 };
 
 class LValAST: public BaseAST {
@@ -286,10 +250,8 @@ public:
     const std::string &getName() const { return name; }
     const VarType getType() const { return type; }
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        return checker.EvalLVal(*this);
-    };
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 };
 
 class FuncCallAST: public BaseAST {
@@ -303,10 +265,8 @@ public:
     const std::string &getName() const { return name; }
     const ASTPtrList &getArgs() const { return args; }
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        return checker.EvalFuncCall(*this);
-    }
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 };
 
 class VarDeclAST: public BaseAST {
@@ -314,15 +274,13 @@ private:
     ASTPtrList varDefs;
     bool Const;
 public:
-    VarDeclAST(bool _isConst, ASTPtrList &list): Const(_isConst), varDefs(std::move(list)) {}
+    VarDeclAST(bool _isConst, ASTPtrList list): Const(_isConst), varDefs(std::move(list)) {}
 
     const ASTPtrList &getVarDefs() const { return varDefs; }
     const bool isConst() const { return Const; }
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        return checker.EvalVarDecl(*this);
-    }
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 };
 
 class VarDefAST: public BaseAST {
@@ -338,10 +296,8 @@ public:
     const ASTPtr &getInitVal() const { return init; }
     const bool isConst() const { return Const; }
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        return checker.EvalVarDef(*this);
-    }
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 };
 
 class InitValAST: public BaseAST {
@@ -354,10 +310,8 @@ public:
     const VarType getType() const { return type; }
     const ASTPtrList &getValues() const { return values; }
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        return checker.EvalInitVal(*this);
-    }
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 };
 
 class ProcessedInitValAST: public InitValAST {
@@ -366,30 +320,22 @@ private:
 public:
     ProcessedInitValAST(VarType _type, ASTPtrList list, std::vector<int> _dims): InitValAST(_type, std::move(list)), dims(std::move(_dims)) {}
 
-    const VarType getType() const { return type; }
-    const ASTPtrList &getValues() const { return values; }
     const std::vector<int> getDims() const { return dims; }
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        return checker.EvalInitVal(*this);
-    }
-    ValPtr GenerateIR(IRGenerator &gen) const override {
-        return gen.GenInitVal(*this);
-    }
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 };
 
 class CompUnitAST: public BaseAST {
 private:
     ASTPtrList nodes;
 public:
-    CompUnitAST(ASTPtrList &_nodes): nodes(std::move(_nodes)) {}
+    CompUnitAST(ASTPtrList _nodes): nodes(std::move(_nodes)) {}
 
     const ASTPtrList &getNodes() const { return nodes; }
 
-    std::optional<int> Eval(TypeCheck &checker) const override {
-        return checker.EvalCompUnit(*this);
-    }
-    ValPtr GenerateIR(IRGenerator &gen) const override;
+    ASTPtr Eval(TypeCheck &checker) override;
+    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 };
 
 #endif

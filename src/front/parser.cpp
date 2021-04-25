@@ -1,23 +1,21 @@
-#include <iostream>
 #include <vector>
 #include <string_view>
-#include <cstddef>
 #include <functional>
 #include <initializer_list>
+#include <memory>
 #include "../define/token.hpp"
 #include "parser.hpp"
-#include "logger.hpp"
 
 void Parser::NextToken() {
     current = lexer.NextToken();
 }
 
-ASTPtr Parser::ParseBinary(std::function<ASTPtr()> parser, std::initializer_list <Operator> ops) {
+ASTPtr Parser::ParseBinary(const std::function<ASTPtr()> &parser, std::initializer_list <Operator> ops) {
     logger.SetFunc("ParseBinary");
     auto lhs = parser();
     logger.UnSetFunc("ParseBinary");
     if (!lhs) {
-        logger.Warning("Parse lhs failed");
+        logger.Error("Parse lhs failed");
         return nullptr;
     }
     while (current == Token::OPERATOR && std::find(ops.begin(), ops.end(), lexer.getOp()) != ops.end()) {
@@ -25,7 +23,7 @@ ASTPtr Parser::ParseBinary(std::function<ASTPtr()> parser, std::initializer_list
         auto rhs = parser();
         logger.UnSetFunc("ParseBinary");
         if (!rhs) {
-            logger.Warning("Parse rhs failed");
+            logger.Error("Parse rhs failed");
             return nullptr;
         }
         lhs = std::make_unique<BinaryExpAST>(lexer.getOp(), std::move(lhs), std::move(rhs));
@@ -109,7 +107,7 @@ ASTPtr Parser::ParseUnaryExp() {
         logger.UnSetFunc("ParseUnaryExp");
         NextToken(); // ")" RP
         if (current != Token::RP) {
-            logger.Warning("Production " + "\"(\" Exp \")\"" + " Lack Right Parenthese");
+            logger.Warn("Production \"(\" Exp \")\" Lack Right Parenthese");
             return nullptr;
         }
         NextToken();
@@ -122,13 +120,13 @@ ASTPtr Parser::ParseUnaryExp() {
         // UnaryExp := ("+" | "-" | "!") UnaryExp
         Operator op = lexer.getOp();
         if (op != Operator::ADD && op != Operator::SUB && op != Operator::NOT) {
-            logger.Warning("Production (\"+\" | \"-\" | \"!\") UnaryExp invalid symbol");
+            logger.Warn(R"(Production ("+" | "-" | "!") UnaryExp invalid symbol)");
             return nullptr;
         }
         ASTPtr exp = ParseUnaryExp();
         logger.UnSetFunc("ParseUnaryExp");
         if (!exp) {
-            logger.Warning("Production (\"+\" | \"-\" | \"!\") UnaryExp parse exp failed");
+            logger.Warn(R"(Production ("+" | "-" | "!") UnaryExp parse exp failed)");
             return nullptr;
         }
         return std::make_unique<UnaryExpAST>(std::move(exp), op);
@@ -147,7 +145,7 @@ ASTPtr Parser::ParseUnaryExp() {
                     ASTPtr exp = ParseAddExp();
                     logger.UnSetFunc("ParseUnaryExp");
                     if (!exp) {
-                        logger.Warning("Production IDENTIFIER \"(\" [FunRParams] \")\" parse FuncRParams failed");
+                        logger.Error("Production IDENTIFIER \"(\" [FunRParams] \")\" parse FuncRParams failed");
                         return nullptr;
                     }
                     args.push_back(std::move(exp));
@@ -157,7 +155,7 @@ ASTPtr Parser::ParseUnaryExp() {
                     NextToken(); // consume CO
                 }
                 if (current != Token::RP) {
-                    logger.Warning("Production IDENTIFIER \"(\" [FunRParams] \")\" lack right parentheses");
+                    logger.Error("Production IDENTIFIER \"(\" [FunRParams] \")\" lack right parentheses");
                     return nullptr;
                 }
                 NextToken(); // consume RP
@@ -173,7 +171,7 @@ ASTPtr Parser::ParseUnaryExp() {
                 pos.push_back(std::move(exp));
                 NextToken();
                 if (current != Token::RSB) {
-                    logger.Warning("Production IDENTIFIER {\"[\" Exp \"]\"}  lack right square bracket");
+                    logger.Error(R"(Production IDENTIFIER {"[" Exp "]"}  lack right square bracket)");
                     return nullptr;
                 }
                 NextToken();
@@ -183,6 +181,9 @@ ASTPtr Parser::ParseUnaryExp() {
         } else {
             return std::make_unique<LValAST>(name, VarType::VAR);
         }
+    } else {
+        logger.Error("No matching production");
+        return nullptr;
     }
 }
 
@@ -194,25 +195,25 @@ ASTPtr Parser::ParseIfElseStmt() {
     logger.SetFunc("ParseIfElseStmt");
     NextToken();
     if (current != Token::LP) {
-        logger.Warning("Production \"if\" \"(\" Cond \")\" Stmt [\"else\" Stmt] lack left parentheses after if");
+        logger.Error("Production \"if\" \"(\" Cond \")\" Stmt [\"else\" Stmt] lack left parentheses after if");
         return nullptr;
     }
     NextToken();
     ASTPtr cond = ParseLOrExp();
     logger.UnSetFunc("ParseIfElseStmt");
     if (!cond) {
-        logger.Warning("Production \"if\" \"(\" Cond \")\" Stmt [\"else\" Stmt] parse cond failed");
+        logger.Error("Production \"if\" \"(\" Cond \")\" Stmt [\"else\" Stmt] parse cond failed");
         return nullptr;
     }
     if (current != Token::RP) {
-        logger.Warning("Production \"if\" \"(\" Cond \")\" Stmt [\"else\" Stmt] lack right parentheses after if");
+        logger.Error("Production \"if\" \"(\" Cond \")\" Stmt [\"else\" Stmt] lack right parentheses after if");
         return nullptr;
     }
     NextToken();
     ASTPtr thenStmt = ParseStmt();
     logger.UnSetFunc("ParseIfElseStmt");
     if (!thenStmt) {
-        logger.Warning("Production \"if\" \"(\" Cond \")\" Stmt [\"else\" Stmt] parse then failed");
+        logger.Error("Production \"if\" \"(\" Cond \")\" Stmt [\"else\" Stmt] parse then failed");
         return nullptr;
     }
     if (current == Token::ELSE) {
@@ -220,7 +221,7 @@ ASTPtr Parser::ParseIfElseStmt() {
         ASTPtr elseStmt = ParseStmt();
         logger.UnSetFunc("ParseIfElseStmt");
         if (!elseStmt) {
-            logger.Warning("Production \"if\" \"(\" Cond \")\" Stmt [\"else\" Stmt] parse else failed");
+            logger.Error("Production \"if\" \"(\" Cond \")\" Stmt [\"else\" Stmt] parse else failed");
             return nullptr;
         }
         return std::make_unique<IfElseAST>(std::move(cond), std::move(thenStmt), std::move(elseStmt));
@@ -238,25 +239,25 @@ ASTPtr Parser::ParseWhileStmt() {
     logger.SetFunc("ParseWhileStmt");
     NextToken();
     if (current != Token::LP) {
-        logger.Warning("Production \"while\" \"(\" Cond \")\" Stmt lack left parentheses after while");
+        logger.Error("Production \"while\" \"(\" Cond \")\" Stmt lack left parentheses after while");
         return nullptr;
     }
     NextToken();
     ASTPtr cond = ParseLOrExp();
     logger.UnSetFunc("ParseWhileStmt");
     if (!cond) {
-        logger.Warning("Production \"while\" \"(\" Cond \")\" Stmt parse cond failed");
+        logger.Error("Production \"while\" \"(\" Cond \")\" Stmt parse cond failed");
         return nullptr;
     }
     if (current != Token::RP) {
-        logger.Warning("Production \"while\" \"(\" Cond \")\" Stmt lack right parentheses after while");
+        logger.Error("Production \"while\" \"(\" Cond \")\" Stmt lack right parentheses after while");
         return nullptr;
     }
     NextToken();
     ASTPtr thenStmt = ParseStmt();
     logger.UnSetFunc("ParseWhileStmt");
     if (!thenStmt) {
-        logger.Warning("Production \"while\" \"(\" Cond \")\" Stmt parse then failed");
+        logger.Error("Production \"while\" \"(\" Cond \")\" Stmt parse then failed");
         return nullptr;
     }
     return std::make_unique<WhileAST>(std::move(cond), std::move(thenStmt));
@@ -281,27 +282,27 @@ ASTPtr Parser::ParseStmt() {
         ASTPtr stmt = ParseIfElseStmt();
         logger.UnSetFunc("ParseStmt");
         if (!stmt) {
-            logger.Warning("Production IfElseStmt parse IfElseStmt failed");
+            logger.Error("Production IfElseStmt parse IfElseStmt failed");
             return nullptr;
         }
         if (current != Token::SC) {
-            logger.Warning("Lack semicolon");
+            logger.Error("Lack semicolon");
             return nullptr;
         }
         NextToken();
-        return std::make_unique<StmtAST>(stmt);
+        return std::make_unique<StmtAST>(std::move(stmt));
     } else if (current == Token::WHILE) {
         ASTPtr stmt = ParseWhileStmt();
         logger.UnSetFunc("ParseStmt");
         if (!stmt) {
-            logger.Warning("Production WhileStmt parse WhileStmt failed");
+            logger.Error("Production WhileStmt parse WhileStmt failed");
             return nullptr;
         }
         if (current != Token::SC) {
-            logger.Warning("Lack semicolon");
+            logger.Error("Lack semicolon");
             return nullptr;
         }
-        return std::make_unique<StmtAST>(stmt);
+        return std::make_unique<StmtAST>(std::move(stmt));
     } else if (current == Token::BREAK || current == Token::CONTINUE || current == Token::RETURN) {
         Token temp = current;
         NextToken();
@@ -312,17 +313,17 @@ ASTPtr Parser::ParseStmt() {
             ASTPtr retExp = ParseAddExp();
             logger.UnSetFunc("ParseStmt");
             if (!retExp) {
-                logger.Warning("Production ReturnStmt parse return exp failed");
+                logger.Error("Production ReturnStmt parse return exp failed");
                 return nullptr;
             }
             if (current != Token::SC) {
-                logger.Warning("Lack semicolon");
+                logger.Error("Lack semicolon");
                 return nullptr;
             }
             stmt = std::make_unique<ControlAST>(Token::RETURN, std::move(retExp));
         }
         NextToken(); // consume SC
-        return std::make_unique<StmtAST>(stmt);
+        return std::make_unique<StmtAST>(std::move(stmt));
     } else if (current == Token::SC) {
         NextToken();
         return std::make_unique<StmtAST>(nullptr);
@@ -330,50 +331,50 @@ ASTPtr Parser::ParseStmt() {
         ASTPtr block = ParseBlock();
         logger.UnSetFunc("ParseStmt");
         if (!block) {
-            logger.Warning("Production Block parse block failed");
+            logger.Error("Production Block parse block failed");
             return nullptr;
         }
         NextToken();
-        return std::make_unique<StmtAST>(block)
+        return std::make_unique<StmtAST>(std::move(block));
     } else {
         ASTPtr exp = ParseAddExp();
         logger.UnSetFunc("ParseStmt");
         if (!exp) {
-            logger.Warning("Production Exp \";\"/LVal \"=\" Exp \";\" parse lval failed");
+            logger.Error(R"(Production Exp ";"/LVal "=" Exp ";" parse lval failed)");
             return nullptr;
         }
         NextToken();
-        if (std::dynamic_pointer_cast<LValAST>(exp)) {
+        if (dynamic_cast<LValAST*>(exp.get())) {
             // LVal "=" Exp ";"
             if (current == Token::ASSIGN) {
                 NextToken();
                 ASTPtr rhs = ParseAddExp();
                 logger.UnSetFunc("ParseStmt");
                 if (!rhs) {
-                    logger.Warning("Production Exp \";\"/LVal \"=\" Exp \";\" parse rhs failed");
+                    logger.Error(R"(Production Exp ";"/LVal "=" Exp ";" parse rhs failed)");
                     return nullptr;
                 }
-                ASTPtr stmt = std::make_unique<AssignAST>(exp, rhs);
+                ASTPtr stmt = std::make_unique<AssignAST>(std::move(exp), std::move(rhs));
                 NextToken();
                 if (current != Token::SC) {
-                    logger.Warning("Lack semicolon");
+                    logger.Error("Lack semicolon");
                     return nullptr;
                 }
-                return std::make_unique<StmtAST>(stmt);
+                return std::make_unique<StmtAST>(std::move(stmt));
             } else if (current == Token::SC) {
                 // Exp;
-                return std::make_unique<StmtAST>(exp);
+                return std::make_unique<StmtAST>(std::move(exp));
             } else {
-                logger.Warning("Lack semicolon");
+                logger.Error("Lack semicolon");
                 return nullptr;
             }
         } else {
             // ;
             if (current != Token::SC) {
-                logger.Warning("Lack semicolon");
+                logger.Error("Lack semicolon");
                 return nullptr;
             }
-            return std::make_unique<StmtAST>(exp);
+            return std::make_unique<StmtAST>(std::move(exp));
         }
     }
 }
@@ -392,10 +393,10 @@ ASTPtr Parser::ParseBlock() {
         ASTPtrList list;
         while (current != Token::RB) {
             if (current == Token::CONST || current == Token::TYPE) {
-                ASTPtr decl = ParseDecl();
+                ASTPtr decl = ParseVarDecl();
                 logger.UnSetFunc("ParseBlock");
                 if (!decl) {
-                    logger.Warning("Production Decl parse decl failed");
+                    logger.Error("Production Decl parse decl failed");
                     return nullptr;
                 }
                 list.push_back(decl);
@@ -403,7 +404,7 @@ ASTPtr Parser::ParseBlock() {
                 ASTPtr stmt = ParseStmt();
                 logger.UnSetFunc("ParseBlock");
                 if (!stmt) {
-                    logger.Warning("Production Stmt parse stmt failed");
+                    logger.Error("Production Stmt parse stmt failed");
                     return nullptr;
                 }
                 list.push_back(stmt);
@@ -429,7 +430,7 @@ ASTPtr Parser::ParseInitVal() {
                 ASTPtr init = ParseInitVal();
                 logger.UnSetFunc("ParseInitVal");
                 if (!init) {
-                    logger.Warning("Production \"{\" [InitVal {\",\" InitVal}] \"}\" parse InitVal failed");
+                    logger.Error(R"(Production "{" [InitVal {"," InitVal}] "}" parse InitVal failed)");
                     return nullptr;
                 }
                 initVals.push_back(init);
@@ -438,7 +439,7 @@ ASTPtr Parser::ParseInitVal() {
                 NextToken();
             }
             if (current != Token::RB) {
-                logger.Warning("Production \"{\" [InitVal {\",\" InitVal}] \"}\" lack right brace after InitVals");
+                logger.Error(R"(Production "{" [InitVal {"," InitVal}] "}" lack right brace after InitVals)");
                 return nullptr;
             }
             return std::make_unique<InitValAST>(VarType::ARRAY, initVals);
@@ -447,7 +448,7 @@ ASTPtr Parser::ParseInitVal() {
         ASTPtr exp = ParseAddExp();
         logger.UnSetFunc("ParseInitVal");
         if (!exp) {
-            logger.Warning("Production Exp parse exp failed");
+            logger.Error("Production Exp parse exp failed");
             return nullptr;
         }
         return std::make_unique<InitValAST>(VarType::VAR, ASTPtrList{std::move(exp)});
@@ -466,13 +467,13 @@ ASTPtr Parser::ParseFuncDef() {
     Type type = lexer.getType();
     NextToken();
     if (current != Token::IDENTIFIER) {
-        logger.Warning("Production FuncType IDENT \"(\" [FuncFParams] \")\" Block lacked identifier");
+        logger.Error("Production FuncType IDENT \"(\" [FuncFParams] \")\" Block lacked identifier");
         return nullptr;
     }
     std::string name = lexer.getName();
     NextToken();
     if (current != Token::LP) {
-        logger.Warning(
+        logger.Error(
                 "Production FuncType IDENT \"(\" [FuncFParams] \")\" Block lacked left parentheses after identifier");
         return nullptr;
     }
@@ -482,7 +483,7 @@ ASTPtr Parser::ParseFuncDef() {
         while (true) {
             NextToken();
             if (current != Token::TYPE || lexer.getType() != Type::INT) {
-                logger.Warning("Production FuncType IDENT \"(\" [FuncFParams] \")\" Block wrong arg type");
+                logger.Error("Production FuncType IDENT \"(\" [FuncFParams] \")\" Block wrong arg type");
                 return nullptr;
             }
             NextToken();
@@ -492,7 +493,7 @@ ASTPtr Parser::ParseFuncDef() {
                 ASTPtrList dim = {std::make_unique<NumberAST>(0)};
                 NextToken();
                 if (current != Token::RSB) {
-                    logger.Warning(
+                    logger.Error(
                             "Production FuncType IDENT \"(\" [FuncFParams] \")\" Block lack right bracket in array arg");
                     return nullptr;
                 }
@@ -503,14 +504,14 @@ ASTPtr Parser::ParseFuncDef() {
                         ASTPtr _dim = ParseAddExp();
                         logger.UnSetFunc("ParseFuncDef");
                         if (!_dim) {
-                            logger.Warning(
-                                    "Production BType IDENT [\"[\" \"]\" {\"[\" ConstExp \"]\"}] parse exp dim failed");
+                            logger.Error(
+                                    R"(Production BType IDENT ["[" "]" {"[" ConstExp "]"}] parse exp dim failed)");
                             return nullptr;
                         }
                         dim.push_back(_dim);
                         if (current != Token::RSB) {
-                            logger.Warning(
-                                    "Production BType IDENT [\"[\" \"]\" {\"[\" ConstExp \"]\"}] lack right square bracket");
+                            logger.Error(
+                                    R"(Production BType IDENT ["[" "]" {"[" ConstExp "]"}] lack right square bracket)");
                             return nullptr;
                         }
                         NextToken();
@@ -518,7 +519,7 @@ ASTPtr Parser::ParseFuncDef() {
                             break;
                     }
                 }
-                args.push_back(std::make_unique<IdAST>(argName, VarType::ARRAY, std::move(dim)));
+                args.push_back(std::make_unique<IdAST>(argName, VarType::ARRAY, false, dim));
             } else {
                 args.push_back(std::make_unique<IdAST>(argName, VarType::VAR));
             }
@@ -526,7 +527,7 @@ ASTPtr Parser::ParseFuncDef() {
                 break;
         }
         if (current != Token::RP) {
-            logger.Warning(
+            logger.Error(
                     "Production FuncType IDENT \"(\" [FuncFParams] \")\" Block lacked right parentheses after identifier");
             return nullptr;
         }
@@ -546,7 +547,7 @@ ASTPtr Parser::ParseVarDecl() {
     if (current == Token::CONST)
         isConst = true;
     if (lexer.getType() != Type::INT) {
-        logger.Warning("Production [CONST] BType VarDef {\",\" VarDef} \";\" wrong BType");
+        logger.Error(R"(Production [CONST] BType VarDef {"," VarDef} ";" wrong BType)");
         return nullptr;
     }
     NextToken();
@@ -554,7 +555,7 @@ ASTPtr Parser::ParseVarDecl() {
     ASTPtr varDef = ParseVarDef(isConst);
     logger.UnSetFunc("ParseVarDecl");
     if (!varDef) {
-        logger.Warning("Production [CONST] BType VarDef {\",\" VarDef} \";\" parse vardef failed");
+        logger.Error(R"(Production [CONST] BType VarDef {"," VarDef} ";" parse vardef failed)");
         return nullptr;
     }
     vars.push_back(std::move(varDef));
@@ -563,18 +564,18 @@ ASTPtr Parser::ParseVarDecl() {
         varDef = ParseVarDef(isConst);
         logger.UnSetFunc("ParseVarDecl");
         if (!varDef) {
-            logger.Warning("Production [CONST] BType VarDef {\",\" VarDef} \";\" parse vardef failed");
+            logger.Error(R"(Production [CONST] BType VarDef {"," VarDef} ";" parse vardef failed)");
             return nullptr;
         }
-        vars.push_back(std::move(VarDef));
+        vars.push_back(std::move(varDef));
     }
     NextToken();
     if (current != Token::SC) {
-        logger.Warning("lack semicolon");
+        logger.Error("lack semicolon");
         return nullptr;
     }
     NextToken();
-    return std::make_unique<VarDeclAST>(isConst, std::move(vars));
+    return std::make_unique<VarDeclAST>(isConst, vars);
 }
 
 /*
@@ -584,7 +585,7 @@ ASTPtr Parser::ParseVarDecl() {
 ASTPtr Parser::ParseVarDef(bool isConst) {
     logger.SetFunc("ParseVarDef");
     if (current != Token::IDENTIFIER) {
-        logger.Warning("Production IDENT {\"[\" ConstExp \"]\"} [\"=\" InitVal] lacked identifier");
+        logger.Error(R"(Production IDENT {"[" ConstExp "]"} ["=" InitVal] lacked identifier)");
         return nullptr;
     }
     std::string name = lexer.getName();
@@ -595,13 +596,13 @@ ASTPtr Parser::ParseVarDef(bool isConst) {
         ASTPtr exp = ParseAddExp();
         logger.UnSetFunc("ParseVarDef");
         if (!exp) {
-            logger.Warning("Production IDENT {\"[\" ConstExp \"]\"} [\"=\" InitVal] parse exp failed");
+            logger.Error(R"(Production IDENT {"[" ConstExp "]"} ["=" InitVal] parse exp failed)");
             return nullptr;
         }
         dims.push_back(exp);
         if (current != Token::RSB) {
-            logger.Warning(
-                    "Production IDENT {\"[\" ConstExp \"]\"} [\"=\" InitVal] lack right square bracket after exp");
+            logger.Error(
+                    R"(Production IDENT {"[" ConstExp "]"} ["=" InitVal] lack right square bracket after exp)");
             return nullptr;
         }
         NextToken();
@@ -616,16 +617,16 @@ ASTPtr Parser::ParseVarDef(bool isConst) {
         ASTPtr init = ParseInitVal();
         logger.UnSetFunc("ParseVarDef");
         if (!init) {
-            logger.Warning("Production IDENT {\"[\" ConstExp \"]\"} [\"=\" InitVal] parse init failed");
+            logger.Error(R"(Production IDENT {"[" ConstExp "]"} ["=" InitVal] parse init failed)");
             return nullptr;
         }
-        return std::make_unique<VarDefAST>(isConst, var, init);
+        return std::make_unique<VarDefAST>(isConst, std::move(var), std::move(init));
     } else {
         if (isConst) {
-            logger.Warning("Production ConstDef: IDENT {\"[\" ConstExp \"]\"} \"=\" ConstInitVal lacked assignment");
+            logger.Error(R"(Production ConstDef: IDENT {"[" ConstExp "]"} "=" ConstInitVal lacked assignment)");
             return nullptr;
         }
-        return std::make_unique<VarDefAST>(isConst, var);
+        return std::make_unique<VarDefAST>(isConst, std::move(var));
     }
 }
 
@@ -636,12 +637,12 @@ ASTPtr Parser::ParseCompUnit() {
     logger.SetFunc("ParseCompUnit");
     NextToken();
     ASTPtrList nodes;
-    while (current != Token::EOF) {
+    while (current != Token::END) {
         if (current == Token::CONST) {
             ASTPtr decl = ParseVarDecl();
             logger.UnSetFunc("ParseCompUnit");
             if (!decl) {
-                logger.Warning("Production (Decl | FuncDef) [CompUnit] parse decl failed");
+                logger.Error("Production (Decl | FuncDef) [CompUnit] parse decl failed");
                 return nullptr;
             }
             nodes.push_back(decl);
@@ -649,7 +650,7 @@ ASTPtr Parser::ParseCompUnit() {
             if (lexer.getType() == Type::VOID) {
                 ASTPtr func = ParseFuncDef();
                 if (!func) {
-                    logger.Warning("Production (Decl | FuncDef) [CompUnit] parse func failed");
+                    logger.Error("Production (Decl | FuncDef) [CompUnit] parse func failed");
                     return nullptr;
                 }
                 nodes.push_back(func);
@@ -657,7 +658,7 @@ ASTPtr Parser::ParseCompUnit() {
                 Type type = lexer.getType();
                 NextToken();
                 if (current != Token::IDENTIFIER) {
-                    logger.Warning("lack identifier");
+                    logger.Error("lack identifier");
                     return nullptr;
                 }
                 std::string name = lexer.getName();
@@ -670,7 +671,7 @@ ASTPtr Parser::ParseCompUnit() {
                         while (true) {
                             NextToken();
                             if (current != Token::TYPE || lexer.getType() != Type::INT) {
-                                logger.Warning(
+                                logger.Error(
                                         "Production FuncType IDENT \"(\" [FuncFParams] \")\" Block wrong arg type");
                                 return nullptr;
                             }
@@ -681,7 +682,7 @@ ASTPtr Parser::ParseCompUnit() {
                                 ASTPtrList dim = {std::make_unique<NumberAST>(0)};
                                 NextToken();
                                 if (current != Token::RSB) {
-                                    logger.Warning(
+                                    logger.Error(
                                             "Production FuncType IDENT \"(\" [FuncFParams] \")\" Block lack right bracket in array arg");
                                     return nullptr;
                                 }
@@ -692,14 +693,14 @@ ASTPtr Parser::ParseCompUnit() {
                                         ASTPtr _dim = ParseAddExp();
                                         logger.UnSetFunc("ParseFuncDef");
                                         if (!_dim) {
-                                            logger.Warning(
-                                                    "Production BType IDENT [\"[\" \"]\" {\"[\" ConstExp \"]\"}] parse exp dim failed");
+                                            logger.Error(
+                                                    R"(Production BType IDENT ["[" "]" {"[" ConstExp "]"}] parse exp dim failed)");
                                             return nullptr;
                                         }
                                         dim.push_back(_dim);
                                         if (current != Token::RSB) {
-                                            logger.Warning(
-                                                    "Production BType IDENT [\"[\" \"]\" {\"[\" ConstExp \"]\"}] lack right square bracket");
+                                            logger.Error(
+                                                    R"(Production BType IDENT ["[" "]" {"[" ConstExp "]"}] lack right square bracket)");
                                             return nullptr;
                                         }
                                         NextToken();
@@ -707,7 +708,7 @@ ASTPtr Parser::ParseCompUnit() {
                                             break;
                                     }
                                 }
-                                args.push_back(std::make_unique<IdAST>(argName, VarType::ARRAY, std::move(dim)));
+                                args.push_back(std::make_unique<IdAST>(argName, VarType::ARRAY, false, dim));
                             } else {
                                 args.push_back(std::make_unique<IdAST>(argName, VarType::VAR));
                             }
@@ -715,7 +716,7 @@ ASTPtr Parser::ParseCompUnit() {
                                 break;
                         }
                         if (current != Token::RP) {
-                            logger.Warning(
+                            logger.Error(
                                     "Production FuncType IDENT \"(\" [FuncFParams] \")\" Block lacked right parentheses after identifier");
                             return nullptr;
                         }
@@ -733,13 +734,13 @@ ASTPtr Parser::ParseCompUnit() {
                         ASTPtr exp = ParseAddExp();
                         logger.UnSetFunc("ParseVarDef");
                         if (!exp) {
-                            logger.Warning("Production IDENT {\"[\" ConstExp \"]\"} [\"=\" InitVal] parse exp failed");
+                            logger.Error(R"(Production IDENT {"[" ConstExp "]"} ["=" InitVal] parse exp failed)");
                             return nullptr;
                         }
                         dims.push_back(exp);
                         if (current != Token::RSB) {
-                            logger.Warning(
-                                    "Production IDENT {\"[\" ConstExp \"]\"} [\"=\" InitVal] lack right square bracket after exp");
+                            logger.Error(
+                                    R"(Production IDENT {"[" ConstExp "]"} ["=" InitVal] lack right square bracket after exp)");
                             return nullptr;
                         }
                         NextToken();
@@ -754,12 +755,12 @@ ASTPtr Parser::ParseCompUnit() {
                         NextToken();
                         ASTPtr init = ParseInitVal();
                         if (!init) {
-                            logger.Warning("Production IDENT {\"[\" ConstExp \"]\"} [\"=\" InitVal] parse init failed");
+                            logger.Error(R"(Production IDENT {"[" ConstExp "]"} ["=" InitVal] parse init failed)");
                             return nullptr;
                         }
-                        varDef = std::make_unique<VarDefAST>(false, var, init);
+                        varDef = std::make_unique<VarDefAST>(false, std::move(var), std::move(init));
                     } else {
-                        varDef = std::make_unique<VarDefAST>(false, var);
+                        varDef = std::make_unique<VarDefAST>(false, std::move(var));
                     }
                     varDefs.push_back(std::move(varDef));
                     while (current == Token::CO) {
@@ -767,23 +768,23 @@ ASTPtr Parser::ParseCompUnit() {
                         varDef = ParseVarDef(false);
                         logger.UnSetFunc("ParseVarDecl");
                         if (!varDef) {
-                            logger.Warning("Production [CONST] BType VarDef {\",\" VarDef} \";\" parse vardef failed");
+                            logger.Error(R"(Production [CONST] BType VarDef {"," VarDef} ";" parse vardef failed)");
                             return nullptr;
                         }
-                        varDefs.push_back(std::move(VarDef));
+                        varDefs.push_back(std::move(varDef));
                     }
                     NextToken();
                     if (current != Token::SC) {
-                        logger.Warning("lack semicolon");
+                        logger.Error("lack semicolon");
                         return nullptr;
                     }
-                    ASTPtr decl = std::make_unique<VarDeclAST>(false, std::move(varDefs));
+                    ASTPtr decl = std::make_unique<VarDeclAST>(false, varDefs);
                     nodes.push_back(std::move(decl));
                     NextToken();
                 }
             }
         } else {
-            logger.Warning("Wrong token");
+            logger.Error("Wrong token");
             return nullptr;
         }
     }

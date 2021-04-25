@@ -2,32 +2,32 @@
 #include <string>
 #include <iostream>
 
-void Logger::SetFunc(std::string funcName) {
+void Logger::SetFunc(const std::string& funcName) {
 #ifndef OJ
     function = funcName;
     logger << "[" << function << "]" << "Enter function: " << funcName << "\n";
 #endif
 }
 
-void Logger::Error(std::string message) {
+void Logger::Error(const std::string& message) {
 #ifndef OJ
     logger << "[" << function << "]" << "-Error: " << message << "\n";
 #endif
 }
 
-void Logger::Warning(std::string message) {
+void Logger::Warn(const std::string& message) {
 #ifndef OJ
     logger << "[" << function << "]" << "-Warning: " << message << "\n";
 #endif
 }
 
-void Logger::Info(std::string message) {
+void Logger::Info(const std::string& message) {
 #ifndef OJ
     logger << "[" << function << "]" << "-Info: " << message << "\n";
 #endif
 }
 
-void Logger::UnSetFunc(std::string funcName) {
+void Logger::UnSetFunc(const std::string& funcName) {
 #ifndef OJ
     logger << "[" << function << "]" << "Leave function: " << funcName << "\n";
     function = funcName;

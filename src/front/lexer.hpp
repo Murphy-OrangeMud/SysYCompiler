@@ -3,8 +3,8 @@
 
 class Lexer {
 public:
-    Lexer() {}
-    ~Lexer() {}
+    Lexer() = default;
+    ~Lexer() = default;
 
     Token NextToken();
     Operator getOp() { return op; }
@@ -17,7 +17,7 @@ private:
     Token parseIDKeyword();
     Token parseComment();
 
-    long long value;
+    long long value{};
     std::string name;
     Operator op;
     Type type;

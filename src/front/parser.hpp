@@ -23,11 +23,12 @@ public:
         std::string path = "..\\..\\logs\\log_" + std::to_string(rand() % 10000);
         std::cout << path << std::endl;
         logger = Logger(path);
+        logger.open();
     }
 
     void NextToken();
 
-    ASTPtr ParseBinary(std::function<ASTPtr()> parser, std::initializer_list <Operator> ops);
+    ASTPtr ParseBinary(const std::function<ASTPtr()> &parser, std::initializer_list <Operator> ops);
 
     ASTPtr ParseRelExp();
 
@@ -60,6 +61,6 @@ public:
     ASTPtr ParseVarDef(bool isConst);
 
     ASTPtr ParseCompUnit();
-}
+};
 
 #endif

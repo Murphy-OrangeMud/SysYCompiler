@@ -15,10 +15,10 @@ Token Lexer::parseInt() {
                 c = std::cin.peek();
                 if (c >= '0' && c <= '9') {
                     std::cin >> c;
-                    val = val * 16 + s[i] - '0';
+                    val = val * 16 + c - '0';
                 } else if (c >= 'A' && c <= 'F') {
                     std::cin >> c;
-                    val = val * 16 + s[i] - 'A' + 10;
+                    val = val * 16 + c - 'A' + 10;
                 } else if (c >= 'a' && c <= 'f') {
                     std::cin >> c;
                     val = val * 16 + c - 'a' + 10;
@@ -56,6 +56,7 @@ Token Lexer::parseInt() {
 
 Token Lexer::parseIDKeyword() {
     std::string s;
+    char c;
     while (true) {
         std::cin >> c;
         s += c;

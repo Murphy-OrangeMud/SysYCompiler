@@ -17,3 +17,4 @@ add_compile_definitions(APP_VERSION_PATCH=${PROJECT_VERSION_PATCH})
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
+add_executable(sysyc ${SOURCES})

@@ -5,14 +5,9 @@
 #include <set>
 #include <string>
 #include <vector>
-#include "../define/ast.hpp"
 #include "../define/token.hpp"
 #include "../front/logger.hpp"
-
-struct Arg {
-    VarType type;
-    vector<int> dim;
-};
+#include "../define/ast.hpp"
 
 class TypeCheck {
 private:
@@ -35,7 +30,7 @@ public:
     FuncConstArrayTable;
 
     TypeCheck() {
-        std::string path = "..\\..\\logs\\log_" + std::to_string(rand() % 10000);
+        std::string path = R"(..\..\logs\log_)" + std::to_string(rand() % 10000);
         logger = Logger(path);
         currentFunc = "";
         // insert 6 included func
@@ -70,9 +65,9 @@ public:
         });
     }
 
-    ~TypeCheck() {}
+    ~TypeCheck() = default;
 
-    bool FillInValue(int *memory, InitValAST &init, std::vector<int> &dim, int i);
+    bool FillInValue(int *memory, InitValAST *init, std::vector<int> &dim, int i);
 
     std::unique_ptr <VarDeclAST> EvalVarDecl(VarDeclAST &varDecl);
 

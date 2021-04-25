@@ -1,10 +1,9 @@
 #ifndef GENIR_INCLUDED
 #define GENIR_INCLUDED
 
-#include "../define/ast.hpp"
 #include <iostream>
 #include <map>
-#include <stack>
+#include "../define/ast.hpp"
 
 class IRGenerator {
 private:
@@ -31,11 +30,11 @@ public:
         l_num = 0;
     }
 
-    void GenerateValue(int idx, InitValAST &init, std::vector<int> &dim, int i, std::string &code);
+    void GenerateValue(int idx, InitValAST *init, std::vector<int> dim, int i, std::string &code);
 
     void GenVarDecl(VarDeclAST &varDecl, std::string &code);
 
-    std::string GenId(ProcessedIdAST &id, std::stirng &code);
+    std::string GenId(ProcessedIdAST &id, std::string &code);
 
     std::string GenNumber(NumberAST &num, std::string &code);
 
@@ -47,7 +46,7 @@ public:
 
     std::string GenInitVal(ProcessedInitValAST &init, std::string &code);
 
-    std::string op2char(Operator op);
+    static std::string op2char(Operator op);
 
     void GenBlock(BlockAST &block, std::string &code);
 
