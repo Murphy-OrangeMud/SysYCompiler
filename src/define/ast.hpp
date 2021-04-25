@@ -2,6 +2,7 @@
 #define AST_INCLUDED
 
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <memory>
 #include <utility>
@@ -31,12 +32,12 @@ private:
     ASTPtr body;
 public:
     FuncDefAST(Type _type, const std::string &_name, ASTPtrList _args, ASTPtr _body)
-    :type(_type), name(_name), args(_args), body(std::move(_body)) {}
+    :type(_type), name(_name), args(std::move(_args)), body(std::move(_body)) {}
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
-    const Type &getType() const { return type; }
+    const Type getType() const { return type; }
     const std::string &getName() const { return name; }
     const ASTPtrList &getArgs() const { return args; }
     const ASTPtr &getBody() const { return body; }
@@ -46,7 +47,7 @@ class BlockAST: public BaseAST {
 private:
     ASTPtrList stmts;
 public:
-    BlockAST(ASTPtrList _stmts): stmts(std::move(_stmts)) {};
+    explicit BlockAST(ASTPtrList _stmts): stmts(std::move(_stmts)) {};
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
@@ -109,7 +110,7 @@ class NumberAST: public BaseAST {
 private:
     int value;
 public:
-    NumberAST(int _val): value(_val) {}
+    explicit NumberAST(int _val): value(_val) {}
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
@@ -130,7 +131,7 @@ public:
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
-     const std::string &getName() const { return std::move(name); }
+     const std::string getName() const { return name; }
      const VarType getType() const { return type; }
      const ASTPtrList &getDim() const { return dim; }
      const bool isConst() const { return Const; }
@@ -160,7 +161,7 @@ private:
     ASTPtr unaryExp;
     Operator op;
 public:
-    UnaryExpAST(ASTPtr unary, Operator _op=Operator::NONE):
+    explicit UnaryExpAST(ASTPtr unary, Operator _op=Operator::NONE):
     unaryExp(std::move(unary)), op(_op) {}
     const ASTPtr &getNode() const { return unaryExp; }
     const Operator getOp() const { return op; }
@@ -175,7 +176,7 @@ private:
     Control controlType;
     ASTPtr returnExp;
 public:
-    ControlAST(Token controlToken, ASTPtr _return=nullptr): returnExp(std::move(_return)) {
+    explicit ControlAST(Token controlToken, ASTPtr _return=nullptr): returnExp(std::move(_return)) {
         switch (controlToken) {
             case Token::CONTINUE:{
                 controlType = Control::Continue;
@@ -243,8 +244,8 @@ private:
     VarType type;
     ASTPtrList position;
 public:
-    LValAST(const std::string _name, VarType _type, ASTPtrList _pos=ASTPtrList{}):
-    name(std::move(_name)), type(_type), position(std::move(_pos)) {}
+    LValAST(const std::string& _name, VarType _type, ASTPtrList _pos=ASTPtrList{}):
+    name(_name), type(_type), position(std::move(_pos)) {}
 
     const ASTPtrList &getPosition() const { return position; }
     const std::string &getName() const { return name; }
@@ -259,8 +260,8 @@ private:
     std::string name;
     ASTPtrList args;
 public:
-    FuncCallAST(const std::string _name, ASTPtrList _args=ASTPtrList{}):
-    name(std::move(_name)), args(std::move(_args)) {}
+    explicit FuncCallAST(const std::string& _name, ASTPtrList _args=ASTPtrList{}):
+    name(_name), args(std::move(_args)) {}
 
     const std::string &getName() const { return name; }
     const ASTPtrList &getArgs() const { return args; }
@@ -274,7 +275,7 @@ private:
     ASTPtrList varDefs;
     bool Const;
 public:
-    VarDeclAST(bool _isConst, ASTPtrList list): Const(_isConst), varDefs(std::move(list)) {}
+    VarDeclAST(bool _isConst, ASTPtrList list): varDefs(std::move(list)), Const(_isConst) {}
 
     const ASTPtrList &getVarDefs() const { return varDefs; }
     const bool isConst() const { return Const; }
@@ -290,7 +291,7 @@ private:
     bool Const;
 public:
     VarDefAST(bool Const_, ASTPtr _lhs, ASTPtr _rhs= nullptr):
-    Const(Const_), var(std::move(_lhs)), init(std::move(_rhs)) {}
+    var(std::move(_lhs)), init(std::move(_rhs)), Const(Const_) {}
 
     const ASTPtr &getVar() const { return var; }
     const ASTPtr &getInitVal() const { return init; }
@@ -330,7 +331,7 @@ class CompUnitAST: public BaseAST {
 private:
     ASTPtrList nodes;
 public:
-    CompUnitAST(ASTPtrList _nodes): nodes(std::move(_nodes)) {}
+    explicit CompUnitAST(ASTPtrList _nodes): nodes(std::move(_nodes)) {}
 
     const ASTPtrList &getNodes() const { return nodes; }
 

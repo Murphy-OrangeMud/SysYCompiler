@@ -1,6 +1,7 @@
 #include <memory>
 #include <iostream>
 #include <cstddef>
+#include <algorithm>
 
 #include "../define/ast.hpp"
 #include "typeck.hpp"
@@ -57,7 +58,7 @@ std::unique_ptr<VarDeclAST> TypeCheck::EvalVarDecl(VarDeclAST &varDecl) {
                 logger.Error("Eval var definition failed");
                 return nullptr;
             }
-            list.push_back(varDef);
+            list.push_back(std::move(varDef));
         }
         return std::make_unique<VarDeclAST>(varDecl.isConst(), std::move(list));
     } else {
@@ -67,7 +68,7 @@ std::unique_ptr<VarDeclAST> TypeCheck::EvalVarDecl(VarDeclAST &varDecl) {
             logger.UnSetFunc("EvalVarDecl");
             if (dynamic_cast<ProcessedIdAST *>(dynamic_cast<VarDefAST *>(nDef.get())->getVar().get())->getType() ==
                 VarType::ARRAY) {
-                list.push_back(nDef);
+                list.push_back(std::move(nDef));
             }
         }
         return std::make_unique<VarDeclAST>(varDecl.isConst(), std::move(list));
@@ -79,7 +80,7 @@ std::unique_ptr<ProcessedIdAST> TypeCheck::EvalId(IdAST &id) {
     for (const auto &exp: id.getDim()) {
         if (dynamic_cast<NumberAST *>(exp.get())) {
             ndim.push_back(dynamic_cast<NumberAST *>(exp.get())->getVal());
-        } else if (dynamic_cast<BinaryExpAST*>(exp.get())) {
+        } else if (dynamic_cast<BinaryExpAST *>(exp.get())) {
             auto result = dynamic_cast<BinaryExpAST *>(exp.get())->Eval(*this);
             logger.UnSetFunc("EvalId");
             if (!dynamic_cast<NumberAST *>(result.get())) {
@@ -126,7 +127,7 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
             }
             int *arrayVal = (int *) malloc(size * sizeof(int));
             int *tmp = arrayVal;
-            if (!FillInValue(tmp, dynamic_cast<InitValAST*>(initVal.get()), ndim, 0)) {
+            if (!FillInValue(tmp, dynamic_cast<InitValAST *>(initVal.get()), ndim, 0)) {
                 logger.Error("Initialize const variable with inconstant value");
                 return nullptr;
             }
@@ -152,7 +153,7 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                     logger.Error(message);
                     return nullptr;
                 }
-                for (auto & i : FuncTable[currentFunc].second) {
+                for (auto &i : FuncTable[currentFunc].second) {
                     if (i.first == name) {
                         std::string message = "Repeated definition: " + name;
                         logger.Error(message);
@@ -205,7 +206,7 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                     logger.Error(message);
                     return nullptr;
                 }
-                for (auto & i : FuncTable[currentFunc].second) {
+                for (auto &i : FuncTable[currentFunc].second) {
                     if (i.first == name) {
                         std::string message = "Repeated definition: " + name;
                         logger.Error(message);
@@ -324,7 +325,7 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                     logger.Error(message);
                     return nullptr;
                 }
-                for (auto & i : FuncTable[currentFunc].second) {
+                for (auto &i : FuncTable[currentFunc].second) {
                     if (i.first == name) {
                         std::string message = "Repeated definition: " + name;
                         logger.Error(message);
@@ -377,9 +378,11 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                         return nullptr;
                     }
                     VarTable[name] = 0;
+                    ASTPtrList retlist;
+                    retlist.push_back(std::make_unique<NumberAST>(0));
                     return std::make_unique<VarDefAST>(varDef.isConst(), std::move(id),
-                                                       std::make_unique<ProcessedInitValAST>(VarType::VAR, ASTPtrList{
-                                                                                                     std::make_unique<NumberAST>(0)},
+                                                       std::make_unique<ProcessedInitValAST>(VarType::VAR,
+                                                                                             std::move(retlist),
                                                                                              std::vector<int>{}));
                 }
             }
@@ -438,7 +441,7 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                                 for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
                                      j < i4->second.size(); j++) {
                                     if (i4->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                    dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
+                                                                                                           dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
                                         logger.Error("Unmatched parameter dim");
                                         return nullptr;
                                     }
@@ -452,7 +455,7 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                                 for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
                                      j < i2->second.size(); j++) {
                                     if (i2->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                         dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
+                                                                                                           dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
                                         logger.Error("Unmatched parameter dim");
                                         return nullptr;
                                     }
@@ -477,7 +480,7 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                             for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
                                  j < i3->second.size(); j++) {
                                 if (i3->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                      dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
+                                                                                                       dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
                                     logger.Error("Unmatched parameter dim");
                                     return nullptr;
                                 }
@@ -491,7 +494,7 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                             for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
                                  j < i1->second.size(); j++) {
                                 if (i1->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                      dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
+                                                                                                       dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
                                     logger.Error("Unmatched parameter dim");
                                     return nullptr;
                                 }
@@ -519,7 +522,7 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                                 for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
                                      j < i4->second.size(); j++) {
                                     if (i4->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                          dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
+                                                                                                           dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
                                         logger.Error("Unmatched parameter dim");
                                         return nullptr;
                                     }
@@ -533,7 +536,7 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                                 for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
                                      j < i2->second.size(); j++) {
                                     if (i2->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                          dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
+                                                                                                           dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
                                         logger.Error("Unmatched parameter dim");
                                         return nullptr;
                                     }
@@ -558,7 +561,7 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                             for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
                                  j < i3->second.size(); j++) {
                                 if (i3->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                      dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
+                                                                                                       dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
                                     logger.Error("Unmatched parameter dim");
                                     return nullptr;
                                 }
@@ -572,7 +575,7 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                             for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
                                  j < i1->second.size(); j++) {
                                 if (i1->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                      dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
+                                                                                                       dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
                                     logger.Error("Unmatched parameter dim");
                                     return nullptr;
                                 }
@@ -581,7 +584,7 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                     }
                 }
             }
-            newArgs.push_back(arg);
+            newArgs.push_back(std::move(arg));
         }
         return std::make_unique<FuncCallAST>(func.getName(), std::move(newArgs));
     }
@@ -597,7 +600,7 @@ std::unique_ptr<BlockAST> TypeCheck::EvalBlock(BlockAST &block) {
             return nullptr;
         }
         logger.UnSetFunc("EvalBlock");
-        stmts.push_back(nStmt);
+        stmts.push_back(std::move(nStmt));
 
     }
     return std::make_unique<BlockAST>(stmts);
@@ -723,7 +726,7 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
                 logger.Error("Eval dim failed");
                 return nullptr;
             }
-            pos.push_back(val);
+            pos.push_back(std::move(val));
         }
         const std::string &name = lval.getName();
         std::map<std::string, std::vector<int>/*dim*/>::iterator iter;
@@ -794,7 +797,7 @@ std::unique_ptr<InitValAST> TypeCheck::EvalInitVal(InitValAST &init) {
             logger.Error("eval init val failed");
             return nullptr;
         }
-        newInitVals.push_back(newVal);
+        newInitVals.push_back(std::move(newVal));
     }
     return std::make_unique<InitValAST>(init.getType(), newInitVals);
 }
@@ -1062,7 +1065,7 @@ std::unique_ptr<CompUnitAST> TypeCheck::EvalCompUnit(CompUnitAST &unit) {
             logger.Error("Eval node failed");
             return nullptr;
         }
-        newNodes.push_back(newNode);
+        newNodes.push_back(std::move(newNode));
     }
     if (FuncTable.find("main") == FuncTable.end()) {
         logger.Error("Main function not found");
