@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-filepath="../open-test-cases/eeyore/functional"
+filepath="../open-test-cases/sysy/section1/functional_test"
 
 cd cmake-build-debug || exit
 
