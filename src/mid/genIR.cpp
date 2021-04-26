@@ -115,6 +115,7 @@ std::string IRGenerator::GenAssign(AssignAST &assign, std::string &code) {
     std::string l = assign.getLeft()->GenerateIR(*this, code);
     std::string r = assign.getRight()->GenerateIR(*this, code);
     code += (tab + l + " = " + r + "\n");
+    return l;
 }
 
 void IRGenerator::GenVarDecl(VarDeclAST &varDecl, std::string &code) {
@@ -183,7 +184,7 @@ std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
             dim = FuncArrayTable[currentFunc][lval.getName()];
         }
         int tmp;
-        for (int i = 0; i < lval.getPosition().size(); i++) {
+        for (size_t i = 0; i < lval.getPosition().size(); i++) {
             std::string var = lval.getPosition()[i]->GenerateIR(*this, code);
             if (i < lval.getPosition().size() - 1) {
                 code += (tab + "t" + std::to_string(t_num) + " = " + var + " * " + std::to_string(dim[i+1]) + "\n");
@@ -205,7 +206,7 @@ std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
 
 void IRGenerator::GenFuncDef(FuncDefAST &funcDef, std::string &code) {
     currentFunc = funcDef.getName();
-    for (int i = 0; i < funcDef.getArgs().size(); i++) {
+    for (size_t i = 0; i < funcDef.getArgs().size(); i++) {
         FuncArgTable[currentFunc][dynamic_cast<ProcessedIdAST*>(funcDef.getArgs()[i].get())->getName()] = i;
     }
     code += ("f_" + funcDef.getName() + "[" + std::to_string(funcDef.getArgs().size()) + "]\n");

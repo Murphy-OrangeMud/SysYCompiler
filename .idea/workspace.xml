@@ -19,9 +19,11 @@
     <select />
   </component>
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
-    <generated />
+    <generated>
+      <config projectName="SysYCompiler" targetName="sysyc" />
+    </generated>
   </component>
-  <component name="CMakeSettings">
+  <component name="CMakeSettings" AUTO_RELOAD="true">
     <configurations>
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
@@ -30,8 +32,8 @@
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/define/ast.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/ast.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mid/genIR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/typeck.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mid/typeck.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +43,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -71,13 +74,23 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\cheng\SysYCompiler\src\front" />
       <recent name="C:\Users\cheng\SysYCompiler\src\define" />
+      <recent name="C:\Users\cheng\SysYCompiler\src\front" />
       <recent name="C:\Users\cheng\SysYCompiler\src" />
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="sysyc" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SysYCompiler" TARGET_NAME="sysyc" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SysYCompiler" RUN_TARGET_NAME="sysyc">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -93,7 +106,7 @@
       <updated>1617979741035</updated>
       <workItem from="1617979742179" duration="69126000" />
       <workItem from="1618464254646" duration="75851000" />
-      <workItem from="1619183989074" duration="27248000" />
+      <workItem from="1619183989074" duration="62717000" />
     </task>
     <servers />
   </component>
@@ -121,6 +134,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="96" y="35" width="1086" height="713" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.760@0.0.1280.760" timestamp="1618734079411" />
+    <state x="93" y="93" width="1093" height="573" key="DiffContextDialog" timestamp="1619282357229">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state x="93" y="93" width="1093" height="573" key="DiffContextDialog/0.0.1280.760@0.0.1280.760" timestamp="1619282357229" />
     <state x="421" y="135" key="FileChooserDialogImpl" timestamp="1618110387166">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
@@ -133,10 +150,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state width="498" height="446" key="SwitcherDM/0.0.1280.760@0.0.1280.760" timestamp="1619232530665" />
-    <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1618489252887">
+    <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1619405124596">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1618489252887" />
+    <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1619405124596" />
     <state x="309" y="88" width="672" height="678" key="search.everywhere.popup" timestamp="1619184329970">
       <screen x="0" y="0" width="1280" height="760" />
     </state>

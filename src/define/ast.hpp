@@ -120,10 +120,11 @@ public:
 
 class IdAST: public BaseAST {
 private:
+    bool Const;
     std::string name;
     VarType type;
     ASTPtrList dim; // exps: binaryExp, unaryExp
-    bool Const;
+
 public:
      IdAST(std::string _name, VarType _type, bool _const=false, ASTPtrList _dim=ASTPtrList{}):
      Const(_const), name(std::move(_name)), type(_type), dim(std::move(_dim)) {}
@@ -139,10 +140,10 @@ public:
 
 class ProcessedIdAST: public BaseAST {
 private:
+    bool Const;
     std::string name;
     VarType type;
     std::vector<int> dim; // exps: binaryExp, unaryExp
-    bool Const;
 public:
     ProcessedIdAST(std::string _name, VarType _type, bool _const=false, std::vector<int> _dim=std::vector<int>{}):
             Const(_const), name(std::move(_name)), type(_type), dim(std::move(_dim)) {}

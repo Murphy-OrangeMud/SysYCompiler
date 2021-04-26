@@ -401,7 +401,7 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
             return nullptr;
         }
         ASTPtrList newArgs;
-        for (int i = 0; i < func.getArgs().size(); i++) {
+        for (size_t i = 0; i < func.getArgs().size(); i++) {
             auto arg = func.getArgs()[i]->Eval(*this);
             if (FuncTable[func.getName()].second[i].second.first == VarType::ARRAY) {
                 if (dynamic_cast<NumberAST *>(arg.get())) {
