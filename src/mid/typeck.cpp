@@ -76,6 +76,7 @@ std::unique_ptr<VarDeclAST> TypeCheck::EvalVarDecl(VarDeclAST &varDecl) {
 }
 
 std::unique_ptr<ProcessedIdAST> TypeCheck::EvalId(IdAST &id) {
+    logger.SetFunc("EvalId");
     std::vector<int> ndim;
     for (const auto &exp: id.getDim()) {
         if (dynamic_cast<NumberAST *>(exp.get())) {
@@ -120,6 +121,7 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
             logger.Error("Eval initVal failed");
             return nullptr;
         }
+        logger.Info("Var name: " + name + ", var type: " + std::to_string(type));
         if (type == VarType::ARRAY) {
             int size = 1;
             for (auto x: ndim) {
@@ -255,6 +257,7 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
         VarType type = dynamic_cast<ProcessedIdAST *>(id.get())->getType();
         std::vector<int> ndim = dynamic_cast<ProcessedIdAST *>(id.get())->getDim();
         logger.UnSetFunc("EvalVarDef");
+        logger.Info("Var name: " + name + ", var type: " + std::to_string(type));
         if (type == VarType::ARRAY) {
             int size = 1;
             for (auto x: ndim) {
@@ -299,6 +302,18 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
 
                     dynamic_cast<InitValAST*>(initVal.get())->setDim(ndim);
                     return std::make_unique<VarDefAST>(true, std::move(id), std::move(initVal));
+                } else {
+                    if (ArrayTable.find(name) != ArrayTable.end()) {
+                        std::string message = "Repeated definition: " + name;
+                        logger.Error(message);
+                        return nullptr;
+                    }
+                    if (ConstArrayTable.find(name) != ConstArrayTable.end()) {
+                        std::string message = "Repeated definition: " + name;
+                        logger.Error(message);
+                        return nullptr;
+                    }
+                    ArrayTable[name] = ndim;
                 }
                 return std::make_unique<VarDefAST>(false, std::move(id));
             }

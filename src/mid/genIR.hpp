@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include "../define/ast.hpp"
+#include "../front/logger.hpp"
 
 class IRGenerator {
 private:
@@ -18,6 +19,8 @@ private:
     std::map <std::string, std::map<std::string, int> /*编号*/> FuncVarTable;
     std::map <std::string, std::vector<int> /*dims*/> ArrayTable;
     std::map <std::string, std::map<std::string, std::vector < int> /*dims*/>> FuncArrayTable;
+
+    Logger logger;
 public:
     IRGenerator(std::map <std::string, std::vector<int>> _table1,
                 std::map <std::string, std::map<std::string, std::vector < int>>
@@ -28,9 +31,11 @@ public:
         t_num = 0;
         T_num = 0;
         l_num = 0;
+        std::string path = R"(..\..\logs\log_)" + std::to_string(rand() % 10000);
+        logger = Logger(path);
     }
 
-    void GenerateValue(int idx, InitValAST *init, std::vector<int> dim, int i, std::string &code);
+    void GenerateValue(int &idx, InitValAST *init, std::vector<int> dim, int i, std::string &code);
 
     void GenVarDecl(VarDeclAST &varDecl, std::string &code);
 

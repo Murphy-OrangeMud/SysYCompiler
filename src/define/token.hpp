@@ -4,21 +4,59 @@
 #include <iostream>
 
 enum Token {
-    COMMENT, IDENTIFIER, ERROR, OPERATOR, NUMBER, TYPE, CONST, END,
-    BREAK, CONTINUE, RETURN, IF, ELSE, WHILE, ASSIGN,
-    LP, RP, LSB, RSB, LB, RB, DQM, SQM, SC, CO
+    COMMENT,
+    IDENTIFIER,
+    ERROR,
+    OPERATOR,
+    NUMBER,
+    TYPE,
+    CONST,
+    END,
+    BREAK,
+    CONTINUE,
+    RETURN,
+    IF,
+    ELSE,
+    WHILE,
+    ASSIGN,
+    LP,
+    RP,
+    LSB,
+    RSB,
+    LB,
+    RB,
+    DQM,
+    SQM,
+    SC,
+    CO
 };
 
 enum class Operator {
-    ADD, SUB, MUL, DIV, MOD, EQ, NEQ, LT, GT, LE, GE, OR, AND, NOT, NONE
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+    MOD,
+    EQ,
+    NEQ,
+    LT,
+    GT,
+    LE,
+    GE,
+    OR,
+    AND,
+    NOT,
+    NONE
 };
 
-enum class Type {
-    VOID, INT
+enum Type {
+    VOID,
+    INT
 };
 
-enum class VarType {
-    ARRAY, VAR
+enum VarType {
+    ARRAY,
+    VAR
 };
 
 #endif

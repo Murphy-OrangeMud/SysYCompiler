@@ -8,9 +8,16 @@
 
 void Parser::NextToken() {
     current = lexer.NextToken();
+    logger.Info("NextToken: " + std::to_string(current));
+    if (current == Token::IDENTIFIER) {
+        logger.Info("Name: " + lexer.getName());
+    }
+    if (current == Token::NUMBER) {
+        logger.Info("Value: " + std::to_string(lexer.getVal()));
+    }
 }
 
-ASTPtr Parser::ParseBinary(const std::function<ASTPtr()> &parser, std::initializer_list <Operator> ops) {
+ASTPtr Parser::ParseBinary(const std::function<ASTPtr()> &parser, std::initializer_list<Operator> ops) {
     logger.SetFunc("ParseBinary");
     auto lhs = parser();
     logger.UnSetFunc("ParseBinary");
@@ -100,14 +107,13 @@ ASTPtr Parser::ParseLOrExp() {
  */
 ASTPtr Parser::ParseUnaryExp() {
     logger.SetFunc("ParseUnaryExp");
-    NextToken();
     if (current == Token::LP) {
         // UnaryExp := "(" Exp ")"
+        NextToken();
         ASTPtr exp = ParseAddExp();
         logger.UnSetFunc("ParseUnaryExp");
-        NextToken(); // ")" RP
         if (current != Token::RP) {
-            logger.Warn("Production \"(\" Exp \")\" Lack Right Parenthese");
+            logger.Error("Production \"(\" Exp \")\" Lack Right Parenthese");
             return nullptr;
         }
         NextToken();
@@ -115,20 +121,22 @@ ASTPtr Parser::ParseUnaryExp() {
     } else if (current == Token::NUMBER) {
         // UnaryExp := NUMBER
         ASTPtr num = std::make_unique<NumberAST>(lexer.getVal());
+        NextToken();
         return num;
     } else if (current == Token::OPERATOR) {
         // UnaryExp := ("+" | "-" | "!") UnaryExp
         Operator op = lexer.getOp();
         if (op != Operator::ADD && op != Operator::SUB && op != Operator::NOT) {
-            logger.Warn(R"(Production ("+" | "-" | "!") UnaryExp invalid symbol)");
+            logger.Error(R"(Production ("+" | "-" | "!") UnaryExp invalid symbol)");
             return nullptr;
         }
         ASTPtr exp = ParseUnaryExp();
         logger.UnSetFunc("ParseUnaryExp");
         if (!exp) {
-            logger.Warn(R"(Production ("+" | "-" | "!") UnaryExp parse exp failed)");
+            logger.Error(R"(Production ("+" | "-" | "!") UnaryExp parse exp failed)");
             return nullptr;
         }
+        NextToken();
         return std::make_unique<UnaryExpAST>(std::move(exp), op);
     } else if (current == Token::IDENTIFIER) {
         std::string name = lexer.getName();
@@ -138,6 +146,7 @@ ASTPtr Parser::ParseUnaryExp() {
             NextToken();
             if (current == Token::RP) {
                 ASTPtr funcCall = std::make_unique<FuncCallAST>(name);
+                NextToken();
                 return funcCall;
             } else {
                 ASTPtrList args;
@@ -169,7 +178,6 @@ ASTPtr Parser::ParseUnaryExp() {
                 ASTPtr exp = ParseAddExp();
                 logger.UnSetFunc("ParseUnaryExp");
                 pos.push_back(std::move(exp));
-                NextToken();
                 if (current != Token::RSB) {
                     logger.Error(R"(Production IDENTIFIER {"[" Exp "]"}  lack right square bracket)");
                     return nullptr;
@@ -302,6 +310,7 @@ ASTPtr Parser::ParseStmt() {
             logger.Error("Lack semicolon");
             return nullptr;
         }
+        NextToken();
         return std::make_unique<StmtAST>(std::move(stmt));
     } else if (current == Token::BREAK || current == Token::CONTINUE || current == Token::RETURN) {
         Token temp = current;
@@ -343,8 +352,7 @@ ASTPtr Parser::ParseStmt() {
             logger.Error(R"(Production Exp ";"/LVal "=" Exp ";" parse lval failed)");
             return nullptr;
         }
-        NextToken();
-        if (dynamic_cast<LValAST*>(exp.get())) {
+        if (dynamic_cast<LValAST *>(exp.get())) {
             // LVal "=" Exp ";"
             if (current == Token::ASSIGN) {
                 NextToken();
@@ -355,14 +363,15 @@ ASTPtr Parser::ParseStmt() {
                     return nullptr;
                 }
                 ASTPtr stmt = std::make_unique<AssignAST>(std::move(exp), std::move(rhs));
-                NextToken();
                 if (current != Token::SC) {
                     logger.Error("Lack semicolon");
                     return nullptr;
                 }
+                NextToken();
                 return std::make_unique<StmtAST>(std::move(stmt));
             } else if (current == Token::SC) {
                 // Exp;
+                NextToken(); // consume sc
                 return std::make_unique<StmtAST>(std::move(exp));
             } else {
                 logger.Error("Lack semicolon");
@@ -374,6 +383,7 @@ ASTPtr Parser::ParseStmt() {
                 logger.Error("Lack semicolon");
                 return nullptr;
             }
+            NextToken();
             return std::make_unique<StmtAST>(std::move(exp));
         }
     }
@@ -388,6 +398,7 @@ ASTPtr Parser::ParseBlock() {
     NextToken();
     if (current == Token::RB) {
         // {}
+        NextToken();
         return std::make_unique<BlockAST>(ASTPtrList{});
     } else {
         ASTPtrList list;
@@ -410,6 +421,7 @@ ASTPtr Parser::ParseBlock() {
                 list.push_back(std::move(stmt));
             }
         }
+        NextToken(); //consume RB
         return std::make_unique<BlockAST>(std::move(list));
     }
 }
@@ -442,6 +454,7 @@ ASTPtr Parser::ParseInitVal() {
                 logger.Error(R"(Production "{" [InitVal {"," InitVal}] "}" lack right brace after InitVals)");
                 return nullptr;
             }
+            NextToken();
             return std::make_unique<InitValAST>(VarType::ARRAY, std::move(initVals));
         }
     } else {
@@ -489,6 +502,10 @@ ASTPtr Parser::ParseFuncDef() {
                 return nullptr;
             }
             NextToken();
+            if (current != Token::IDENTIFIER) {
+                logger.Error("BTYPE var lacked Identifier");
+                return nullptr;
+            }
             std::string argName = lexer.getName();
             NextToken();
             if (current == Token::LSB) {
@@ -501,26 +518,22 @@ ASTPtr Parser::ParseFuncDef() {
                     return nullptr;
                 }
                 NextToken();
-                if (current == Token::LSB) {
-                    while (true) {
-                        NextToken();
-                        ASTPtr _dim = ParseAddExp();
-                        logger.UnSetFunc("ParseFuncDef");
-                        if (!_dim) {
-                            logger.Error(
-                                    R"(Production BType IDENT ["[" "]" {"[" ConstExp "]"}] parse exp dim failed)");
-                            return nullptr;
-                        }
-                        dim.push_back(std::move(_dim));
-                        if (current != Token::RSB) {
-                            logger.Error(
-                                    R"(Production BType IDENT ["[" "]" {"[" ConstExp "]"}] lack right square bracket)");
-                            return nullptr;
-                        }
-                        NextToken();
-                        if (current != Token::LSB)
-                            break;
+                while (current == Token::LSB) {
+                    NextToken();
+                    ASTPtr _dim = ParseAddExp();
+                    logger.UnSetFunc("ParseFuncDef");
+                    if (!_dim) {
+                        logger.Error(
+                                R"(Production BType IDENT ["[" "]" {"[" ConstExp "]"}] parse exp dim failed)");
+                        return nullptr;
                     }
+                    dim.push_back(std::move(_dim));
+                    if (current != Token::RSB) {
+                        logger.Error(
+                                R"(Production BType IDENT ["[" "]" {"[" ConstExp "]"}] lack right square bracket)");
+                        return nullptr;
+                    }
+                    NextToken();
                 }
                 args.push_back(std::make_unique<IdAST>(argName, VarType::ARRAY, false, std::move(dim)));
             } else {
@@ -537,6 +550,7 @@ ASTPtr Parser::ParseFuncDef() {
     }
     NextToken();
     ASTPtr body = ParseBlock();
+    logger.UnSetFunc("ParseFuncDef");
     return std::make_unique<FuncDefAST>(type, std::move(name), std::move(args), std::move(body));
 }
 
@@ -639,7 +653,6 @@ ASTPtr Parser::ParseVarDef(bool isConst) {
 ASTPtr Parser::ParseCompUnit() {
     logger.SetFunc("ParseCompUnit");
     NextToken();
-    std::cout << current << std::endl;
     ASTPtrList nodes;
     while (current != Token::END) {
         if (current == Token::CONST) {
@@ -653,6 +666,7 @@ ASTPtr Parser::ParseCompUnit() {
         } else if (current == Token::TYPE) {
             if (lexer.getType() == Type::VOID) {
                 ASTPtr func = ParseFuncDef();
+                logger.UnSetFunc("ParseCompUnit");
                 if (!func) {
                     logger.Error("Production (Decl | FuncDef) [CompUnit] parse func failed");
                     return nullptr;
@@ -680,6 +694,10 @@ ASTPtr Parser::ParseCompUnit() {
                                 return nullptr;
                             }
                             NextToken();
+                            if (current != Token::IDENTIFIER) {
+                                logger.Error("Production BTYPE IDENTIFIER lacked identifier");
+                                return nullptr;
+                            }
                             std::string argName = lexer.getName();
                             NextToken();
                             if (current == Token::LSB) {
@@ -692,26 +710,22 @@ ASTPtr Parser::ParseCompUnit() {
                                     return nullptr;
                                 }
                                 NextToken();
-                                if (current == Token::LSB) {
-                                    while (true) {
-                                        NextToken();
-                                        ASTPtr _dim = ParseAddExp();
-                                        logger.UnSetFunc("ParseFuncDef");
-                                        if (!_dim) {
-                                            logger.Error(
-                                                    R"(Production BType IDENT ["[" "]" {"[" ConstExp "]"}] parse exp dim failed)");
-                                            return nullptr;
-                                        }
-                                        dim.push_back(std::move(_dim));
-                                        if (current != Token::RSB) {
-                                            logger.Error(
-                                                    R"(Production BType IDENT ["[" "]" {"[" ConstExp "]"}] lack right square bracket)");
-                                            return nullptr;
-                                        }
-                                        NextToken();
-                                        if (current != Token::LSB)
-                                            break;
+                                while (current == Token::LSB) {
+                                    NextToken();
+                                    ASTPtr _dim = ParseAddExp();
+                                    logger.UnSetFunc("ParseCompUnit");
+                                    if (!_dim) {
+                                        logger.Error(
+                                                R"(Production BType IDENT ["[" "]" {"[" ConstExp "]"}] parse exp dim failed)");
+                                        return nullptr;
                                     }
+                                    dim.push_back(std::move(_dim));
+                                    if (current != Token::RSB) {
+                                        logger.Error(
+                                                R"(Production BType IDENT ["[" "]" {"[" ConstExp "]"}] lack right square bracket)");
+                                        return nullptr;
+                                    }
+                                    NextToken();
                                 }
                                 args.push_back(std::make_unique<IdAST>(argName, VarType::ARRAY, false, std::move(dim)));
                             } else {
@@ -728,6 +742,7 @@ ASTPtr Parser::ParseCompUnit() {
                     }
                     NextToken();
                     ASTPtr body = ParseBlock();
+                    logger.UnSetFunc("ParseCompUnit");
                     ASTPtr func = std::make_unique<FuncDefAST>(type, std::move(name), std::move(args), std::move(body));
                     nodes.push_back(std::move(func));
                 } else {
@@ -737,7 +752,7 @@ ASTPtr Parser::ParseCompUnit() {
                     while (current == Token::LSB) {
                         NextToken();
                         ASTPtr exp = ParseAddExp();
-                        logger.UnSetFunc("ParseVarDef");
+                        logger.UnSetFunc("ParseCompUnit");
                         if (!exp) {
                             logger.Error(R"(Production IDENT {"[" ConstExp "]"} ["=" InitVal] parse exp failed)");
                             return nullptr;
@@ -759,6 +774,7 @@ ASTPtr Parser::ParseCompUnit() {
                     if (current == Token::ASSIGN) {
                         NextToken();
                         ASTPtr init = ParseInitVal();
+                        logger.UnSetFunc("ParseCompUnit");
                         if (!init) {
                             logger.Error(R"(Production IDENT {"[" ConstExp "]"} ["=" InitVal] parse init failed)");
                             return nullptr;
@@ -771,14 +787,13 @@ ASTPtr Parser::ParseCompUnit() {
                     while (current == Token::CO) {
                         NextToken();
                         varDef = ParseVarDef(false);
-                        logger.UnSetFunc("ParseVarDecl");
+                        logger.UnSetFunc("ParseCompUnit");
                         if (!varDef) {
                             logger.Error(R"(Production [CONST] BType VarDef {"," VarDef} ";" parse vardef failed)");
                             return nullptr;
                         }
                         varDefs.push_back(std::move(varDef));
                     }
-                    NextToken();
                     if (current != Token::SC) {
                         logger.Error("lack semicolon");
                         return nullptr;

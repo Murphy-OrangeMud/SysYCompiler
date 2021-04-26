@@ -3,25 +3,24 @@
 #include "lexer.hpp"
 
 Token Lexer::parseInt() {
-    std::cout << "parseInt\n";
-    char c;
-    long long int val = 0;
-    std::cin >> c;
+    char c = std::cin.peek();
+    int val = 0;
     if (c == '0') {
+        c = std::cin.get();
         c = std::cin.peek();
         if (c == 'x' || c == 'X') {
             // hexadecimal const
-            std::cin >> c;
+            c = std::cin.get();
             while (true) {
                 c = std::cin.peek();
                 if (c >= '0' && c <= '9') {
-                    std::cin >> c;
+                    c = std::cin.get();
                     val = val * 16 + c - '0';
                 } else if (c >= 'A' && c <= 'F') {
-                    std::cin >> c;
+                    c = std::cin.get();
                     val = val * 16 + c - 'A' + 10;
                 } else if (c >= 'a' && c <= 'f') {
-                    std::cin >> c;
+                    c = std::cin.get();
                     val = val * 16 + c - 'a' + 10;
                 } else {
                     value = val;
@@ -32,35 +31,31 @@ Token Lexer::parseInt() {
             // octal number
             while (true) {
                 if (c >= '0' && c <= '7') {
-                    std::cin >> c;
+                    c = std::cin.get();
                     val = val * 8 + c - '0';
                 } else {
                     value = val;
-                     return Token::NUMBER;
+                    return Token::NUMBER;
                 }
                 c = std::cin.peek();
             }
         }
     } else {
-        while (true) {
-            if (c >= '0' && c <= '9') {
-                std::cin >> c;
-                val = val * 10 + c - '0';
-            } else {
-                value = val;
-                return Token::NUMBER;
-            }
+        while (c >= '0' && c <= '9') {
+            c = std::cin.get();
+            val = val * 10 + (int)(c - '0');
             c = std::cin.peek();
         }
+        value = val;
+        return Token::NUMBER;
     }
 }
 
 Token Lexer::parseIDKeyword() {
-    std::cout << "parseIDKeyword\n";
     std::string s;
     char c;
     while (true) {
-        std::cin >> c;
+        c = std::cin.get();
         s += c;
         c = std::cin.peek();
         if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_'))) {
@@ -98,34 +93,32 @@ Token Lexer::parseIDKeyword() {
 
 Token Lexer::parseComment() {
     char c;
-    std::cin >> c;
+    c = std::cin.get();
     if (c == '*') {
         // multi-line comment
         while (true) {
             do {
-                std::cin >> c;
+                c = std::cin.get();
             } while (c != '*');
-            std::cin >> c;
+            c = std::cin.get();
             if ((c = std::cin.peek()) == '/') {
-                std::cin >> c;
+                c = std::cin.get();
                 break;
             }
         }
     } else if (c == '/') {
         // single-line comment
         while ((c = std::cin.peek()) != '\n') {
-            std::cin >> c;
+            c = std::cin.get();
         }
     }
     return Token::COMMENT;
 }
 
 Token Lexer::NextToken() {
-    std::cout << "NextToken\n";
-    char c = std::cin.peek();
-    std::cout << c << std::endl;
+    char c;
     while (true) {
-        std::cout << c << std::endl;
+        c = std::cin.peek();
         if (c >= '0' && c <= '9') {
             return parseInt();
         }
@@ -133,24 +126,27 @@ Token Lexer::NextToken() {
             return parseIDKeyword();
         }
         else {
+            if (c == EOF) {
+                return Token::END;
+            }
             switch(c) {
                 case '+': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     op = Operator::ADD;
                     return Token::OPERATOR;
                 }
                 case '-': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     op = Operator::SUB;
                     return Token::OPERATOR;
                 }
                 case '*': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     op = Operator::MUL;
                     return Token::OPERATOR;
                 }
                 case '/': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     c = std::cin.peek();
                     if (c == '/' || c == '*') {
                         return parseComment();
@@ -159,15 +155,15 @@ Token Lexer::NextToken() {
                     return Token::OPERATOR;
                 }
                 case '%': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     op = Operator::MOD;
                     return Token::OPERATOR;
                 }
                 case '>': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     c = std::cin.peek();
                     if (c == '=') {
-                        std::cin >> c;
+                        c = std::cin.get();
                         op = Operator::GE;
                         return Token::OPERATOR;
                     } else {
@@ -176,10 +172,10 @@ Token Lexer::NextToken() {
                     }
                 }
                 case '<': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     c = std::cin.peek();
                     if (c == '=') {
-                        std::cin >> c;
+                        c = std::cin.get();
                         op = Operator::LE;
                         return Token::OPERATOR;
                     } else {
@@ -188,10 +184,10 @@ Token Lexer::NextToken() {
                     }
                 }
                 case '=': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     c = std::cin.peek();
                     if (c == '=') {
-                        std::cin >> c;
+                        c = std::cin.get();
                         op = Operator::EQ;
                         return Token::OPERATOR;
                     } else {
@@ -199,10 +195,10 @@ Token Lexer::NextToken() {
                     }
                 }
                 case '!': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     c = std::cin.peek();
                     if (c == '=') {
-                        std::cin >> c;
+                        c = std::cin.get();
                         op = Operator::NEQ;
                         return Token::OPERATOR;
                     } else {
@@ -211,69 +207,72 @@ Token Lexer::NextToken() {
                     }
                 }
                 case '&': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     c = std::cin.peek();
                     if (c == '&') {
-                        std::cin >> c;
+                        c = std::cin.get();
                         op = Operator::AND;
                         return Token::OPERATOR;
                     }
                     return Token::ERROR;
                 }
                 case '|': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     c = std::cin.peek();
                     if (c == '|') {
-                        std::cin >> c;
+                        c = std::cin.get();
                         op = Operator::OR;
                         return Token::OPERATOR;
                     }
                     return Token::ERROR;
                 }
                 case '(': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     return Token::LP;
                 }
                 case ')': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     return Token::RP;
                 }
                 case '[': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     return Token::LSB;
                 }
                 case ']': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     return Token::RSB;
                 }
                 case '{': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     return Token::LB;
                 }
                 case '}': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     return Token::RB;
                 }
                 case '\'': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     return Token::SQM;
                 }
                 case '"': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     return Token::DQM;
                 }
                 case ';': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     return Token::SC;
                 }
                 case ',': {
-                    std::cin >> c;
+                    c = std::cin.get();
                     return Token::CO;
                 }
                 case '\t':
                 case ' ':
                 case '\n':
+                case '\b': {
+                    c = std::cin.get();
                     break;
+                }
                 default:
                     return Token::ERROR;
             }

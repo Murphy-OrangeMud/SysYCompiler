@@ -30,22 +30,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/define/eval.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/eval.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/define/gen.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/gen.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/define/token.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/token.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/front/lexer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/lexer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/front/lexer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/lexer.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/front/logger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/logger.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/front/logger.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/logger.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/genIR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/genIR.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/typeck.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mid/typeck.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.sh" beforeDir="false" afterPath="$PROJECT_DIR$/test.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +58,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="w4nfj141" />
@@ -118,7 +112,7 @@
       <updated>1617979741035</updated>
       <workItem from="1617979742179" duration="69126000" />
       <workItem from="1618464254646" duration="75851000" />
-      <workItem from="1619183989074" duration="69088000" />
+      <workItem from="1619183989074" duration="81750000" />
     </task>
     <servers />
   </component>
@@ -166,10 +160,18 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state width="498" height="446" key="SwitcherDM/0.0.1280.760@0.0.1280.760" timestamp="1619232530665" />
-    <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1619406268634">
+    <state x="448" y="293" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1619421626079">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1619406268634" />
+    <state x="448" y="293" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1280.760@0.0.1280.760" timestamp="1619421626079" />
+    <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1619433223843">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1619433223843" />
+    <state x="301" y="174" key="run.anything.popup" timestamp="1619433496345">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state x="301" y="174" key="run.anything.popup/0.0.1280.760@0.0.1280.760" timestamp="1619433496345" />
     <state x="309" y="88" width="672" height="678" key="search.everywhere.popup" timestamp="1619184329970">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
