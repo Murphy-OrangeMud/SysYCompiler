@@ -2,7 +2,6 @@
 #include <algorithm>
 #include "mid/typeck.hpp"
 #include "front/parser.hpp"
-#include "define/ast.hpp"
 #include "mid/genIR.hpp"
 
 int main(int argc, char *argv[]) {

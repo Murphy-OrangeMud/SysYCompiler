@@ -1,7 +1,9 @@
 #ifndef TOKEN_INCLUDED
 #define TOKEN_INCLUDED
 
-enum class Token {
+#include <iostream>
+
+enum Token {
     COMMENT, IDENTIFIER, ERROR, OPERATOR, NUMBER, TYPE, CONST, END,
     BREAK, CONTINUE, RETURN, IF, ELSE, WHILE, ASSIGN,
     LP, RP, LSB, RSB, LB, RB, DQM, SQM, SC, CO

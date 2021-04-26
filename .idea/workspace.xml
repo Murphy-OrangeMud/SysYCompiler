@@ -30,11 +30,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/define/token.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/token.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/lexer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/lexer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/front/logger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/logger.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/front/parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/front/parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.hpp" afterDir="false" />
@@ -111,7 +109,7 @@
       <updated>1617979741035</updated>
       <workItem from="1617979742179" duration="69126000" />
       <workItem from="1618464254646" duration="75851000" />
-      <workItem from="1619183989074" duration="67062000" />
+      <workItem from="1619183989074" duration="67404000" />
     </task>
     <servers />
   </component>

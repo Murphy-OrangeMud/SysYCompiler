@@ -20,8 +20,7 @@ public:
     Parser() {
         srand(std::time(0));
         lexer = Lexer();
-        std::string path = "..\\..\\logs\\log_" + std::to_string(rand() % 10000);
-        std::cout << path << std::endl;
+        std::string path = R"(../logs/log_)" + std::to_string(rand() % 10000);
         logger = Logger(path);
         logger.open();
     }

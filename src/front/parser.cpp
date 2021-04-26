@@ -639,6 +639,7 @@ ASTPtr Parser::ParseVarDef(bool isConst) {
 ASTPtr Parser::ParseCompUnit() {
     logger.SetFunc("ParseCompUnit");
     NextToken();
+    std::cout << current << std::endl;
     ASTPtrList nodes;
     while (current != Token::END) {
         if (current == Token::CONST) {

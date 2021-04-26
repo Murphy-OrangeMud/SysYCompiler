@@ -3,6 +3,7 @@
 #include "lexer.hpp"
 
 Token Lexer::parseInt() {
+    std::cout << "parseInt\n";
     char c;
     long long int val = 0;
     std::cin >> c;
@@ -55,6 +56,7 @@ Token Lexer::parseInt() {
 }
 
 Token Lexer::parseIDKeyword() {
+    std::cout << "parseIDKeyword\n";
     std::string s;
     char c;
     while (true) {
@@ -119,8 +121,11 @@ Token Lexer::parseComment() {
 }
 
 Token Lexer::NextToken() {
+    std::cout << "NextToken\n";
     char c = std::cin.peek();
+    std::cout << c << std::endl;
     while (true) {
+        std::cout << c << std::endl;
         if (c >= '0' && c <= '9') {
             return parseInt();
         }
