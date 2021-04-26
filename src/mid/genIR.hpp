@@ -44,7 +44,7 @@ public:
 
     std::string GenBinaryExp(BinaryExpAST &exp, std::string &code);
 
-    std::string GenInitVal(ProcessedInitValAST &init, std::string &code);
+    std::string GenInitVal(InitValAST &init, std::string &code);
 
     static std::string op2char(Operator op);
 

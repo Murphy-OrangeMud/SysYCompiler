@@ -6,7 +6,7 @@
 #include "../define/ast.hpp"
 #include "typeck.hpp"
 
-bool TypeCheck::FillInValue(int *memory, InitValAST *init, std::vector<int> &dim, int i) {
+bool TypeCheck::FillInValue(int *memory, InitValAST *init, std::vector<int> &dim, size_t i) {
     logger.SetFunc("FillInValue");
     int idx = 0;
     if (!init) {
@@ -247,9 +247,8 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
             }
         }
 
-        return std::make_unique<VarDefAST>(true, std::move(id), std::make_unique<ProcessedInitValAST>(
-                dynamic_cast<InitValAST *>(initVal.get())->getType(),
-                dynamic_cast<InitValAST *>(initVal.get())->getValues(), ndim));
+        dynamic_cast<InitValAST*>(initVal.get())->setDim(ndim);
+        return std::make_unique<VarDefAST>(true, std::move(id), std::move(initVal));
     } else {
         auto id = varDef.getVar()->Eval(*this);
         std::string name = dynamic_cast<ProcessedIdAST *>(id.get())->getName();
@@ -266,9 +265,9 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                 FuncArrayTable[currentFunc][name] = ndim;
                 auto initVal = varDef.getInitVal()->Eval(*this);
                 logger.UnSetFunc("EvalVarDef");
-                return std::make_unique<VarDefAST>(false, std::move(id), std::make_unique<ProcessedInitValAST>(
-                        dynamic_cast<InitValAST *>(initVal.get())->getType(),
-                        dynamic_cast<InitValAST *>(initVal.get())->getValues(), ndim));
+
+                dynamic_cast<InitValAST*>(initVal.get())->setDim(ndim);
+                return std::make_unique<VarDefAST>(true, std::move(id), std::move(initVal));
             } else {
                 // global must initialize with constant value
                 if (varDef.getInitVal()) {
@@ -297,9 +296,9 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                         }
                         ArrayTable[name] = ndim;
                     }
-                    return std::make_unique<VarDefAST>(false, std::move(id), std::make_unique<ProcessedInitValAST>(
-                            dynamic_cast<InitValAST *>(initVal.get())->getType(),
-                            dynamic_cast<InitValAST *>(initVal.get())->getValues(), ndim));
+
+                    dynamic_cast<InitValAST*>(initVal.get())->setDim(ndim);
+                    return std::make_unique<VarDefAST>(true, std::move(id), std::move(initVal));
                 }
                 return std::make_unique<VarDefAST>(false, std::move(id));
             }
@@ -381,9 +380,8 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                     ASTPtrList retlist;
                     retlist.push_back(std::make_unique<NumberAST>(0));
                     return std::make_unique<VarDefAST>(varDef.isConst(), std::move(id),
-                                                       std::make_unique<ProcessedInitValAST>(VarType::VAR,
-                                                                                             std::move(retlist),
-                                                                                             std::vector<int>{}));
+                                                       std::make_unique<InitValAST>(VarType::VAR,
+                                                                                             std::move(retlist)));
                 }
             }
         }
@@ -603,7 +601,7 @@ std::unique_ptr<BlockAST> TypeCheck::EvalBlock(BlockAST &block) {
         stmts.push_back(std::move(nStmt));
 
     }
-    return std::make_unique<BlockAST>(stmts);
+    return std::make_unique<BlockAST>(std::move(stmts));
 }
 
 std::unique_ptr<IfElseAST> TypeCheck::EvalIfElse(IfElseAST &stmt) {
@@ -740,10 +738,10 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
                     logger.Error("Undefined identifier");
                     return nullptr;
                 } else {
-                    return std::make_unique<LValAST>(lval.getName(), lval.getType(), pos);
+                    return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
                 }
             }
-            return std::make_unique<LValAST>(lval.getName(), lval.getType(), pos);
+            return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
         } else {
             iter = FuncConstArrayTable[currentFunc].find(name);
             if (iter == FuncConstArrayTable[currentFunc].end()) {
@@ -752,10 +750,10 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
                     logger.Error("Undefined identifier: " + name);
                     return nullptr;
                 } else {
-                    return std::make_unique<LValAST>(lval.getName(), lval.getType(), pos);
+                    return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
                 }
             }
-            return std::make_unique<LValAST>(lval.getName(), lval.getType(), pos);
+            return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
         }
     } else {
         // var
@@ -799,7 +797,7 @@ std::unique_ptr<InitValAST> TypeCheck::EvalInitVal(InitValAST &init) {
         }
         newInitVals.push_back(std::move(newVal));
     }
-    return std::make_unique<InitValAST>(init.getType(), newInitVals);
+    return std::make_unique<InitValAST>(init.getType(), std::move(newInitVals));
 }
 
 ASTPtr TypeCheck::EvalAddExp(BinaryExpAST &exp) {
@@ -1071,7 +1069,7 @@ std::unique_ptr<CompUnitAST> TypeCheck::EvalCompUnit(CompUnitAST &unit) {
         logger.Error("Main function not found");
         return nullptr;
     }
-    return std::make_unique<CompUnitAST>(newNodes);
+    return std::make_unique<CompUnitAST>(std::move(newNodes));
 }
 
 ASTPtr TypeCheck::EvalEqExp(BinaryExpAST &exp) {

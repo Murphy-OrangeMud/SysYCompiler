@@ -101,7 +101,7 @@ std::string IRGenerator::GenId(ProcessedIdAST &id, std::string &code) {
     }
 }
 
-std::string IRGenerator::GenInitVal(ProcessedInitValAST &init, std::string &code) {
+std::string IRGenerator::GenInitVal(InitValAST &init, std::string &code) {
     if (init.getType() == VarType::VAR) {
         std::string res = init.getValues()[0]->GenerateIR(*this, code);
         code += (tab + "T" + std::to_string(T_num) + " = " + res + "\n");

@@ -76,10 +76,6 @@ std::string VarDefAST::GenerateIR(IRGenerator &gen, std::string &code) {
 }
 
 std::string InitValAST::GenerateIR(IRGenerator &gen, std::string &code) {
-    return {};
-}
-
-std::string ProcessedInitValAST::GenerateIR(IRGenerator &gen, std::string &code) {
     return gen.GenInitVal(*this, code);
 }
 

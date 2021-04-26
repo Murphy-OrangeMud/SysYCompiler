@@ -306,23 +306,17 @@ class InitValAST: public BaseAST {
 private:
     VarType type;
     ASTPtrList values;
-public:
-    InitValAST(VarType _type, ASTPtrList list): type(_type), values(std::move(list)) {}
-
-    const VarType getType() const { return type; }
-    const ASTPtrList &getValues() const { return values; }
-
-    ASTPtr Eval(TypeCheck &checker) override;
-    std::string GenerateIR(IRGenerator &gen, std::string &code) override;
-};
-
-class ProcessedInitValAST: public InitValAST {
-private:
     std::vector<int> dims;
 public:
-    ProcessedInitValAST(VarType _type, ASTPtrList list, std::vector<int> _dims): InitValAST(_type, std::move(list)), dims(std::move(_dims)) {}
+    InitValAST(VarType _type, ASTPtrList list, std::vector<int> _dims=std::vector<int>{}): type(_type), values(std::move(list)), dims(_dims) {}
 
-    const std::vector<int> getDims() const { return dims; }
+    bool setDim(std::vector<int> _dims) {
+        dims = std::move(_dims);
+        return true;
+    }
+    const VarType getType() const { return type; }
+    const ASTPtrList &getValues() const { return values; }
+    const std::vector<int> &getDims() const { return dims; }
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;

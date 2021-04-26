@@ -67,7 +67,7 @@ public:
 
     ~TypeCheck() = default;
 
-    bool FillInValue(int *memory, InitValAST *init, std::vector<int> &dim, int i);
+    bool FillInValue(int *memory, InitValAST *init, std::vector<int> &dim, size_t i);
 
     std::unique_ptr <VarDeclAST> EvalVarDecl(VarDeclAST &varDecl);
 
