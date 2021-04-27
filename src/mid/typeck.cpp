@@ -111,10 +111,10 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
             return nullptr;
         }
         auto id = varDef.getVar()->Eval(*this); // ProcessedIdAST
+        logger.UnSetFunc("EvalVarDef");
         std::string name = dynamic_cast<ProcessedIdAST *>(id.get())->getName();
         VarType type = dynamic_cast<ProcessedIdAST *>(id.get())->getType();
         std::vector<int> ndim = dynamic_cast<ProcessedIdAST *>(id.get())->getDim();
-        logger.UnSetFunc("EvalVarDef");
         auto initVal = varDef.getInitVal()->Eval(*this);
         logger.UnSetFunc("EvalVarDef");
         if (!initVal) {
@@ -253,10 +253,10 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
         return std::make_unique<VarDefAST>(true, std::move(id), std::move(initVal));
     } else {
         auto id = varDef.getVar()->Eval(*this);
+        logger.UnSetFunc("EvalVarDef");
         std::string name = dynamic_cast<ProcessedIdAST *>(id.get())->getName();
         VarType type = dynamic_cast<ProcessedIdAST *>(id.get())->getType();
         std::vector<int> ndim = dynamic_cast<ProcessedIdAST *>(id.get())->getDim();
-        logger.UnSetFunc("EvalVarDef");
         logger.Info("Var name: " + name + ", var type: " + std::to_string(type));
         if (type == VarType::ARRAY) {
             int size = 1;
@@ -621,12 +621,14 @@ std::unique_ptr<BlockAST> TypeCheck::EvalBlock(BlockAST &block) {
 
 std::unique_ptr<IfElseAST> TypeCheck::EvalIfElse(IfElseAST &stmt) {
     logger.SetFunc("EvalIfElse");
+    std::cout << "COND: " << dynamic_cast<BinaryExpAST*>(stmt.getCond().get())->getOp() << "\n";
     auto cond = stmt.getCond()->Eval(*this);
     logger.UnSetFunc("EvalIfElse");
     if (!cond) {
         logger.Error("Eval cond stmt failed for if else");
         return nullptr;
     }
+    std::cout << "COND: " << dynamic_cast<BinaryExpAST*>(cond.get())->getOp() << "\n";
     auto then = stmt.getThenStmt()->Eval(*this);
     logger.UnSetFunc("EvalIfElse");
     if (!then) {
@@ -730,11 +732,13 @@ std::unique_ptr<AssignAST> TypeCheck::EvalAssign(AssignAST &assign) {
 
 // return number ast or lval ast
 ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
+    logger.SetFunc("EvalLVal");
     if (lval.getType() == VarType::ARRAY) {
+        // TODO:检查这里
         ASTPtrList pos;
         for (const auto &exp: lval.getPosition()) {
             auto val = exp->Eval(*this);
-            logger.UnSetFunc("EvalUnaryExp");
+            logger.UnSetFunc("EvalLValExp");
             if (!val) {
                 logger.Error("Eval dim failed");
                 return nullptr;
@@ -752,8 +756,6 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
                 if (iter == ArrayTable.end()) {
                     logger.Error("Undefined identifier");
                     return nullptr;
-                } else {
-                    return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
                 }
             }
             return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
@@ -762,10 +764,14 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
             if (iter == FuncConstArrayTable[currentFunc].end()) {
                 iter = FuncArrayTable[currentFunc].find(name);
                 if (iter == FuncArrayTable[currentFunc].end()) {
-                    logger.Error("Undefined identifier: " + name);
-                    return nullptr;
-                } else {
-                    return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
+                    iter = ConstArrayTable.find(name);
+                    if (iter == ConstArrayTable.end()) {
+                        iter = ArrayTable.find(name);
+                        if (iter == ArrayTable.end()) {
+                            logger.Error("Undefined identifier");
+                            return nullptr;
+                        }
+                    }
                 }
             }
             return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
@@ -773,27 +779,38 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
     } else {
         // var
         const std::string &name = lval.getName();
+        std::map<std::string, int>::iterator iter;
         if (currentFunc.empty()) {
-            auto iter = ConstVarTable.find(name);
+            iter = ConstVarTable.find(name);
             if (iter == ConstVarTable.end()) {
                 iter = VarTable.find(name);
                 if (iter == VarTable.end()) {
                     logger.Error("Undefined identifier :" + name);
                     return nullptr;
-                } else {
-                    return std::make_unique<LValAST>(lval.getName(), lval.getType());
                 }
+                return std::make_unique<LValAST>(lval.getName(), lval.getType());
             }
             return std::make_unique<NumberAST>(iter->second);
         } else {
-            auto iter = FuncConstVarTable[currentFunc].find(name);
+            iter = FuncConstVarTable[currentFunc].find(name);
             if (iter == FuncConstVarTable[currentFunc].end()) {
                 auto iter2 = FuncVarTable[currentFunc].find(name);
                 if (iter2 == FuncVarTable[currentFunc].end()) {
-                    logger.Error("Undefined identifier " + name);
-                    return nullptr;
+                    iter = ConstVarTable.find(name);
+                    if (iter == ConstVarTable.end()) {
+                        iter = VarTable.find(name);
+                        if (iter == VarTable.end()) {
+                            logger.Error("Undefined identifier :" + name);
+                            return nullptr;
+                        } else {
+                            return std::make_unique<LValAST>(name, VarType::VAR);
+                        }
+                    } else {
+                        return std::make_unique<NumberAST>(iter->second);
+                    }
+                } else {
+                    return std::make_unique<LValAST>(name, VarType::VAR);
                 }
-                return std::make_unique<LValAST>(lval.getName(), lval.getType());
             }
             return std::make_unique<NumberAST>(iter->second);
         }
@@ -916,6 +933,7 @@ ASTPtr TypeCheck::EvalUnaryExp(UnaryExpAST &exp) {
         }
     } else {
         auto lval = exp.getNode()->Eval(*this);
+        logger.UnSetFunc("EvalUnaryExp");
         if (!lval) {
             logger.Error("Eval lval failed");
             return nullptr;
@@ -949,6 +967,7 @@ std::unique_ptr<FuncDefAST> TypeCheck::EvalFuncDef(FuncDefAST &funcDef) {
     for (const auto &arg: funcDef.getArgs()) {
         //语义要求函数定义中变量维度数一定是常量
         if (dynamic_cast<IdAST *>(arg.get())->getType() == VarType::ARRAY) {
+            // TODO:检查这里
             std::vector<int> dims;
             dims.push_back(0);
             for (const auto &exp: dynamic_cast<IdAST *>(arg.get())->getDim()) {
@@ -960,15 +979,17 @@ std::unique_ptr<FuncDefAST> TypeCheck::EvalFuncDef(FuncDefAST &funcDef) {
                 }
                 dims.push_back(dynamic_cast<NumberAST *>(res.get())->getVal());
             }
+            FuncArrayTable[currentFunc][dynamic_cast<IdAST *>(arg.get())->getName()] = dims;
             newArgs.push_back(
-                    std::make_unique<ProcessedIdAST>(dynamic_cast<ProcessedIdAST *>(arg.get())->getName(),
+                    std::make_unique<ProcessedIdAST>(dynamic_cast<IdAST *>(arg.get())->getName(),
                                                      VarType::ARRAY, false, dims));
             args.emplace_back(dynamic_cast<IdAST *>(arg.get())->getName(), std::make_pair(VarType::ARRAY, dims));
         } else {
+            FuncVarTable[currentFunc].insert(dynamic_cast<IdAST *>(arg.get())->getName());
             newArgs.push_back(
-                    std::make_unique<ProcessedIdAST>(dynamic_cast<ProcessedIdAST *>(arg.get())->getName(), VarType::VAR,
+                    std::make_unique<ProcessedIdAST>(dynamic_cast<IdAST *>(arg.get())->getName(), VarType::VAR,
                                                      false));
-            args.emplace_back(dynamic_cast<ProcessedIdAST *>(arg.get())->getName(),
+            args.emplace_back(dynamic_cast<IdAST *>(arg.get())->getName(),
                               std::make_pair(VarType::VAR, std::vector<int>{}));
         }
     }
@@ -1034,7 +1055,6 @@ ASTPtr TypeCheck::EvalLAndExp(BinaryExpAST &exp) {
     if (dynamic_cast<NumberAST *>(lhs.get())->getVal() == 0) {
         return std::make_unique<NumberAST>(0);
     }
-    logger.UnSetFunc("EvalLAndExp");
     auto rhs = exp.getRHS()->Eval(*this);
     logger.UnSetFunc("EvalLAndExp");
     if (!rhs) {
@@ -1051,20 +1071,22 @@ ASTPtr TypeCheck::EvalLAndExp(BinaryExpAST &exp) {
 ASTPtr TypeCheck::EvalLOrExp(BinaryExpAST &exp) {
     logger.SetFunc("EvalLOrExp");
     auto lhs = exp.getLHS()->Eval(*this);
-    if (dynamic_cast<NumberAST *>(lhs.get())->getVal()) {
+    logger.UnSetFunc("EvalLOrExp");
+    if (dynamic_cast<NumberAST *>(lhs.get()) && dynamic_cast<NumberAST *>(lhs.get())->getVal()) {
         return std::make_unique<NumberAST>(1);
     }
-    logger.UnSetFunc("EvalLOrExp");
     auto rhs = exp.getRHS()->Eval(*this);
     logger.UnSetFunc("EvalLOrExp");
     if (!rhs) {
         logger.Error("Eval rhs failed for land exp");
         return nullptr;
     }
-    if (dynamic_cast<NumberAST *>(lhs.get())->getVal()) {
+    if (dynamic_cast<NumberAST *>(rhs.get()) && dynamic_cast<NumberAST *>(rhs.get())->getVal()) {
         return std::make_unique<NumberAST>(1);
-    } else {
+    } else if (dynamic_cast<NumberAST *>(rhs.get())) {
         return std::make_unique<NumberAST>(0);
+    } else {
+        return std::make_unique<BinaryExpAST>(Operator::OR, std::move(lhs), std::move(rhs));
     }
 }
 

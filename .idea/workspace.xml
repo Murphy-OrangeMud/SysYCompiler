@@ -31,14 +31,20 @@
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/define/eval.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/eval.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/define/gen.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/gen.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/define/token.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/token.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/front/lexer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/lexer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/front/logger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/logger.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/logger.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/logger.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/front/parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/genIR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/genIR.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/typeck.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mid/typeck.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.sh" beforeDir="false" afterPath="$PROJECT_DIR$/test.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,7 +118,7 @@
       <updated>1617979741035</updated>
       <workItem from="1617979742179" duration="69126000" />
       <workItem from="1618464254646" duration="75851000" />
-      <workItem from="1619183989074" duration="81750000" />
+      <workItem from="1619183989074" duration="106169000" />
     </task>
     <servers />
   </component>
@@ -148,26 +154,26 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="93" y="93" width="1093" height="573" key="DiffContextDialog/0.0.1280.760@0.0.1280.760" timestamp="1619282357229" />
-    <state x="421" y="135" key="FileChooserDialogImpl" timestamp="1618110387166">
+    <state x="421" y="135" key="FileChooserDialogImpl" timestamp="1619445094217">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="421" y="135" key="FileChooserDialogImpl/0.0.1280.760@0.0.1280.760" timestamp="1618110387166" />
+    <state x="421" y="135" key="FileChooserDialogImpl/0.0.1280.760@0.0.1280.760" timestamp="1619445094217" />
     <state x="147" y="10" key="SettingsEditor" timestamp="1619420987844">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="147" y="10" key="SettingsEditor/0.0.1280.760@0.0.1280.760" timestamp="1619420987844" />
-    <state width="498" height="446" key="SwitcherDM" timestamp="1619232530665">
+    <state width="498" height="446" key="SwitcherDM" timestamp="1619445094113">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="498" height="446" key="SwitcherDM/0.0.1280.760@0.0.1280.760" timestamp="1619232530665" />
+    <state width="498" height="446" key="SwitcherDM/0.0.1280.760@0.0.1280.760" timestamp="1619445094113" />
     <state x="448" y="293" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1619421626079">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="448" y="293" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1280.760@0.0.1280.760" timestamp="1619421626079" />
-    <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1619433223843">
+    <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1619510716594">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1619433223843" />
+    <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1619510716594" />
     <state x="301" y="174" key="run.anything.popup" timestamp="1619433496345">
       <screen x="0" y="0" width="1280" height="760" />
     </state>

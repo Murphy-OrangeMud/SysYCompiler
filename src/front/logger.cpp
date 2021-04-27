@@ -29,7 +29,7 @@ void Logger::Info(const std::string& message) {
 
 void Logger::UnSetFunc(const std::string& funcName) {
 #ifndef OJ
-    std::cout << "[" << function << "]" << "Leave function: " << function << "\n";
+    std::cout << "[" << function << "]" << "Leave function: " << function  << " to " << funcName << "\n";
     function = funcName;
 #endif
 }

@@ -85,6 +85,9 @@ Token Lexer::parseIDKeyword() {
             if (s == "else") {
                 return Token::ELSE;
             }
+            if (s == "const")  {
+                return Token::CONST;
+            }
             name = std::move(s);
             return Token::IDENTIFIER;
         }
@@ -97,14 +100,16 @@ Token Lexer::parseComment() {
     if (c == '*') {
         // multi-line comment
         while (true) {
-            do {
+            c = std::cin.peek();
+            if (c == '*') {
                 c = std::cin.get();
-            } while (c != '*');
-            c = std::cin.get();
-            if ((c = std::cin.peek()) == '/') {
-                c = std::cin.get();
-                break;
+                c = std::cin.peek();
+                if (c == '/') {
+                    c = std::cin.get();
+                    break;
+                }
             }
+            c = std::cin.get();
         }
     } else if (c == '/') {
         // single-line comment

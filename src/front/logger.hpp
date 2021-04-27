@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 class Logger {
 private:
@@ -12,7 +13,7 @@ private:
 public:
     Logger() = default;
     explicit Logger(const std::string& _path) {
-        path = _path;
+        path = _path + ".txt";
     }
 
     bool open() {

@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 
-filepath="../open-test-cases/sysy/section1/functional_test"
+filepath="open-test-cases/sysy/section1/functional_test"
+test_files=$(ls $filepath | grep .sy)
 
-cd cmake-build-debug || exit
-
-for (( i = 0; i < 100; i++ ))
+for file in $test_files
 do
-  i_path=$filepath/$(printf "%02d_*.sy" $i)
-  o_path=$filepath/$(printf "%02d.eeyore" $i)
-  ./sysyc "$i_path" "$o_path"
-  # printf "%s %s\n" "$i_path" "$o_path"
+  i_path=$filepath/$file
+  printf "TEST CASE: %s""$file""\n"
+  ./cmake-build-debug/sysyc "$i_path"
 done

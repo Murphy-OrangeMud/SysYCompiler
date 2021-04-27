@@ -29,8 +29,8 @@ public:
     std::map <std::string, std::map<std::string, std::vector < int>>>
     FuncConstArrayTable;
 
-    TypeCheck() {
-        std::string path = R"(..\..\logs\log_)" + std::to_string(rand() % 10000);
+    TypeCheck(const std::string& i) {
+        std::string path = R"(../../logs/log_checker_)" + i;
         logger = Logger(path);
         currentFunc = "";
         // insert 6 included func

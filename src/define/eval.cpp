@@ -14,28 +14,25 @@ ASTPtr BlockAST::Eval(TypeCheck &checker) {
 ASTPtr BinaryExpAST::Eval(TypeCheck &checker) {
     std::initializer_list<Operator> opAdd = {Operator::ADD, Operator::SUB};
     std::initializer_list<Operator> opMul = {Operator::MUL, Operator::DIV, Operator::MOD};
-    std::initializer_list<Operator> opRel = {Operator::LE, Operator::GE, Operator::LT, Operator::LE};
+    std::initializer_list<Operator> opRel = {Operator::LE, Operator::GE, Operator::LT, Operator::GT};
     std::initializer_list<Operator> opEq = {Operator::EQ, Operator::NEQ};
     std::initializer_list<Operator> opLAnd = {Operator::AND};
     std::initializer_list<Operator> opLOr = {Operator::OR};
 
-    if (std::find(opLOr.begin(), opLOr.end(), op)) {
+    if (std::find(opLOr.begin(), opLOr.end(), op) != opLOr.end()) {
         return checker.EvalLOrExp(*this);
-    }
-    else if (std::find(opLAnd.begin(), opLAnd.end(), op)) {
+    } else if (std::find(opLAnd.begin(), opLAnd.end(), op) != opLAnd.end()) {
         return checker.EvalLAndExp(*this);
-    }
-    else if (std::find(opEq.begin(), opEq.end(), op)) {
+    } else if (std::find(opEq.begin(), opEq.end(), op) != opEq.end()) {
         return checker.EvalEqExp(*this);
-    }
-    else if (std::find(opRel.begin(), opRel.end(), op)) {
+    } else if (std::find(opRel.begin(), opRel.end(), op) != opRel.end()) {
         return checker.EvalRelExp(*this);
-    }
-    else if (std::find(opAdd.begin(), opAdd.end(), op)) {
+    } else if (std::find(opAdd.begin(), opAdd.end(), op) != opAdd.end()) {
         return checker.EvalAddExp(*this);
-    }
-    else if (std::find(opMul.begin(), opMul.end(), op)) {
+    } else if (std::find(opMul.begin(), opMul.end(), op) != opMul.end()) {
         return checker.EvalMulExp(*this);
+    } else {
+        return nullptr;
     }
 }
 

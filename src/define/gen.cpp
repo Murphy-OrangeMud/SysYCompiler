@@ -62,8 +62,7 @@ std::string LValAST::GenerateIR(IRGenerator &gen, std::string &code) {
 }
 
 std::string FuncCallAST::GenerateIR(IRGenerator &gen, std::string &code) {
-    gen.GenFuncCall(*this, code);
-    return {};
+    return gen.GenFuncCall(*this, code);
 }
 
 std::string VarDeclAST::GenerateIR(IRGenerator &gen, std::string &code) {

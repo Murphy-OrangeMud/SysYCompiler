@@ -15,27 +15,34 @@ private:
     std::map<std::string, int> SymbolTable;
     std::vector <std::pair<std::string, VarType>> ReverseSymbolTable;
     std::string currentFunc;
-    std::map <std::string, std::map<std::string, int>> FuncArgTable;
-    std::map <std::string, std::map<std::string, int> /*编号*/> FuncVarTable;
+    // std::map <std::string, std::map<std::string, int>> FuncArgTable;
+    // std::map <std::string, std::map<std::string, int> /*编号*/> FuncVarTable;
+    std::map <std::string, std::map<std::string, std::string> /*编号*/> FuncVarTable;
     std::map <std::string, std::vector<int> /*dims*/> ArrayTable;
-    std::map <std::string, std::map<std::string, std::vector < int> /*dims*/>> FuncArrayTable;
+    std::map <std::string, std::map<std::string, std::pair<std::string, std::vector < int> /*dims*/>>> FuncArrayTable;
+    // std::map <std::string, std::map<std::string, std::vector < int> /*dims*/>> FuncArrayTable;
 
     Logger logger;
 public:
     IRGenerator(std::map <std::string, std::vector<int>> _table1,
                 std::map <std::string, std::map<std::string, std::vector < int>>
 
-    > _table2):
+    > _table2, const std::string& i):
 
-    ArrayTable (std::move(_table1)), FuncArrayTable(std::move(_table2)) {
+    ArrayTable (std::move(_table1)) {
+        for (auto & iter1 : _table2) {
+            for (auto iter2 = iter1.second.begin(); iter2 != iter1.second.end(); iter2++) {
+                FuncArrayTable[iter1.first][iter2->first].second = iter2->second;
+            }
+        }
         t_num = 0;
         T_num = 0;
         l_num = 0;
-        std::string path = R"(..\..\logs\log_)" + std::to_string(rand() % 10000);
+        std::string path = R"(../../logs/log_generator_)" + i;
         logger = Logger(path);
     }
 
-    void GenerateValue(int &idx, InitValAST *init, std::vector<int> dim, int i, std::string &code);
+    void GenerateValue(const std::string& varName, int &idx, InitValAST *init, std::vector<int> dim, int i, std::string &code);
 
     void GenVarDecl(VarDeclAST &varDecl, std::string &code);
 
@@ -55,7 +62,7 @@ public:
 
     void GenBlock(BlockAST &block, std::string &code);
 
-    void GenFuncCall(FuncCallAST &func, std::string &code);
+    std::string GenFuncCall(FuncCallAST &func, std::string &code);
 
     std::string GenLVal(LValAST &lval, std::string &code);
 

@@ -31,7 +31,7 @@ enum Token {
     CO
 };
 
-enum class Operator {
+enum Operator {
     ADD,
     SUB,
     MUL,

@@ -17,10 +17,9 @@ private:
     Logger logger;
     Token current;
 public:
-    Parser() {
-        srand(std::time(0));
+    Parser(const std::string& i) {
         lexer = Lexer();
-        std::string path = R"(../logs/log_)" + std::to_string(rand() % 10000);
+        std::string path = R"(./logs/log_parser_)" + i;
         logger = Logger(path);
         logger.open();
     }
