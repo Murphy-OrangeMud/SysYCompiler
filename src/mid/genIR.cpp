@@ -3,10 +3,35 @@
 #include <functional>
 #include <vector>
 
-// TODO: void函数的return问题不能硬编码return 0
-void IRGenerator::GenerateValue(const std::string& varName, int &idx, InitValAST *init, std::vector<int> dim, int i, std::string &code) {
+// TODO: 局部变量以block为单位，而不是以function为单位
+void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST *init, std::vector<int> dim, int i,
+                                std::string &code) {
     logger.SetFunc("GenerateValue");
-    if (init == nullptr) {
+    if (init) {
+        for (const auto &initval: init->getValues()) {
+            if (dynamic_cast<NumberAST *>(initval.get())) {
+                code += (tab + varName + "[" + std::to_string(idx++) + "] = " +
+                         std::to_string(dynamic_cast<NumberAST *>(initval.get())->getVal()) + "\n");
+            } else if (dynamic_cast<InitValAST *>(initval.get())) {
+                if (dynamic_cast<InitValAST *>(initval.get())->getType() == VarType::VAR) {
+                    if (dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get()))) {
+                        code += (tab + varName + "[" + std::to_string(idx++) + "] = " + std::to_string(
+                                dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get()))->getVal()) + "\n");
+                    } else {
+                        std::string res = initval->GenerateIR(*this, code);
+                        code += (tab + varName + "[" + std::to_string(idx++) + "] = " + res + "\n");
+                    }
+                } else {
+                    GenerateValue(varName, idx, dynamic_cast<InitValAST *>(initval.get()), dim, i + 1, code);
+                    logger.UnSetFunc("GenerateValue");
+                }
+            }
+        }
+        for (int j = init->getValues().size(); j < dim[i]; j++) {
+            GenerateValue(varName, idx, nullptr, dim, i + 1, code);
+            logger.UnSetFunc("GenerateValue");
+        }
+    } else {
         if (i == dim.size() - 1) {
             for (int j = 0; j < dim[i]; j++) {
                 code += (tab + varName + "[" + std::to_string(idx++) + "] = 0\n");
@@ -17,45 +42,57 @@ void IRGenerator::GenerateValue(const std::string& varName, int &idx, InitValAST
                 logger.UnSetFunc("GenerateValue");
             }
         }
-    } else{
-        for (const auto &initval: init->getValues()) {
-            if (dynamic_cast<InitValAST*>(initval.get())) {
-                GenerateValue(varName, idx, dynamic_cast<InitValAST*>(initval.get()), dim, i+1, code);
-                logger.UnSetFunc("GenerateValue");
-            } else {
-                if (dynamic_cast<NumberAST*>(initval.get())) {
-                    code += (tab + varName + "[" + std::to_string(idx++) + "] = " + std::to_string(dynamic_cast<NumberAST*>(initval.get())->getVal()) + "\n");
-                } else {
-                    std::string res = initval->GenerateIR(*this, code);
-                    code += (tab + varName + "[" + std::to_string(idx++) + "] = " + res + "\n");
-                }
-            }
-        }
-        for (int j = init->getValues().size(); j < dim[i]; j++) {
-            GenerateValue(varName, idx, nullptr, dim, i + 1, code);
-            logger.UnSetFunc("GenerateValue");
-        }
     }
 }
 
 std::string IRGenerator::op2char(Operator op) {
     std::string c;
     switch (op) {
-        case Operator::ADD: c = "+"; break;
-        case Operator::SUB: c = "-"; break;
-        case Operator::DIV: c = "/"; break;
-        case Operator::MOD: c = "%"; break;
-        case Operator::MUL: c = "*"; break;
-        case Operator::AND: c = "&&"; break;
-        case Operator::EQ: c = "=="; break;
-        case Operator::GE: c = ">="; break;
-        case Operator::NEQ: c = "!="; break;
-        case Operator::LE: c = "<="; break;
-        case Operator::LT: c = "<"; break;
-        case Operator::GT: c = ">"; break;
-        case Operator::OR: c = "||"; break;
-        case Operator::NONE:  c = ""; break;
-        case Operator::NOT: c = "!"; break;
+        case Operator::ADD:
+            c = "+";
+            break;
+        case Operator::SUB:
+            c = "-";
+            break;
+        case Operator::DIV:
+            c = "/";
+            break;
+        case Operator::MOD:
+            c = "%";
+            break;
+        case Operator::MUL:
+            c = "*";
+            break;
+        case Operator::AND:
+            c = "&&";
+            break;
+        case Operator::EQ:
+            c = "==";
+            break;
+        case Operator::GE:
+            c = ">=";
+            break;
+        case Operator::NEQ:
+            c = "!=";
+            break;
+        case Operator::LE:
+            c = "<=";
+            break;
+        case Operator::LT:
+            c = "<";
+            break;
+        case Operator::GT:
+            c = ">";
+            break;
+        case Operator::OR:
+            c = "||";
+            break;
+        case Operator::NONE:
+            c = "";
+            break;
+        case Operator::NOT:
+            c = "!";
+            break;
     }
     return c;
 }
@@ -84,13 +121,13 @@ std::string IRGenerator::GenVarDef(VarDefAST &varDef, std::string &code) {
         varDef.getInitVal()->GenerateIR(*this, code);
         logger.UnSetFunc("GenVarDef");
     } else {
-        if (dynamic_cast<ProcessedIdAST*>(varDef.getVar().get())->getType() == VarType::VAR) {
+        if (dynamic_cast<ProcessedIdAST *>(varDef.getVar().get())->getType() == VarType::VAR) {
             if (currentFunc.empty()) {
                 code += (tab + var + " = 0\n");
             }
         } else {
             int idx = 0;
-            GenerateValue(var, idx, nullptr, dynamic_cast<ProcessedIdAST*>(varDef.getVar().get())->getDim(), 0, code);
+            GenerateValue(var, idx, nullptr, dynamic_cast<ProcessedIdAST *>(varDef.getVar().get())->getDim(), 0, code);
             logger.UnSetFunc("GenVarDef");
         }
     }
@@ -170,7 +207,7 @@ void IRGenerator::GenCompUnit(CompUnitAST &unit, std::string &code) {
     std::string str;
     int tmp = T_num;
     for (const auto &node: unit.getNodes()) {
-        if (dynamic_cast<VarDeclAST*>(node.get())) {
+        if (dynamic_cast<VarDeclAST *>(node.get())) {
             node->GenerateIR(*this, str);
             logger.UnSetFunc("GenCompUnit");
         }
@@ -189,7 +226,7 @@ void IRGenerator::GenCompUnit(CompUnitAST &unit, std::string &code) {
     }
     code += str;
     for (const auto &node: unit.getNodes()) {
-        if (!dynamic_cast<VarDeclAST*>(node.get())) {
+        if (!dynamic_cast<VarDeclAST *>(node.get())) {
             node->GenerateIR(*this, code);
             logger.UnSetFunc("GenCompUnit");
         }
@@ -205,10 +242,10 @@ std::string IRGenerator::GenFuncCall(FuncCallAST &func, std::string &code) {
         args.push_back(res);
     }
     for (const auto &res: args) {
-        code += ( tab + "param " + res + "\n");
+        code += (tab + "param " + res + "\n");
     }
     if (FuncTable[func.getName()] == Type::VOID) {
-        code += ( tab + "call f_" + func.getName() + "\n");
+        code += (tab + "call f_" + func.getName() + "\n");
         return {};
     } else {
         return ("call f_" + func.getName() + "\n");
@@ -265,12 +302,13 @@ std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
             std::string var = lval.getPosition()[i]->GenerateIR(*this, code);
             logger.UnSetFunc("GenLVal");
             if (i < lval.getPosition().size() - 1) {
-                code += (tab + "t" + std::to_string(t_num) + " = " + var + " * " + std::to_string(dim[i+1]) + "\n");
+                code += (tab + "t" + std::to_string(t_num) + " = " + var + " * " + std::to_string(dim[i + 1]) + "\n");
             } else {
                 code += (tab + "t" + std::to_string(t_num) + " = " + var + "\n");
             }
             if (i > 0) {
-                code += (tab + "t" + std::to_string(t_num) + " = t" + std::to_string(tmp) + " + t" + std::to_string(t_num) + "\n");
+                code += (tab + "t" + std::to_string(t_num) + " = t" + std::to_string(tmp) + " + t" +
+                         std::to_string(t_num) + "\n");
             }
             tmp = t_num++;
         }
@@ -286,8 +324,9 @@ void IRGenerator::GenFuncDef(FuncDefAST &funcDef, std::string &code) {
     currentFunc = funcDef.getName();
     FuncTable[funcDef.getName()] = funcDef.getType();
     for (size_t i = 0; i < funcDef.getArgs().size(); i++) {
-        if (dynamic_cast<ProcessedIdAST*>(funcDef.getArgs()[i].get())->getType() == VarType::VAR) {
-            FuncVarTable[currentFunc][dynamic_cast<ProcessedIdAST*>(funcDef.getArgs()[i].get())->getName()] = "p" + std::to_string(i);
+        if (dynamic_cast<ProcessedIdAST *>(funcDef.getArgs()[i].get())->getType() == VarType::VAR) {
+            FuncVarTable[currentFunc][dynamic_cast<ProcessedIdAST *>(funcDef.getArgs()[i].get())->getName()] =
+                    "p" + std::to_string(i);
         }
     }
     code += ("f_" + funcDef.getName() + "[" + std::to_string(funcDef.getArgs().size()) + "]\n");
@@ -313,7 +352,7 @@ void IRGenerator::GenFuncDef(FuncDefAST &funcDef, std::string &code) {
         code += (tab + "var t" + std::to_string(i) + "\n");
     }
     code += code2;
-    code += (tab + "return" + (funcDef.getType() == Type::INT? " 0 ":" ") + "\nend f_" + funcDef.getName() + "\n");
+    code += (tab + "return" + (funcDef.getType() == Type::INT ? " 0 " : " ") + "\nend f_" + funcDef.getName() + "\n");
     tab = "";
 }
 
@@ -327,14 +366,13 @@ void IRGenerator::GenStmt(StmtAST &stmt, std::string &code) {
 
 void IRGenerator::GenBlock(BlockAST &block, std::string &code) {
     logger.SetFunc("GenBlock");
-    for (const auto & stmt : block.getStmts()) {
+    for (const auto &stmt : block.getStmts()) {
         stmt->GenerateIR(*this, code);
         logger.UnSetFunc("GenBlock");
     }
 }
 
-// TODO: If else 和 while 的标签需要合并
-void IRGenerator::GenIfElse(IfElseAST &stmt ,std::string &code) {
+void IRGenerator::GenIfElse(IfElseAST &stmt, std::string &code) {
     logger.SetFunc("GenIfElse");
     std::string cond = stmt.getCond()->GenerateIR(*this, code);
     logger.UnSetFunc("GenIfElse");
@@ -378,7 +416,7 @@ void IRGenerator::GenWhile(WhileAST &stmt, std::string &code) {
 
 void IRGenerator::GenControl(ControlAST &stmt, std::string &code) {
     logger.SetFunc("GenControl");
-    switch(stmt.getControl()) {
+    switch (stmt.getControl()) {
         case Token::CONTINUE: {
             code += (tab + "goto l" + std::to_string(l_while_num - 2) + "\n");
             break;
@@ -392,8 +430,7 @@ void IRGenerator::GenControl(ControlAST &stmt, std::string &code) {
                 std::string ret = stmt.getReturnExp()->GenerateIR(*this, code);
                 logger.UnSetFunc("GenControl");
                 code += (tab + "return " + ret + "\n");
-            }
-            else code += (tab + "return\n");
+            } else code += (tab + "return\n");
         }
         default:
             break;
