@@ -14,6 +14,8 @@ class TypeCheck {
 private:
     Logger logger;
     int blockNum;
+    int currentBlock;
+    std::string currentFunc;
 public:
     struct Var {
         std::string name;
@@ -44,6 +46,7 @@ public:
         std::string path = R"(../../logs/log_checker_)" + i;
         logger = Logger(path);
         blockNum = 0;
+        currentFunc = "";
 
         FuncTable["getint"] = Function("getint", Type::INT, std::vector<Var>{});
         FuncTable["getch"] = Function("getch", Type::INT, std::vector<Var>{});

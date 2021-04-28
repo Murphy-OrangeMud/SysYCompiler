@@ -272,16 +272,17 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                         logger.Error("Unmatched parameter type: int[] and variable");
                         return nullptr;
                     }
-                    int currentBlock = blockNum; // TODO: 需要参数确定当前的block
+                    // TODO: 需要参数确定当前的block
+                    int tmpCurrentBlock = currentBlock;
                     std::map<std::string, Var>::iterator iter;
-                    while (currentBlock != -1) {
-                        iter = BlockVars[currentBlock].find(dynamic_cast<LValAST *>(arg.get())->getName());
-                        if (iter != BlockVars[currentBlock].end()) {
+                    while (tmpCurrentBlock != -1) {
+                        iter = BlockVars[tmpCurrentBlock].find(dynamic_cast<LValAST *>(arg.get())->getName());
+                        if (iter != BlockVars[tmpCurrentBlock].end()) {
                             break;
                         }
-                        currentBlock = parentBlock[currentBlock];
+                        tmpCurrentBlock = parentBlock[tmpCurrentBlock];
                     }
-                    if (currentBlock == -1) {
+                    if (tmpCurrentBlock == -1) {
                         logger.Error("Undefined identifier " + dynamic_cast<LValAST *>(arg.get())->getName());
                         return nullptr;
                     }
@@ -303,16 +304,17 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                 }
             } else {
                 if (dynamic_cast<LValAST *>(arg.get())) {
-                    int currentBlock = blockNum; // TODO: 需要参数确定当前的block
+                    // TODO: 需要参数确定当前的block
+                    int tmpCurrentBlock = currentBlock;
                     std::map<std::string, Var>::iterator iter;
-                    while (currentBlock != -1) {
-                        iter = BlockVars[currentBlock].find(dynamic_cast<LValAST *>(arg.get())->getName());
-                        if (iter != BlockVars[currentBlock].end()) {
+                    while (tmpCurrentBlock != -1) {
+                        iter = BlockVars[tmpCurrentBlock].find(dynamic_cast<LValAST *>(arg.get())->getName());
+                        if (iter != BlockVars[tmpCurrentBlock].end()) {
                             break;
                         }
-                        currentBlock = parentBlock[currentBlock];
+                        tmpCurrentBlock = parentBlock[tmpCurrentBlock];
                     }
-                    if (currentBlock == -1) {
+                    if (tmpCurrentBlock == -1) {
                         logger.Error("Undefined identifier " + dynamic_cast<LValAST *>(arg.get())->getName());
                         return nullptr;
                     }
@@ -331,6 +333,7 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
 
 std::unique_ptr<BlockAST> TypeCheck::EvalBlock(BlockAST &block) {
     logger.SetFunc("EvalBlock");
+    //parentBlock[blockNum + 1] = blockNum; // TODO:目前是按照blockNum手动增长（压栈）和减少（退栈）的方式确定当前block，需要修改
     ASTPtrList stmts;
     for (const auto &stmt: block.getStmts()) {
         auto nStmt = stmt->Eval(*this);
@@ -393,7 +396,7 @@ std::unique_ptr<WhileAST> TypeCheck::EvalWhile(WhileAST &stmt) {
 std::unique_ptr<ControlAST> TypeCheck::EvalControl(ControlAST &stmt) {
     logger.SetFunc("EvalControl");
     if (stmt.getControl() == Token::RETURN) {
-        if (FuncTable[currentFunc].first == Type::VOID) {
+        if (FuncTable[currentFunc].funcType == Type::VOID) {
             if (stmt.getReturnExp() != nullptr) {
                 logger.Error("Return type do not match in void function: " + currentFunc);
                 return nullptr;
@@ -427,24 +430,26 @@ std::unique_ptr<AssignAST> TypeCheck::EvalAssign(AssignAST &assign) {
         logger.Error("Cannot assign value to a right value");
         return nullptr;
     }
-    if (!currentFunc.empty()) {
-        if (FuncConstArrayTable[currentFunc].find(dynamic_cast<LValAST *>(lhs.get())->getName()) !=
-            FuncConstArrayTable[currentFunc].end()) {
-            logger.Error("Cannot change the value of a constant array");
-            return nullptr;
+    // TODO: 需要参数确定当前的block
+    int tmpCurrentBlock = currentBlock;
+    std::map<std::string, Var>::iterator iter;
+    while (tmpCurrentBlock != -1) {
+        iter = BlockVars[tmpCurrentBlock].find(dynamic_cast<LValAST *>(lhs.get())->getName());
+        if (iter != BlockVars[tmpCurrentBlock].end()) {
+            break;
         }
-        if (FuncConstVarTable[currentFunc].find(dynamic_cast<LValAST *>(lhs.get())->getName()) !=
-            FuncConstVarTable[currentFunc].end()) {
-            logger.Error("Cannot change the value of a constant variable");
-            return nullptr;
-        }
+        tmpCurrentBlock = parentBlock[tmpCurrentBlock];
     }
-    if (ConstArrayTable.find(dynamic_cast<LValAST *>(lhs.get())->getName()) != ConstArrayTable.end()) {
-        logger.Error("Cannot change the value of a constant array");
+    if (tmpCurrentBlock == -1) {
+        logger.Error("Undefined identifier " + dynamic_cast<LValAST *>(lhs.get())->getName());
         return nullptr;
     }
-    if (ConstVarTable.find(dynamic_cast<LValAST *>(lhs.get())->getName()) != ConstVarTable.end()) {
-        logger.Error("Cannot change the value of a constant variable");
+    if (iter->second.argType == VarType::ARRAY && iter->second.dims.size() != dynamic_cast<LValAST *>(lhs.get())->getPosition().size()) {
+        logger.Error("Mismatched type, array to assign value");
+        return nullptr;
+    }
+    if (iter->second.isConst) {
+        logger.Error("Cannot change the value of a constant array");
         return nullptr;
     }
     auto rhs = assign.getRight()->Eval(*this);
@@ -452,6 +457,26 @@ std::unique_ptr<AssignAST> TypeCheck::EvalAssign(AssignAST &assign) {
     if (!rhs) {
         logger.Error("Eval rhs failed for assignment");
         return nullptr;
+    }
+    // TODO: 检查右值的合法性
+    if (dynamic_cast<LValAST*>(rhs.get())) {
+        int tmpCurrentBlock = currentBlock;
+        std::map<std::string, Var>::iterator iter;
+        while (tmpCurrentBlock != -1) {
+            iter = BlockVars[tmpCurrentBlock].find(dynamic_cast<LValAST *>(rhs.get())->getName());
+            if (iter != BlockVars[tmpCurrentBlock].end()) {
+                break;
+            }
+            tmpCurrentBlock = parentBlock[tmpCurrentBlock];
+        }
+        if (tmpCurrentBlock == -1) {
+            logger.Error("Undefined identifier " + dynamic_cast<LValAST *>(rhs.get())->getName());
+            return nullptr;
+        }
+        if (iter->second.argType == VarType::ARRAY && iter->second.dims.size() != dynamic_cast<LValAST *>(rhs.get())->getPosition().size()) {
+            logger.Error("Mismatched type, array as right value");
+            return nullptr;
+        }
     }
     return std::make_unique<AssignAST>(std::move(lhs), std::move(rhs));
 }
@@ -472,73 +497,41 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
             pos.push_back(std::move(val));
         }
         const std::string &name = lval.getName();
-        std::map<std::string, std::vector<int>/*dim*/>::iterator iter;
-
-        // 需要常量值
-        if (currentFunc.empty()) {
-            iter = ConstArrayTable.find(name);
-            if (iter == ConstArrayTable.end()) {
-                iter = ArrayTable.find(name);
-                if (iter == ArrayTable.end()) {
-                    logger.Error("Undefined identifier");
-                    return nullptr;
-                }
+        int tmpCurrentBlock = currentBlock;
+        std::map<std::string, Var>::iterator iter;
+        while (tmpCurrentBlock != -1) {
+            iter = BlockVars[tmpCurrentBlock].find(name);
+            if (iter != BlockVars[tmpCurrentBlock].end()) {
+                break;
             }
-            return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
-        } else {
-            iter = FuncConstArrayTable[currentFunc].find(name);
-            if (iter == FuncConstArrayTable[currentFunc].end()) {
-                iter = FuncArrayTable[currentFunc].find(name);
-                if (iter == FuncArrayTable[currentFunc].end()) {
-                    iter = ConstArrayTable.find(name);
-                    if (iter == ConstArrayTable.end()) {
-                        iter = ArrayTable.find(name);
-                        if (iter == ArrayTable.end()) {
-                            logger.Error("Undefined identifier");
-                            return nullptr;
-                        }
-                    }
-                }
-            }
-            return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
+            tmpCurrentBlock = parentBlock[tmpCurrentBlock];
         }
+        if (tmpCurrentBlock == -1) {
+            logger.Error("Undefined identifier " + name);
+            return nullptr;
+        }
+        return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
+
     } else {
         // var
         const std::string &name = lval.getName();
-        std::map<std::string, int>::iterator iter;
-        if (currentFunc.empty()) {
-            iter = ConstVarTable.find(name);
-            if (iter == ConstVarTable.end()) {
-                iter = VarTable.find(name);
-                if (iter == VarTable.end()) {
-                    logger.Error("Undefined identifier:" + name);
-                    return nullptr;
-                }
-                return std::make_unique<LValAST>(lval.getName(), lval.getType());
+        int tmpCurrentBlock = currentBlock;
+        std::map<std::string, Var>::iterator iter;
+        while (tmpCurrentBlock != -1) {
+            iter = BlockVars[tmpCurrentBlock].find(name);
+            if (iter != BlockVars[tmpCurrentBlock].end()) {
+                break;
             }
-            return std::make_unique<NumberAST>(iter->second);
+            tmpCurrentBlock = parentBlock[tmpCurrentBlock];
+        }
+        if (tmpCurrentBlock == -1) {
+            logger.Error("Undefined identifier " + name);
+            return nullptr;
+        }
+        if (iter->second.isConst) {
+            return std::make_unique<NumberAST>(iter->second.val);
         } else {
-            iter = FuncConstVarTable[currentFunc].find(name);
-            if (iter == FuncConstVarTable[currentFunc].end()) {
-                auto iter2 = FuncVarTable[currentFunc].find(name);
-                if (iter2 == FuncVarTable[currentFunc].end()) {
-                    iter = ConstVarTable.find(name);
-                    if (iter == ConstVarTable.end()) {
-                        iter = VarTable.find(name);
-                        if (iter == VarTable.end()) {
-                            logger.Error("Undefined identifier :" + name);
-                            return nullptr;
-                        } else {
-                            return std::make_unique<LValAST>(name, VarType::VAR);
-                        }
-                    } else {
-                        return std::make_unique<NumberAST>(iter->second);
-                    }
-                } else {
-                    return std::make_unique<LValAST>(name, VarType::VAR);
-                }
-            }
-            return std::make_unique<NumberAST>(iter->second);
+            return std::make_unique<LValAST>(lval.getName(), lval.getType());
         }
     }
 }
