@@ -242,14 +242,15 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
         logger.Error("Undefined function");
         return nullptr;
     } else {
-        if (func.getArgs().size() != FuncTable[func.getName()].second.size()) {
+        if (func.getArgs().size() != FuncTable[func.getName()].argTable.size()) {
             logger.Error("Mismatched argument number");
             return nullptr;
         }
         ASTPtrList newArgs;
         for (size_t i = 0; i < func.getArgs().size(); i++) {
+            // 检查参数合法性
             auto arg = func.getArgs()[i]->Eval(*this);
-            if (FuncTable[func.getName()].second[i].second.first == VarType::ARRAY) {
+            if (FuncTable[func.getName()].argTable[i].argType == VarType::ARRAY) {
                 if (dynamic_cast<NumberAST *>(arg.get())) {
                     logger.Error("Unmatched parameter type: int[] and int");
                     return nullptr;
@@ -266,168 +267,60 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                     logger.Error("Unmatched parameter type: int[] and unary exp");
                     return nullptr;
                 }
-                if (dynamic_cast<LValAST *>(arg.get())) {
+                if (dynamic_cast<LValAST*>(arg.get())) {
                     if (dynamic_cast<LValAST *>(arg.get())->getType() == VarType::VAR) {
                         logger.Error("Unmatched parameter type: int[] and variable");
                         return nullptr;
-                    } else {
-                        if (!currentFunc.empty()) {
-                            auto i2 = FuncArrayTable[currentFunc].find(dynamic_cast<LValAST *>(arg.get())->getName());
-                            auto i4 = FuncConstArrayTable[currentFunc].find(
-                                    dynamic_cast<LValAST *>(arg.get())->getName());
-                            if (i2 == FuncArrayTable[currentFunc].end()) {
-                                if (i4 == FuncConstArrayTable[currentFunc].end()) {
-                                    goto out1;
-                                }
-                                if (i4->second.size() ==
-                                    dynamic_cast<LValAST *>(arg.get())->getPosition().size()) {
-                                    logger.Error("Unmatched parameter type: int[] and variable");
-                                    return nullptr;
-                                }
-                                for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
-                                     j < i4->second.size(); j++) {
-                                    if (i4->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                           dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
-                                        logger.Error("Unmatched parameter dim");
-                                        return nullptr;
-                                    }
-                                }
-                            } else {
-                                if (i2->second.size() ==
-                                    dynamic_cast<LValAST *>(arg.get())->getPosition().size()) {
-                                    logger.Error("Unmatched parameter type: int[] and variable");
-                                    return nullptr;
-                                }
-                                for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
-                                     j < i2->second.size(); j++) {
-                                    if (i2->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                           dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
-                                        logger.Error("Unmatched parameter dim");
-                                        return nullptr;
-                                    }
-                                }
-                            }
+                    }
+                    int currentBlock = blockNum; // TODO: 需要参数确定当前的block
+                    std::map<std::string, Var>::iterator iter;
+                    while (currentBlock != -1) {
+                        iter = BlockVars[currentBlock].find(dynamic_cast<LValAST *>(arg.get())->getName());
+                        if (iter != BlockVars[currentBlock].end()) {
+                            break;
                         }
-                        out1:
-                        auto i1 = ArrayTable.find(dynamic_cast<LValAST *>(arg.get())->getName());
-                        auto i3 = ConstArrayTable.find(dynamic_cast<LValAST *>(arg.get())->getName());
-                        if (i1 == ArrayTable.end()) {
-                            if (i3 == ConstArrayTable.end()) {
-                                std::string message =
-                                        "Undefined identifier " + dynamic_cast<LValAST *>(arg.get())->getName();
-                                logger.Error(message);
-                                return nullptr;
-                            }
-                            if (i3->second.size() ==
-                                dynamic_cast<LValAST *>(arg.get())->getPosition().size()) {
-                                logger.Error("Unmatched parameter type: int[] and variable");
-                                return nullptr;
-                            }
-                            for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
-                                 j < i3->second.size(); j++) {
-                                if (i3->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                       dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
-                                    logger.Error("Unmatched parameter dim");
-                                    return nullptr;
-                                }
-                            }
-                        } else {
-                            if (i1->second.size() ==
-                                dynamic_cast<LValAST *>(arg.get())->getPosition().size()) {
-                                logger.Error("Unmatched parameter type: int[] and variable");
-                                return nullptr;
-                            }
-                            for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
-                                 j < i1->second.size(); j++) {
-                                if (i1->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                       dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
-                                    logger.Error("Unmatched parameter dim");
-                                    return nullptr;
-                                }
-                            }
+                        currentBlock = parentBlock[currentBlock];
+                    }
+                    if (currentBlock == -1) {
+                        logger.Error("Undefined identifier " + dynamic_cast<LValAST *>(arg.get())->getName());
+                        return nullptr;
+                    }
+                    if (iter->second.argType == VarType::VAR) {
+                        logger.Error("Unmatched parameter type: int[] and variable");
+                        return nullptr;
+                    }
+                    if (iter->second.dims.size() == dynamic_cast<LValAST *>(arg.get())->getPosition().size()) {
+                        logger.Error("Unmatched parameter type: int[] and variable");
+                        return nullptr;
+                    }
+                    // TODO:检查这个循环的正确性
+                    for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1; j < iter->second.dims.size(); j++) {
+                        if (iter->second.dims[j] != FuncTable[func.getName()].argTable[i].dims[j - dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
+                            logger.Error("Unmatched parameter dim");
+                            return nullptr;
                         }
                     }
                 }
             } else {
                 if (dynamic_cast<LValAST *>(arg.get())) {
-                    if (dynamic_cast<LValAST *>(arg.get())->getType() == VarType::ARRAY) {
-                        if (!currentFunc.empty()) {
-                            auto i2 = FuncArrayTable[currentFunc].find(
-                                    dynamic_cast<LValAST *>(arg.get())->getName());
-                            auto i4 = FuncConstArrayTable[currentFunc].find(
-                                    dynamic_cast<LValAST *>(arg.get())->getName());
-                            if (i2 == FuncArrayTable[currentFunc].end()) {
-                                if (i4 == FuncConstArrayTable[currentFunc].end()) {
-                                    goto out2;
-                                }
-                                if (i4->second.size() ==
-                                    dynamic_cast<LValAST *>(arg.get())->getPosition().size()) {
-                                    logger.Error("Unmatched parameter type: int[] and variable");
-                                    return nullptr;
-                                }
-                                for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
-                                     j < i4->second.size(); j++) {
-                                    if (i4->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                           dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
-                                        logger.Error("Unmatched parameter dim");
-                                        return nullptr;
-                                    }
-                                }
-                            } else {
-                                if (i2->second.size() ==
-                                    dynamic_cast<LValAST *>(arg.get())->getPosition().size()) {
-                                    logger.Error("Unmatched parameter type: int[] and variable");
-                                    return nullptr;
-                                }
-                                for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
-                                     j < i2->second.size(); j++) {
-                                    if (i2->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                           dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
-                                        logger.Error("Unmatched parameter dim");
-                                        return nullptr;
-                                    }
-                                }
-                            }
+                    int currentBlock = blockNum; // TODO: 需要参数确定当前的block
+                    std::map<std::string, Var>::iterator iter;
+                    while (currentBlock != -1) {
+                        iter = BlockVars[currentBlock].find(dynamic_cast<LValAST *>(arg.get())->getName());
+                        if (iter != BlockVars[currentBlock].end()) {
+                            break;
                         }
-                        out2:
-                        auto i1 = ArrayTable.find(dynamic_cast<LValAST *>(arg.get())->getName());
-                        auto i3 = ConstArrayTable.find(dynamic_cast<LValAST *>(arg.get())->getName());
-                        if (i1 == ArrayTable.end()) {
-                            if (i3 == ConstArrayTable.end()) {
-                                std::string message =
-                                        "Undefined identifier: " + dynamic_cast<LValAST *>(arg.get())->getName();
-                                logger.Error(message);
-                                return nullptr;
-                            }
-                            if (i3->second.size() ==
-                                dynamic_cast<LValAST *>(arg.get())->getPosition().size()) {
-                                logger.Error("Unmatched parameter type: int[] and variable");
-                                return nullptr;
-                            }
-                            for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
-                                 j < i3->second.size(); j++) {
-                                if (i3->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                       dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
-                                    logger.Error("Unmatched parameter dim");
-                                    return nullptr;
-                                }
-                            }
-                        } else {
-                            if (i1->second.size() ==
-                                dynamic_cast<LValAST *>(arg.get())->getPosition().size()) {
-                                logger.Error("Unmatched parameter type: int[] and variable");
-                                return nullptr;
-                            }
-                            for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1;
-                                 j < i1->second.size(); j++) {
-                                if (i1->second[j] != FuncTable[func.getName()].second[i].second.second[j -
-                                                                                                       dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
-                                    logger.Error("Unmatched parameter dim");
-                                    return nullptr;
-                                }
-                            }
-                        }
+                        currentBlock = parentBlock[currentBlock];
                     }
+                    if (currentBlock == -1) {
+                        logger.Error("Undefined identifier " + dynamic_cast<LValAST *>(arg.get())->getName());
+                        return nullptr;
+                    }
+                    if (iter->second.dims.size() != dynamic_cast<LValAST*>(arg.get())->getPosition().size()) {
+                        logger.Error("Unmatched parameter type: int and int[]");
+                        return nullptr;
+                    }
+                    // 不检查数组越界
                 }
             }
             newArgs.push_back(std::move(arg));
