@@ -143,14 +143,14 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                 return nullptr;
             }
             logger.UnSetFunc("EvalVarDef");
-            if (BlockVars[blockNum].find(name) != BlockVars[blockNum].end()) {
+            if (BlockVars[currentBlock].find(name) != BlockVars[currentBlock].end()) {
                 logger.Error("Repeated definition: " + name);
                 return nullptr;
             }
             // 常量数组不需要折叠
-            BlockVars[blockNum][name] = Var(name, VarType::ARRAY, varDef.isConst(), ndim);
+            BlockVars[currentBlock][name] = Var(name, VarType::ARRAY, varDef.isConst(), ndim);
         } else {
-            if (BlockVars[blockNum].find(name) != BlockVars[blockNum].end()) {
+            if (BlockVars[currentBlock].find(name) != BlockVars[currentBlock].end()) {
                 logger.Error("Repeated definition: " + name);
                 return nullptr;
             }
@@ -158,7 +158,7 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                 logger.Error("Initialize constant variable with inconstant value");
                 return nullptr;
             }
-            BlockVars[blockNum][name] = Var(name, VarType::VAR, varDef.isConst(), std::vector<int>{},
+            BlockVars[currentBlock][name] = Var(name, VarType::VAR, varDef.isConst(), std::vector<int>{},
                                             dynamic_cast<NumberAST *>(initVal.get())->getVal());
         }
 
@@ -176,11 +176,11 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
             for (auto x: ndim) {
                 size *= x;
             }
-            if (BlockVars[blockNum].find(name) != BlockVars[blockNum].end()) {
+            if (BlockVars[currentBlock].find(name) != BlockVars[currentBlock].end()) {
                 logger.Error("Repeated definition: " + name);
                 return nullptr;
             }
-            BlockVars[blockNum][name] = Var(name, VarType::ARRAY, varDef.isConst(), ndim);
+            BlockVars[currentBlock][name] = Var(name, VarType::ARRAY, varDef.isConst(), ndim);
             if (varDef.getInitVal()) {
                 auto initVal = varDef.getInitVal()->Eval(*this);
                 logger.UnSetFunc("EvalVarDef");
@@ -188,7 +188,7 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                     logger.Error("Invalid initialization of global array");
                     return nullptr;
                 }
-                if (blockNum == 0) { // TODO:修改CompUnit，是在FuncDef的时候增加blocknum值，或者需要对节点的类型进行判断，可能还要传入参数（上一层blocknum值）
+                if (currentBlock == 0) { // TODO:修改CompUnit，是在FuncDef的时候增加blocknum值，或者需要对节点的类型进行判断，可能还要传入参数（上一层blocknum值）
                     int *arrayVal = (int *) malloc(size * sizeof(int));
                     int *tmp = arrayVal;
                     if (!FillInValue(tmp, dynamic_cast<InitValAST *>(initVal.get()), ndim, 0)) {
@@ -203,7 +203,7 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                 return std::make_unique<VarDefAST>(varDef.isConst(), std::move(id));
             }
         } else {
-            if (BlockVars[blockNum].find(name) != BlockVars[blockNum].end()) {
+            if (BlockVars[currentBlock].find(name) != BlockVars[currentBlock].end()) {
                 logger.Error("Repeated definition: " + name);
                 return nullptr;
             }
@@ -213,18 +213,18 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                     logger.Error("Invalid initialization");
                     return nullptr;
                 }
-                if (blockNum == 0) {
+                if (currentBlock == 0) {
                     if (!dynamic_cast<NumberAST *>(initVal.get())) {
                         logger.Error("Mismatched type in variable initialization");
                         return nullptr;
                     }
-                    BlockVars[blockNum][name] = Var(name, VarType::VAR, varDef.isConst(), std::vector<int>{},
+                    BlockVars[currentBlock][name] = Var(name, VarType::VAR, varDef.isConst(), std::vector<int>{},
                                                     dynamic_cast<NumberAST *>(initVal.get())->getVal());
                 }
                 return std::make_unique<VarDefAST>(varDef.isConst(), std::move(id), std::move(initVal));
             } else {
-                if (blockNum == 0) {
-                    BlockVars[blockNum][name] = Var(name, VarType::VAR, varDef.isConst(), std::vector<int>{}, 0);
+                if (currentBlock == 0) {
+                    BlockVars[currentBlock][name] = Var(name, VarType::VAR, varDef.isConst(), std::vector<int>{}, 0);
                 }
                 ASTPtrList retlist;
                 retlist.push_back(std::make_unique<NumberAST>(0));
@@ -333,7 +333,8 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
 
 std::unique_ptr<BlockAST> TypeCheck::EvalBlock(BlockAST &block) {
     logger.SetFunc("EvalBlock");
-    //parentBlock[blockNum + 1] = blockNum; // TODO:目前是按照blockNum手动增长（压栈）和减少（退栈）的方式确定当前block，需要修改
+     // TODO:目前是按照blockNum手动增长（压栈）和减少（退栈）的方式确定当前block，需要修改
+    // TODO: if !currentFunc.empty() and currentBlock == 0, 把函数的参数表放进block里
     ASTPtrList stmts;
     for (const auto &stmt: block.getStmts()) {
         auto nStmt = stmt->Eval(*this);
@@ -632,101 +633,6 @@ ASTPtr TypeCheck::EvalMulExp(BinaryExpAST &exp) {
     }
 }
 
-ASTPtr TypeCheck::EvalUnaryExp(UnaryExpAST &exp) {
-    logger.SetFunc("EvalUnaryExp");
-    if (dynamic_cast<NumberAST *>(exp.getNode().get())) {
-        if (exp.getOp() == Operator::NONE) {
-            return std::make_unique<NumberAST>(dynamic_cast<NumberAST *>(exp.getNode().get())->getVal());
-        } else {
-            switch (exp.getOp()) {
-                case Operator::NOT:
-                    return std::make_unique<NumberAST>(!dynamic_cast<NumberAST *>(exp.getNode().get())->getVal());
-                case Operator::SUB:
-                    return std::make_unique<NumberAST>(-dynamic_cast<NumberAST *>(exp.getNode().get())->getVal());
-                case Operator::ADD:
-                    return std::make_unique<NumberAST>(dynamic_cast<NumberAST *>(exp.getNode().get())->getVal());
-                default:
-                    logger.Error("Invalid unary exp operator");
-                    return nullptr;
-            }
-        }
-    } else {
-        auto lval = exp.getNode()->Eval(*this);
-        logger.UnSetFunc("EvalUnaryExp");
-        if (!lval) {
-            logger.Error("Eval lval failed");
-            return nullptr;
-        }
-        if (dynamic_cast<NumberAST *>(lval.get())) {
-            int value = dynamic_cast<NumberAST *>(lval.get())->getVal();
-            switch (exp.getOp()) {
-                case Operator::NOT:
-                    return std::make_unique<NumberAST>(!value);
-                case Operator::SUB:
-                    return std::make_unique<NumberAST>(-value);
-                case Operator::ADD:
-                    return std::make_unique<NumberAST>(+value);
-                case Operator::NONE:
-                    return std::make_unique<NumberAST>(value);
-                default:
-                    logger.Error("Invalid unary exp operator");
-                    return nullptr;
-            }
-        } else {
-            return std::make_unique<UnaryExpAST>(std::move(lval), exp.getOp());
-        }
-    }
-}
-
-std::unique_ptr<FuncDefAST> TypeCheck::EvalFuncDef(FuncDefAST &funcDef) {
-    logger.SetFunc("EvalFuncDef");
-    currentFunc = funcDef.getName();
-    ASTPtrList newArgs;
-    std::vector<std::pair<std::string, std::pair<VarType, std::vector<int>/*dims*/>>> args;
-    for (const auto &arg: funcDef.getArgs()) {
-        //语义要求函数定义中变量维度数一定是常量
-        if (dynamic_cast<IdAST *>(arg.get())->getType() == VarType::ARRAY) {
-            // TODO:检查这里
-            std::vector<int> dims;
-            dims.push_back(0);
-            for (const auto &exp: dynamic_cast<IdAST *>(arg.get())->getDim()) {
-                auto res = exp->Eval(*this);
-                logger.UnSetFunc("EvalFuncDef");
-                if (!res || !dynamic_cast<NumberAST *>(res.get())) {
-                    logger.Error("Inconstant value for typed array arg dim");
-                    return nullptr;
-                }
-                dims.push_back(dynamic_cast<NumberAST *>(res.get())->getVal());
-            }
-            FuncArrayTable[currentFunc][dynamic_cast<IdAST *>(arg.get())->getName()] = dims;
-            newArgs.push_back(
-                    std::make_unique<ProcessedIdAST>(dynamic_cast<IdAST *>(arg.get())->getName(),
-                                                     VarType::ARRAY, false, dims));
-            args.emplace_back(dynamic_cast<IdAST *>(arg.get())->getName(), std::make_pair(VarType::ARRAY, dims));
-        } else {
-            FuncVarTable[currentFunc].insert(dynamic_cast<IdAST *>(arg.get())->getName());
-            newArgs.push_back(
-                    std::make_unique<ProcessedIdAST>(dynamic_cast<IdAST *>(arg.get())->getName(), VarType::VAR,
-                                                     false));
-            args.emplace_back(dynamic_cast<IdAST *>(arg.get())->getName(),
-                              std::make_pair(VarType::VAR, std::vector<int>{}));
-        }
-    }
-    if (FuncTable.find(currentFunc) != FuncTable.end()) {
-        logger.Error("Repeated definition of function");
-        return nullptr;
-    }
-    FuncTable[currentFunc] = std::make_pair(funcDef.getType(), args);
-    ASTPtr block = funcDef.getBody()->Eval(*this);
-    logger.UnSetFunc("EvalFuncDef");
-    if (!block) {
-        logger.Error("Eval function body failed");
-        return nullptr;
-    }
-    currentFunc = "";
-    return std::make_unique<FuncDefAST>(funcDef.getType(), funcDef.getName(), std::move(newArgs), std::move(block));
-}
-
 ASTPtr TypeCheck::EvalRelExp(BinaryExpAST &exp) {
     logger.SetFunc("EvalRelExp");
     auto lhs = exp.getLHS()->Eval(*this);
@@ -814,29 +720,6 @@ ASTPtr TypeCheck::EvalLOrExp(BinaryExpAST &exp) {
     }
 }
 
-// finished
-std::unique_ptr<CompUnitAST> TypeCheck::EvalCompUnit(CompUnitAST &unit) {
-    logger.SetFunc("EvalCompUnit");
-    ASTPtrList newNodes;
-    parentBlock.push_back(-1);
-    for (const auto &node: unit.getNodes()) {
-        blockNum++; // current block
-        parentBlock.push_back(0);
-        auto newNode = node->Eval(*this);
-        logger.UnSetFunc("EvalCompUnit");
-        if (!newNode) {
-            logger.Error("Eval node failed");
-            return nullptr;
-        }
-        newNodes.push_back(std::move(newNode));
-    }
-    if (FuncTable.find("main") == FuncTable.end()) {
-        logger.Error("Main function not found");
-        return nullptr;
-    }
-    return std::make_unique<CompUnitAST>(std::move(newNodes));
-}
-
 ASTPtr TypeCheck::EvalEqExp(BinaryExpAST &exp) {
     logger.SetFunc("EvalEqExp");
     auto lhs = exp.getLHS()->Eval(*this);
@@ -865,6 +748,117 @@ ASTPtr TypeCheck::EvalEqExp(BinaryExpAST &exp) {
             logger.Error("Invalid operator");
             return nullptr;
     }
+}
+
+ASTPtr TypeCheck::EvalUnaryExp(UnaryExpAST &exp) {
+    logger.SetFunc("EvalUnaryExp");
+    if (dynamic_cast<NumberAST *>(exp.getNode().get())) {
+        if (exp.getOp() == Operator::NONE) {
+            return std::make_unique<NumberAST>(dynamic_cast<NumberAST *>(exp.getNode().get())->getVal());
+        } else {
+            switch (exp.getOp()) {
+                case Operator::NOT:
+                    return std::make_unique<NumberAST>(!dynamic_cast<NumberAST *>(exp.getNode().get())->getVal());
+                case Operator::SUB:
+                    return std::make_unique<NumberAST>(-dynamic_cast<NumberAST *>(exp.getNode().get())->getVal());
+                case Operator::ADD:
+                    return std::make_unique<NumberAST>(dynamic_cast<NumberAST *>(exp.getNode().get())->getVal());
+                default:
+                    logger.Error("Invalid unary exp operator");
+                    return nullptr;
+            }
+        }
+    } else {
+        auto lval = exp.getNode()->Eval(*this);
+        logger.UnSetFunc("EvalUnaryExp");
+        if (!lval) {
+            logger.Error("Eval lval failed");
+            return nullptr;
+        }
+        if (dynamic_cast<NumberAST *>(lval.get())) {
+            int value = dynamic_cast<NumberAST *>(lval.get())->getVal();
+            switch (exp.getOp()) {
+                case Operator::NOT:
+                    return std::make_unique<NumberAST>(!value);
+                case Operator::SUB:
+                    return std::make_unique<NumberAST>(-value);
+                case Operator::ADD:
+                    return std::make_unique<NumberAST>(+value);
+                case Operator::NONE:
+                    return std::make_unique<NumberAST>(value);
+                default:
+                    logger.Error("Invalid unary exp operator");
+                    return nullptr;
+            }
+        } else {
+            return std::make_unique<UnaryExpAST>(std::move(lval), exp.getOp());
+        }
+    }
+}
+
+std::unique_ptr<FuncDefAST> TypeCheck::EvalFuncDef(FuncDefAST &funcDef) {
+    logger.SetFunc("EvalFuncDef");
+    currentFunc = funcDef.getName();
+    ASTPtrList newArgs;
+    std::vector<Var> args;
+    for (const auto &arg: funcDef.getArgs()) {
+        //语义要求函数定义中变量维度数一定是常量
+        if (dynamic_cast<IdAST *>(arg.get())->getType() == VarType::ARRAY) {
+            std::vector<int> dims;
+            dims.push_back(0);
+            for (const auto &exp: dynamic_cast<IdAST *>(arg.get())->getDim()) {
+                auto res = exp->Eval(*this);
+                logger.UnSetFunc("EvalFuncDef");
+                if (!res || !dynamic_cast<NumberAST *>(res.get())) {
+                    logger.Error("Inconstant value for typed array arg dim");
+                    return nullptr;
+                }
+                dims.push_back(dynamic_cast<NumberAST *>(res.get())->getVal());
+            }
+            newArgs.push_back(
+                    std::make_unique<ProcessedIdAST>(dynamic_cast<IdAST *>(arg.get())->getName(),
+                                                     VarType::ARRAY, false, dims));
+            args.push_back(Var(dynamic_cast<IdAST *>(arg.get())->getName(), VarType::ARRAY, false, dims));
+        } else {
+            newArgs.push_back(
+                    std::make_unique<ProcessedIdAST>(dynamic_cast<IdAST *>(arg.get())->getName(), VarType::VAR,
+                                                     false));
+            args.push_back(Var(dynamic_cast<IdAST *>(arg.get())->getName(), VarType::VAR, false));
+        }
+    }
+    if (FuncTable.find(funcDef.getName()) != FuncTable.end()) {
+        logger.Error("Repeated definition of function");
+        return nullptr;
+    }
+    FuncTable[funcDef.getName()] = Function(funcDef.getName(), funcDef.getType(), args);
+    ASTPtr block = funcDef.getBody()->Eval(*this);
+    logger.UnSetFunc("EvalFuncDef");
+    if (!block) {
+        logger.Error("Eval function body failed");
+        return nullptr;
+    }
+    currentFunc = "";
+    return std::make_unique<FuncDefAST>(funcDef.getType(), funcDef.getName(), std::move(newArgs), std::move(block));
+}
+
+std::unique_ptr<CompUnitAST> TypeCheck::EvalCompUnit(CompUnitAST &unit) {
+    logger.SetFunc("EvalCompUnit");
+    ASTPtrList newNodes;
+    parentBlock.push_back(-1);
+    for (const auto &node: unit.getNodes()) {
+        auto newNode = node->Eval(*this);
+        logger.UnSetFunc("EvalCompUnit");
+        if (!newNode) {
+            logger.Error("Eval node failed");
+            return nullptr;
+        }
+        newNodes.push_back(std::move(newNode));
+    }
+    if (FuncTable.find("main") == FuncTable.end()) {
+        logger.Error("Main function not found");
+        return nullptr;
+    }
+    return std::make_unique<CompUnitAST>(std::move(newNodes));
 }
 
 std::unique_ptr<StmtAST> TypeCheck::EvalStmt(StmtAST &stmt) {
