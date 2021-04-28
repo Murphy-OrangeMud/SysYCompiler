@@ -38,18 +38,22 @@ public:
     std::vector<int> parentBlock;
 
     std::map<std::string, Function> FuncTable;
-    std::map<int, Var> BlockVars;
+    std::map<int, std::map<std::string, Var>> BlockVars;
 
     TypeCheck(const std::string &i) {
         std::string path = R"(../../logs/log_checker_)" + i;
         logger = Logger(path);
+        blockNum = 0;
 
         FuncTable["getint"] = Function("getint", Type::INT, std::vector<Var>{});
         FuncTable["getch"] = Function("getch", Type::INT, std::vector<Var>{});
-        FuncTable["getaarray"] = Function("getarray", Type::INT, std::vector<Var>{Var("a", VarType::ARRAY, false, std::vector<int>{0})});
+        FuncTable["getaarray"] = Function("getarray", Type::INT,
+                                          std::vector<Var>{Var("a", VarType::ARRAY, false, std::vector<int>{0})});
         FuncTable["putint"] = Function("putint", Type::VOID, std::vector<Var>{Var("a", VarType::VAR, false)});
         FuncTable["putch"] = Function("putch", Type::VOID, std::vector<Var>{Var("a", VarType::VAR, false)});
-        FuncTable["putarray"] = Function("putarray", Type::VOID, std::vector<Var>{Var("a", VarType::VAR, false), Var("b", VarType::ARRAY, false, std::vector<int>{0})});
+        FuncTable["putarray"] = Function("putarray", Type::VOID, std::vector<Var>{Var("a", VarType::VAR, false),
+                                                                                  Var("b", VarType::ARRAY, false,
+                                                                                      std::vector<int>{0})});
     }
 
     ~TypeCheck() = default;
