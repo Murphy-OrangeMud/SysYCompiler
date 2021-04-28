@@ -1052,7 +1052,7 @@ ASTPtr TypeCheck::EvalLAndExp(BinaryExpAST &exp) {
     logger.SetFunc("EvalLAndExp");
     auto lhs = exp.getLHS()->Eval(*this);
     logger.UnSetFunc("EvalLAndExp");
-    if (dynamic_cast<NumberAST *>(lhs.get())->getVal() == 0) {
+    if (dynamic_cast<NumberAST*>(lhs.get()) && dynamic_cast<NumberAST *>(lhs.get())->getVal() == 0) {
         return std::make_unique<NumberAST>(0);
     }
     auto rhs = exp.getRHS()->Eval(*this);
@@ -1061,10 +1061,12 @@ ASTPtr TypeCheck::EvalLAndExp(BinaryExpAST &exp) {
         logger.Error("Eval rhs failed for land exp");
         return nullptr;
     }
-    if (dynamic_cast<NumberAST *>(lhs.get())->getVal()) {
+    if (dynamic_cast<NumberAST*>(rhs.get()) && dynamic_cast<NumberAST *>(lhs.get())->getVal()) {
         return std::make_unique<NumberAST>(1);
-    } else {
+    } else if (dynamic_cast<NumberAST*>(rhs.get())) {
         return std::make_unique<NumberAST>(0);
+    } else {
+        return std::make_unique<BinaryExpAST>(Operator::AND, std::move(lhs), std::move(rhs));
     }
 }
 

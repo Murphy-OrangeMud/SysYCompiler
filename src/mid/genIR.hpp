@@ -10,17 +10,17 @@ class IRGenerator {
 private:
     int t_num;
     int T_num;
-    int l_num;
+    int l_if_num;
+    int l_while_num;
     std::string tab;
+    // 所有全局符号
     std::map<std::string, int> SymbolTable;
     std::vector <std::pair<std::string, VarType>> ReverseSymbolTable;
     std::string currentFunc;
-    // std::map <std::string, std::map<std::string, int>> FuncArgTable;
-    // std::map <std::string, std::map<std::string, int> /*编号*/> FuncVarTable;
+    std::map <std::string, Type> FuncTable;
     std::map <std::string, std::map<std::string, std::string> /*编号*/> FuncVarTable;
     std::map <std::string, std::vector<int> /*dims*/> ArrayTable;
-    std::map <std::string, std::map<std::string, std::pair<std::string, std::vector < int> /*dims*/>>> FuncArrayTable;
-    // std::map <std::string, std::map<std::string, std::vector < int> /*dims*/>> FuncArrayTable;
+    std::map <std::string, std::map<std::string, std::pair<std::string, /*编号*/ std::vector < int> /*dims*/>>> FuncArrayTable;
 
     Logger logger;
 public:
@@ -37,9 +37,17 @@ public:
         }
         t_num = 0;
         T_num = 0;
-        l_num = 0;
+        l_if_num = 0;
+        l_while_num = 0;
         std::string path = R"(../../logs/log_generator_)" + i;
         logger = Logger(path);
+        FuncTable["getint"] = Type::INT;
+        FuncTable["getch"] = Type::INT;
+        FuncTable["getarray"] = Type::INT;
+        FuncTable["putint"] = Type::VOID;
+        FuncTable["putch"] = Type::VOID;
+        FuncTable["putarray"] = Type::VOID;
+        // std::cout << (FuncArrayTable["main"].find("a") == FuncArrayTable["main"].end()) << std::endl;
     }
 
     void GenerateValue(const std::string& varName, int &idx, InitValAST *init, std::vector<int> dim, int i, std::string &code);
