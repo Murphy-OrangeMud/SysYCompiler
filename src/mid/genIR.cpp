@@ -333,41 +333,47 @@ void IRGenerator::GenBlock(BlockAST &block, std::string &code) {
     }
 }
 
-// TODO: If else 和 while的标签需要合并
+// TODO: If else 和 while 的标签需要合并
 void IRGenerator::GenIfElse(IfElseAST &stmt ,std::string &code) {
     logger.SetFunc("GenIfElse");
     std::string cond = stmt.getCond()->GenerateIR(*this, code);
     logger.UnSetFunc("GenIfElse");
     int tmp1 = l_if_num;
-    code += (tab + "if " + cond + " == 0 goto l" + std::to_string(l_if_num) + "\n");
+    code += (tab + "if " + cond + " == 0 goto l" + std::to_string(tmp1) + "\n");
     l_if_num++;
     stmt.getThenStmt()->GenerateIR(*this, code);
     logger.UnSetFunc("GenIfElse");
     if (stmt.getElseStmt()) {
         // code += (tab + "goto L" + std::to_string(l_if_num) + "\n");
-        int tmp = l_if_num - 1;
+        int tmp = tmp1;
         // code += ("L" + std::to_string(tmp) + ":\n");
         std::string branch;
         stmt.getElseStmt()->GenerateIR(*this, branch);
-        code += (tab + "goto L" + std::to_string(l_if_num) + "\n");
-        code += ("L" + std::to_string(tmp) + ":\n");
+        code += (tab + "goto l" + std::to_string(l_if_num) + "\n");
+        code += ("l" + std::to_string(tmp) + ":\n");
         code += branch;
         logger.UnSetFunc("GenIfElse");
+        code += ("l" + std::to_string(l_if_num) + ":\n");
+        l_if_num++;
+    } else {
+        code += ("l" + std::to_string(tmp1) + ":\n");
     }
-    code += ("L" + std::to_string(l_if_num) + ":\n");
 }
 
 void IRGenerator::GenWhile(WhileAST &stmt, std::string &code) {
     logger.SetFunc("GenWhile");
-    int tmp = l_while_num;
-    code += ("l" + std::to_string(l_while_num++) + "\n");
+    int tmp = l_if_num;
+    code += ("l" + std::to_string(tmp) + ":\n");
+    l_if_num++;
     std::string cond = stmt.getCond()->GenerateIR(*this, code);
     logger.UnSetFunc("GenWhile");
-    code += (tab + "if " + cond + " == 0 goto l" + std::to_string(l_while_num++) + "\n");
+    int tmp2 = l_if_num;
+    l_if_num++;
+    code += (tab + "if " + cond + " == 0 goto l" + std::to_string(tmp2) + "\n");
     stmt.getStmt()->GenerateIR(*this, code);
     code += (tab + "goto l" + std::to_string(tmp) + "\n");
     logger.UnSetFunc("GenWhile");
-    code += ("l" + std::to_string(--l_while_num) + ":\n");
+    code += ("l" + std::to_string(tmp2) + ":\n");
 }
 
 void IRGenerator::GenControl(ControlAST &stmt, std::string &code) {

@@ -32,8 +32,6 @@
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/genIR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mid/genIR.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mid/typeck.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,8 +105,16 @@
       <updated>1617979741035</updated>
       <workItem from="1617979742179" duration="69126000" />
       <workItem from="1618464254646" duration="75851000" />
-      <workItem from="1619183989074" duration="115539000" />
+      <workItem from="1619183989074" duration="118767000" />
     </task>
+    <task id="LOCAL-00001" summary="solve part of the bugs before doing if/else modification">
+      <created>1619585423123</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1619585423123</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -125,6 +131,11 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="solve part of the bugs" />
+    <MESSAGE value="solve part of the bugs before doing if/else modification" />
+    <option name="LAST_COMMIT_MESSAGE" value="solve part of the bugs before doing if/else modification" />
   </component>
   <component name="WindowStateProjectService">
     <state x="245" y="52" key="#SSH_Configurations" timestamp="1617980837172">
@@ -155,6 +166,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state width="498" height="446" key="SwitcherDM/0.0.1280.760@0.0.1280.760" timestamp="1619445094113" />
+    <state x="233" y="113" key="Vcs.Push.Dialog.v2" timestamp="1619585440435">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state x="233" y="113" key="Vcs.Push.Dialog.v2/0.0.1280.760@0.0.1280.760" timestamp="1619585440435" />
     <state x="448" y="293" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1619421626079">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
