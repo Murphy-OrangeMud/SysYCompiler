@@ -10,21 +10,44 @@
 bool TypeCheck::FillInValue(int *memory, InitValAST *init, std::vector<int> &dim, size_t i) {
     logger.SetFunc("FillInValue");
     int idx = 0;
+    int i_idx = 0;
+    int elem = 1;
+    for (int j = i + 1; j < dim.size(); j++) {
+        elem *= dim[j];
+    }
     if (init) {
         for (const auto &initval: init->getValues()) {
             if (dynamic_cast<NumberAST *>(initval.get())) {
                 idx++;
+                if (idx == elem) {
+                    idx = 0;
+                    i_idx++;
+                }
                 *memory = dynamic_cast<NumberAST *>(initval.get())->getVal();
                 memory++;
             } else if (dynamic_cast<InitValAST *>(initval.get())) {
                 if (dynamic_cast<InitValAST *>(initval.get())->getType() == VarType::VAR) {
                     if (!dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get())->getValues()[0].get())) {
+                        logger.Error("Initialize const variable with inconstant value");
                         return false;
                     }
                     idx++;
+                    if (idx == elem) {
+                        idx = 0;
+                        i_idx++;
+                    }
                     *memory = dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get())->getValues()[0].get())->getVal();
                     memory++;
                 } else {
+                    if (idx != 0) {
+                        logger.Error("InitVal illegal");
+                        return false;
+                    }
+                    i_idx++;
+                    if (i == dim.size() - 1) {
+                        logger.Error("InitVal dim larger than array dim");
+                        return false;
+                    }
                     if (!FillInValue(memory, dynamic_cast<InitValAST *>(initval.get()), dim, i + 1))
                         return false;
                     logger.UnSetFunc("FillInValue");
@@ -34,10 +57,23 @@ bool TypeCheck::FillInValue(int *memory, InitValAST *init, std::vector<int> &dim
                 return false;
             }
         }
-        for (; idx < dim[i]; idx++) {
-            if (!FillInValue(memory, nullptr, dim, i + 1))
-                return false;
-            logger.UnSetFunc("FillInValue");
+        if (i_idx > dim[i] || (i_idx == dim[i] && idx > 0)) {
+            logger.Error("Too many InitVals");
+            return false;
+        }
+        for (; i_idx < dim[i]; i_idx++) {
+            if (i == dim.size() - 1) {
+                *memory = 0;
+                memory++;
+            } else {
+                if (idx > 0) {
+                    logger.Error("InitVal illegal");
+                    return false;
+                }
+                if (!FillInValue(memory, nullptr, dim, i + 1))
+                    return false;
+                logger.UnSetFunc("FillInValue");
+            }
         }
     } else {
         if (i == dim.size() - 1) {
@@ -188,7 +224,7 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                     logger.Error("Invalid initialization of global array");
                     return nullptr;
                 }
-                if (currentBlock == 0) { // TODO:修改CompUnit，是在FuncDef的时候增加blocknum值，或者需要对节点的类型进行判断，可能还要传入参数（上一层blocknum值）
+                if (currentBlock == 0) {
                     int *arrayVal = (int *) malloc(size * sizeof(int));
                     int *tmp = arrayVal;
                     if (!FillInValue(tmp, dynamic_cast<InitValAST *>(initVal.get()), ndim, 0)) {
@@ -272,7 +308,6 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                         logger.Error("Unmatched parameter type: int[] and variable");
                         return nullptr;
                     }
-                    // TODO: 需要参数确定当前的block
                     int tmpCurrentBlock = currentBlock;
                     std::map<std::string, Var>::iterator iter;
                     while (tmpCurrentBlock != -1) {
@@ -294,7 +329,6 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                         logger.Error("Unmatched parameter type: int[] and variable");
                         return nullptr;
                     }
-                    // TODO:检查这个循环的正确性
                     for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1; j < iter->second.dims.size(); j++) {
                         if (iter->second.dims[j] != FuncTable[func.getName()].argTable[i].dims[j - dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
                             logger.Error("Unmatched parameter dim");
@@ -304,7 +338,6 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                 }
             } else {
                 if (dynamic_cast<LValAST *>(arg.get())) {
-                    // TODO: 需要参数确定当前的block
                     int tmpCurrentBlock = currentBlock;
                     std::map<std::string, Var>::iterator iter;
                     while (tmpCurrentBlock != -1) {
@@ -333,9 +366,15 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
 
 std::unique_ptr<BlockAST> TypeCheck::EvalBlock(BlockAST &block) {
     logger.SetFunc("EvalBlock");
-     // TODO:目前是按照blockNum手动增长（压栈）和减少（退栈）的方式确定当前block，需要修改
-    // TODO: if !currentFunc.empty() and currentBlock == 0, 把函数的参数表放进block里
     ASTPtrList stmts;
+    if (!currentFunc.empty() && currentBlock == 0) {
+        std::vector<Var> args = FuncTable[currentFunc].argTable;
+        for (auto arg: args) {
+            BlockVars[parentBlock.size()][arg.name] = arg;
+        }
+    }
+    parentBlock.push_back(currentBlock);
+    currentBlock = parentBlock.size() - 1;
     for (const auto &stmt: block.getStmts()) {
         auto nStmt = stmt->Eval(*this);
         if (!nStmt) {
@@ -346,6 +385,7 @@ std::unique_ptr<BlockAST> TypeCheck::EvalBlock(BlockAST &block) {
         stmts.push_back(std::move(nStmt));
 
     }
+    currentBlock = parentBlock[currentBlock];
     return std::make_unique<BlockAST>(std::move(stmts));
 }
 
@@ -431,7 +471,6 @@ std::unique_ptr<AssignAST> TypeCheck::EvalAssign(AssignAST &assign) {
         logger.Error("Cannot assign value to a right value");
         return nullptr;
     }
-    // TODO: 需要参数确定当前的block
     int tmpCurrentBlock = currentBlock;
     std::map<std::string, Var>::iterator iter;
     while (tmpCurrentBlock != -1) {
@@ -459,7 +498,6 @@ std::unique_ptr<AssignAST> TypeCheck::EvalAssign(AssignAST &assign) {
         logger.Error("Eval rhs failed for assignment");
         return nullptr;
     }
-    // TODO: 检查右值的合法性
     if (dynamic_cast<LValAST*>(rhs.get())) {
         int tmpCurrentBlock = currentBlock;
         std::map<std::string, Var>::iterator iter;
@@ -486,7 +524,6 @@ std::unique_ptr<AssignAST> TypeCheck::EvalAssign(AssignAST &assign) {
 ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
     logger.SetFunc("EvalLVal");
     if (lval.getType() == VarType::ARRAY) {
-        // TODO:检查这里
         ASTPtrList pos;
         for (const auto &exp: lval.getPosition()) {
             auto val = exp->Eval(*this);

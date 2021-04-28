@@ -3,7 +3,7 @@
 #include <functional>
 #include <vector>
 
-// TODO: 局部变量以block为单位，而不是以function为单位
+// TODO: 与TypeCheck相匹配地重构genIR
 void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST *init, std::vector<int> dim, int i,
                                 std::string &code) {
     logger.SetFunc("GenerateValue");
