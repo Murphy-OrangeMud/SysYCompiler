@@ -7,27 +7,49 @@
 void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST *init, std::vector<int> dim, int i,
                                 std::string &code) {
     logger.SetFunc("GenerateValue");
+    int elem = 1;
+    for (int j = i + 1; j < dim.size(); j++) {
+        elem *= dim[j];
+    }
     if (init) {
+        int i_idx = 0;
+        int index = 0;
         for (const auto &initval: init->getValues()) {
             if (dynamic_cast<NumberAST *>(initval.get())) {
+                index++;
+                if (index == elem) {
+                    index = 0;
+                    i_idx++;
+                }
                 code += (tab + varName + "[" + std::to_string(idx++) + "] = " +
                          std::to_string(dynamic_cast<NumberAST *>(initval.get())->getVal()) + "\n");
             } else if (dynamic_cast<InitValAST *>(initval.get())) {
                 if (dynamic_cast<InitValAST *>(initval.get())->getType() == VarType::VAR) {
                     if (dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get()))) {
+                        index++;
+                        if (index == elem) {
+                            index = 0;
+                            i_idx++;
+                        }
                         code += (tab + varName + "[" + std::to_string(idx++) + "] = " + std::to_string(
                                 dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get()))->getVal()) + "\n");
                     } else {
                         std::string res = initval->GenerateIR(*this, code);
+                        index++;
+                        if (index == elem) {
+                            index = 0;
+                            i_idx++;
+                        }
                         code += (tab + varName + "[" + std::to_string(idx++) + "] = " + res + "\n");
                     }
                 } else {
+                    i_idx++;
                     GenerateValue(varName, idx, dynamic_cast<InitValAST *>(initval.get()), dim, i + 1, code);
                     logger.UnSetFunc("GenerateValue");
                 }
             }
         }
-        for (int j = init->getValues().size(); j < dim[i]; j++) {
+        for (int j = i_idx; j < dim[i]; j++) {
             GenerateValue(varName, idx, nullptr, dim, i + 1, code);
             logger.UnSetFunc("GenerateValue");
         }
