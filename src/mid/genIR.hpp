@@ -13,7 +13,6 @@ private:
     int t_num;
     int T_num;
     int l_if_num;
-    std::string tab;
     Logger logger;
     int currentBlock;
     std::string currentFunc;
@@ -21,7 +20,7 @@ private:
     std::map<int, std::map<std::string, GenVar>> BlockSymbolTable;
     std::vector<int> parentBLock;
     std::map<std::string, Function> FuncTable;
-    std::vector<std::vector<GenVar>> ReverseSymbolTable;
+    std::vector<GenVar> ReverseSymbolTable;
 
     /*
     std::map<std::string, int> SymbolTable;
