@@ -26,11 +26,9 @@ int main(int argc, char *argv[]) {
         std::cerr << "Type check error\n";
         exit(1);
     }
-    std::map<std::string, std::vector<int>> arrayTable = checker.ArrayTable;
-    arrayTable.insert(checker.ConstArrayTable.begin(), checker.ConstArrayTable.end());
-    std::map <std::string, std::map<std::string, std::vector < int>>> funcArrayTable = checker.FuncArrayTable;
-    funcArrayTable.insert(checker.FuncConstArrayTable.begin(), checker.FuncConstArrayTable.end());
-    IRGenerator generator = IRGenerator(std::move(arrayTable), std::move(funcArrayTable), argv[1]);
+    std::map<std::string, Function> FuncTable = checker.FuncTable;
+    std::map<int, std::map<std::string, Var>> BlockVars = checker.BlockVars;
+    IRGenerator generator = IRGenerator(argv[1], std::move(FuncTable), std::move(BlockVars));
     std::string out;
     generator.GenCompUnit(*dynamic_cast<CompUnitAST*>(nRoot.get()), out);
     std::cout << out;

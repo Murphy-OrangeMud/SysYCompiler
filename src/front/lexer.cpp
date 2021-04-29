@@ -76,7 +76,7 @@ Token Lexer::parseIDKeyword() {
                 return Token::TYPE;
             }
             if (s == "void") {
-                type = Type::INT;
+                type = Type::VOID;
                 return Token::TYPE;
             }
             if (s == "if") {
