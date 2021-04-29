@@ -369,7 +369,7 @@ std::unique_ptr<BlockAST> TypeCheck::EvalBlock(BlockAST &block) {
     ASTPtrList stmts;
     if (!currentFunc.empty() && currentBlock == 0) {
         std::vector<Var> args = FuncTable[currentFunc].argTable;
-        for (auto arg: args) {
+        for (const auto& arg: args) {
             BlockVars[parentBlock.size()][arg.name] = arg;
         }
     }

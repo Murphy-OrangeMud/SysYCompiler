@@ -12,13 +12,16 @@ class IRGenerator {
 private:
     int t_num;
     int T_num;
-    int l_if_num;
+    int l_num;
+    int cur_break_l;
+    int cur_continue_l;
     Logger logger;
+    int currentDepth;
     int currentBlock;
     std::string currentFunc;
 
     std::map<int, std::map<std::string, GenVar>> BlockSymbolTable;
-    std::vector<int> parentBLock;
+    std::vector<int> parentBlock;
     std::map<std::string, Function> FuncTable;
     std::vector<GenVar> ReverseSymbolTable;
 
@@ -33,7 +36,7 @@ private:
 
 
 public:
-    IRGenerator(std::string &i, std::vector<int> _pB, std::map<std::string, Function> __FuncTable, const std::map<int, std::map<std::string, Var>>& BlockVars) :parentBLock(std::move(_pB)), FuncTable(std::move(__FuncTable)) {
+    IRGenerator(std::string &i, std::map<std::string, Function> __FuncTable, const std::map<int, std::map<std::string, Var>>& BlockVars) :FuncTable(std::move(__FuncTable)) {
         for (auto &item1 : BlockVars) {
             for (auto &item2 : item1.second) {
                 if (item2.second.isConst && item2.second.argType == VarType::VAR) continue;
@@ -43,7 +46,7 @@ public:
 
         t_num = 0;
         T_num = 0;
-        l_if_num = 0;
+        l_num = 0;
         std::string path = R"(../../logs/log_generator_)" + i;
         logger = Logger(path);
     }

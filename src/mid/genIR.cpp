@@ -3,8 +3,6 @@
 #include <functional>
 #include <vector>
 
-// TODO: 与TypeCheck相匹配地重构genIR'
-// TODO: currentBlock值的更新
 void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST *init, std::vector<int> dim, int i,
                                 std::string &code) {
     logger.SetFunc("GenerateValue");
@@ -22,7 +20,7 @@ void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST
                     index = 0;
                     i_idx++;
                 }
-                for (int j = 0; j < currentBlock; j++) { code += "\t"; }
+                for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                 code += (varName + "[" + std::to_string(idx++) + "] = " +
                          std::to_string(dynamic_cast<NumberAST *>(initval.get())->getVal()) + "\n");
             } else if (dynamic_cast<InitValAST *>(initval.get())) {
@@ -33,7 +31,7 @@ void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST
                             index = 0;
                             i_idx++;
                         }
-                        for (int j = 0; j < currentBlock; j++) { code += "\t"; }
+                        for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                         code += (varName + "[" + std::to_string(idx++) + "] = " + std::to_string(
                                 dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get()))->getVal()) + "\n");
                     } else {
@@ -43,7 +41,7 @@ void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST
                             index = 0;
                             i_idx++;
                         }
-                        for (int j = 0; j < currentBlock; j++) { code += "\t"; }
+                        for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                         code += (varName + "[" + std::to_string(idx++) + "] = " + res + "\n");
                     }
                 } else {
@@ -60,7 +58,7 @@ void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST
     } else {
         if (i == dim.size() - 1) {
             for (int j = 0; j < dim[i]; j++) {
-                for (int k = 0; k < currentBlock; k++) { code += "\t"; }
+                for (int k = 0; k < currentDepth; k++) { code += "\t"; }
                 code += (varName + "[" + std::to_string(idx++) + "] = 0\n");
             }
         } else {
@@ -131,7 +129,7 @@ std::string IRGenerator::GenBinaryExp(BinaryExpAST &exp, std::string &code) {
     std::string t2 = exp.getRHS()->GenerateIR(*this, code);
     logger.UnSetFunc("GenBinaryExp");
     std::string res = "t" + std::to_string(t_num++);
-    for (int j = 0; j < currentBlock; j++) { code += "\t"; }
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
     code += (res + " = " + t1 + " " + op2char(exp.getOp()) + " " + t2 + "\n");
     return res;
 }
@@ -151,7 +149,7 @@ std::string IRGenerator::GenVarDef(VarDefAST &varDef, std::string &code) {
     } else {
         if (dynamic_cast<ProcessedIdAST *>(varDef.getVar().get())->getType() == VarType::VAR) {
             if (currentFunc.empty()) {
-                for (int i = 0; i < currentBlock; i++) { code += "\t"; }
+                for (int i = 0; i < currentDepth; i++) { code += "\t"; }
                 code += (var + " = 0\n");
             }
         } else {
@@ -172,7 +170,7 @@ std::string IRGenerator::GenId(ProcessedIdAST &id, std::string &code) {
         if (iter != BlockSymbolTable[tmpCurrentBlock].end()) {
             break;
         }
-        tmpCurrentBlock = parentBLock[tmpCurrentBlock];
+        tmpCurrentBlock = parentBlock[tmpCurrentBlock];
     }
     if (iter->second.id.empty()) {
         iter->second.id = "T" + std::to_string(T_num++);
@@ -185,7 +183,7 @@ std::string IRGenerator::GenInitVal(InitValAST &init, std::string &code) {
     if (init.getType() == VarType::VAR) {
         std::string res = init.getValues()[0]->GenerateIR(*this, code);
         logger.SetFunc("GenInitVal");
-        for (int i = 0; i < currentBlock; i++) { code += "\t"; }
+        for (int i = 0; i < currentDepth; i++) { code += "\t"; }
         code += ("T" + std::to_string(T_num - 1) + " = " + res + "\n");
     } else {
         int idx = 0;
@@ -201,7 +199,7 @@ std::string IRGenerator::GenAssign(AssignAST &assign, std::string &code) {
     logger.UnSetFunc("GenAssign");
     std::string r = assign.getRight()->GenerateIR(*this, code);
     logger.UnSetFunc("GenAssign");
-    for (int i = 0; i < currentBlock; i++) { code += "\t"; }
+    for (int i = 0; i < currentDepth; i++) { code += "\t"; }
     code += (l + " = " + r + "\n");
     return l;
 }
@@ -218,6 +216,7 @@ void IRGenerator::GenCompUnit(CompUnitAST &unit, std::string &code) {
     logger.SetFunc("GenCompUnit");
     std::string str;
     int tmp = T_num;
+    parentBlock.push_back(-1);
     for (const auto &node: unit.getNodes()) {
         if (dynamic_cast<VarDeclAST *>(node.get())) {
             node->GenerateIR(*this, str);
@@ -231,10 +230,10 @@ void IRGenerator::GenCompUnit(CompUnitAST &unit, std::string &code) {
             for (int d : dim) {
                 size *= d;
             }
-            for (int j = 0; j < currentBlock; j++) { code += "\t"; }
+            for (int j = 0; j < currentDepth; j++) { code += "\t"; }
             code += ("var " + std::to_string(size) + " T" + std::to_string(i) + "\n");
         } else {
-            for (int j = 0; j < currentBlock; j++) { code += "\t"; }
+            for (int j = 0; j < currentDepth; j++) { code += "\t"; }
             code += ("var T" + std::to_string(i) + "\n");
         }
     }
@@ -256,11 +255,11 @@ std::string IRGenerator::GenFuncCall(FuncCallAST &func, std::string &code) {
         args.push_back(res);
     }
     for (const auto &res: args) {
-        for (int j = 0; j < currentBlock; j++) { code += "\t"; }
+        for (int j = 0; j < currentDepth; j++) { code += "\t"; }
         code += ("param " + res + "\n");
     }
     if (FuncTable[func.getName()].funcType == Type::VOID) {
-        for (int j = 0; j < currentBlock; j++) { code += "\t"; }
+        for (int j = 0; j < currentDepth; j++) { code += "\t"; }
         code += ("call f_" + func.getName() + "\n");
         return {};
     } else {
@@ -286,7 +285,7 @@ std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
         if (iter != BlockSymbolTable[tmpCurrentBlock].end()) {
             break;
         }
-        tmpCurrentBlock = parentBLock[tmpCurrentBlock];
+        tmpCurrentBlock = parentBlock[tmpCurrentBlock];
     }
     if (lval.getType() == VarType::VAR) {
         return iter->second.id;
@@ -298,14 +297,14 @@ std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
             std::string var = lval.getPosition()[i]->GenerateIR(*this, code);
             logger.UnSetFunc("GenLVal");
             if (i < lval.getPosition().size() - 1) {
-                for (int j = 0; j < currentBlock; j++) { code += "\t"; }
+                for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                 code += ("t" + std::to_string(t_num) + " = " + var + " * " + std::to_string(dim[i + 1]) + "\n");
             } else {
-                for (int j = 0; j < currentBlock; j++) { code += "\t"; }
+                for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                 code += ("t" + std::to_string(t_num) + " = " + var + "\n");
             }
             if (i > 0) {
-                for (int j = 0; j < currentBlock; j++) { code += "\t"; }
+                for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                 code += ("t" + std::to_string(t_num) + " = t" + std::to_string(tmp) + " + t" +
                          std::to_string(t_num) + "\n");
             }
@@ -321,7 +320,7 @@ void IRGenerator::GenFuncDef(FuncDefAST &funcDef, std::string &code) {
     logger.SetFunc("GenFuncDef");
     currentFunc = funcDef.getName();
     for (size_t i = 0; i < funcDef.getArgs().size(); i++) {
-        BlockSymbolTable[currentBlock][dynamic_cast<ProcessedIdAST *>(funcDef.getArgs()[i].get())->getName()].id = "p" + std::to_string(i);
+        BlockSymbolTable[currentDepth][dynamic_cast<ProcessedIdAST *>(funcDef.getArgs()[i].get())->getName()].id = "p" + std::to_string(i);
     }
     code += ("f_" + funcDef.getName() + "[" + std::to_string(funcDef.getArgs().size()) + "]\n");
     int T_tmp = T_num;
@@ -331,7 +330,7 @@ void IRGenerator::GenFuncDef(FuncDefAST &funcDef, std::string &code) {
     logger.UnSetFunc("GenFuncDef");
     for (int i = T_tmp; i < T_num; i++) {
         if (ReverseSymbolTable[i].argType == VarType::VAR) {
-            for (int j = 0; j < currentBlock + 1; j++) { code += "\t"; }
+            for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
             code += ("var T" + std::to_string(i) + "\n");
         } else {
             std::vector<int> dim = ReverseSymbolTable[i].dims;
@@ -339,16 +338,16 @@ void IRGenerator::GenFuncDef(FuncDefAST &funcDef, std::string &code) {
             for (int d: dim) {
                 size *= d;
             }
-            for (int j = 0; j < currentBlock + 1; j++) { code += "\t"; }
+            for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
             code += ("var " + std::to_string(size) + " " + ReverseSymbolTable[i].id + "\n");
         }
     }
     for (int i = t_tmp; i < t_num; i++) {
-        for (int j = 0; j < currentBlock + 1; j++) { code += "\t"; }
+        for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
         code += ("var t" + std::to_string(i) + "\n");
     }
     code += code2;
-    for (int j = 0; j < currentBlock; j++) { code += "\t"; }
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
     // TODO: 检查分支是否有返回然后考虑是否硬编码
     code += "return";
     code += (funcDef.getType() == Type::INT ? " 0 " : " ");
@@ -366,34 +365,40 @@ void IRGenerator::GenStmt(StmtAST &stmt, std::string &code) {
 void IRGenerator::GenBlock(BlockAST &block, std::string &code) {
     // TODO: 增加字段或者像typecheck同构更新currentBlock。
     logger.SetFunc("GenBlock");
+    ++currentDepth;
+    parentBlock.push_back(currentBlock);
+    currentBlock = parentBlock.size() - 1;
     for (const auto &stmt : block.getStmts()) {
         stmt->GenerateIR(*this, code);
         logger.UnSetFunc("GenBlock");
     }
-    
+    --currentDepth;
+    currentBlock = parentBlock[currentBlock];
 }
 
 void IRGenerator::GenIfElse(IfElseAST &stmt, std::string &code) {
     logger.SetFunc("GenIfElse");
     std::string cond = stmt.getCond()->GenerateIR(*this, code);
     logger.UnSetFunc("GenIfElse");
-    int tmp1 = l_if_num;
-    code += (tab + "if " + cond + " == 0 goto l" + std::to_string(tmp1) + "\n");
-    l_if_num++;
+    int tmp1 = l_num;
+    for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
+    code += ("if " + cond + " == 0 goto l" + std::to_string(tmp1) + "\n");
+    l_num++;
     stmt.getThenStmt()->GenerateIR(*this, code);
     logger.UnSetFunc("GenIfElse");
     if (stmt.getElseStmt()) {
-        // code += (tab + "goto L" + std::to_string(l_if_num) + "\n");
+        // code += (tab + "goto L" + std::to_string(l_num) + "\n");
         int tmp = tmp1;
         // code += ("L" + std::to_string(tmp) + ":\n");
         std::string branch;
         stmt.getElseStmt()->GenerateIR(*this, branch);
-        code += (tab + "goto l" + std::to_string(l_if_num) + "\n");
+        for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
+        code += ("goto l" + std::to_string(l_num) + "\n");
         code += ("l" + std::to_string(tmp) + ":\n");
         code += branch;
         logger.UnSetFunc("GenIfElse");
-        code += ("l" + std::to_string(l_if_num) + ":\n");
-        l_if_num++;
+        code += ("l" + std::to_string(l_num) + ":\n");
+        l_num++;
     } else {
         code += ("l" + std::to_string(tmp1) + ":\n");
     }
@@ -401,37 +406,56 @@ void IRGenerator::GenIfElse(IfElseAST &stmt, std::string &code) {
 
 void IRGenerator::GenWhile(WhileAST &stmt, std::string &code) {
     logger.SetFunc("GenWhile");
-    int tmp = l_if_num;
-    code += ("l" + std::to_string(tmp) + ":\n");
-    l_if_num++;
+
+    int old_break = cur_break_l;
+    int old_continue = cur_continue_l;
+
+    int begin_loop = l_num;
+    code += ("l" + std::to_string(begin_loop) + ":\n");
+    l_num++;
     std::string cond = stmt.getCond()->GenerateIR(*this, code);
     logger.UnSetFunc("GenWhile");
-    int tmp2 = l_if_num;
-    l_if_num++;
-    code += (tab + "if " + cond + " == 0 goto l" + std::to_string(tmp2) + "\n");
+    int out_loop = l_num;
+    l_num++;
+
+    cur_break_l = out_loop;
+    cur_continue_l = begin_loop;
+
+    for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
+    code += ("if " + cond + " == 0 goto l" + std::to_string(out_loop) + "\n");
     stmt.getStmt()->GenerateIR(*this, code);
-    code += (tab + "goto l" + std::to_string(tmp) + "\n");
+    for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
+    code += ("goto l" + std::to_string(begin_loop) + "\n");
     logger.UnSetFunc("GenWhile");
-    code += ("l" + std::to_string(tmp2) + ":\n");
+    code += ("l" + std::to_string(out_loop) + ":\n");
+
+    cur_break_l = old_break;
+    cur_continue_l = old_continue;
 }
 
 void IRGenerator::GenControl(ControlAST &stmt, std::string &code) {
     logger.SetFunc("GenControl");
     switch (stmt.getControl()) {
         case Token::CONTINUE: {
-            code += (tab + "goto l" + std::to_string(l_while_num - 2) + "\n");
+            for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+            code += ("goto l" + std::to_string(cur_continue_l) + "\n");
             break;
         }
         case Token::BREAK: {
-            code += (tab + "goto l" + std::to_string(l_while_num - 1) + "\n");
+            for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+            code += ("goto l" + std::to_string(cur_break_l) + "\n");
             break;
         }
         case Token::RETURN: {
             if (stmt.getReturnExp()) {
                 std::string ret = stmt.getReturnExp()->GenerateIR(*this, code);
                 logger.UnSetFunc("GenControl");
-                code += (tab + "return " + ret + "\n");
-            } else code += (tab + "return\n");
+                for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+                code += ("return " + ret + "\n");
+            } else {
+                for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+                code += ("return\n");
+            }
         }
         default:
             break;
