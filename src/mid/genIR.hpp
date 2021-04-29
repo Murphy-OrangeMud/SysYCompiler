@@ -37,6 +37,11 @@ public:
         t_num = 0;
         T_num = 0;
         l_num = 0;
+        cur_break_l = -1;
+        cur_continue_l = -1;
+        currentDepth = 0;
+        currentBlock = 0;
+        currentFunc = "";
         std::string path = R"(../../logs/log_generator_)" + i;
         logger = Logger(path);
     }

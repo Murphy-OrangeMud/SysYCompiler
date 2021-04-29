@@ -165,6 +165,7 @@ std::string IRGenerator::GenId(ProcessedIdAST &id, std::string &code) {
     logger.SetFunc("GenId");
     std::map<std::string, GenVar>::iterator iter;
     int tmpCurrentBlock = currentBlock;
+    std::cout << currentBlock << std::endl;
     while (tmpCurrentBlock != -1) {
         iter = BlockSymbolTable[tmpCurrentBlock].find(id.getName());
         if (iter != BlockSymbolTable[tmpCurrentBlock].end()) {
@@ -176,6 +177,7 @@ std::string IRGenerator::GenId(ProcessedIdAST &id, std::string &code) {
         iter->second.id = "T" + std::to_string(T_num++);
         ReverseSymbolTable.push_back(iter->second); // ReverseSymbolTable实际上就是T_num到var信息的一个map
     }
+    return iter->second.id;
 }
 
 std::string IRGenerator::GenInitVal(InitValAST &init, std::string &code) {
@@ -347,7 +349,7 @@ void IRGenerator::GenFuncDef(FuncDefAST &funcDef, std::string &code) {
         code += ("var t" + std::to_string(i) + "\n");
     }
     code += code2;
-    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
     // TODO: 检查分支是否有返回然后考虑是否硬编码
     code += "return";
     code += (funcDef.getType() == Type::INT ? " 0 " : " ");
