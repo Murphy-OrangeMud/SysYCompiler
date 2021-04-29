@@ -27,6 +27,7 @@ public:
         std::string path = R"(../../logs/log_checker_)" + i;
         logger = Logger(path);
         currentFunc = "";
+        currentBlock = 0;
 
         FuncTable["getint"] = Function("getint", Type::INT, std::vector<Var>{});
         FuncTable["getch"] = Function("getch", Type::INT, std::vector<Var>{});

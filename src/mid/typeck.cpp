@@ -856,12 +856,12 @@ std::unique_ptr<FuncDefAST> TypeCheck::EvalFuncDef(FuncDefAST &funcDef) {
             newArgs.push_back(
                     std::make_unique<ProcessedIdAST>(dynamic_cast<IdAST *>(arg.get())->getName(),
                                                      VarType::ARRAY, false, dims));
-            args.push_back(Var(dynamic_cast<IdAST *>(arg.get())->getName(), VarType::ARRAY, false, dims));
+            args.emplace_back(dynamic_cast<IdAST *>(arg.get())->getName(), VarType::ARRAY, false, dims);
         } else {
             newArgs.push_back(
                     std::make_unique<ProcessedIdAST>(dynamic_cast<IdAST *>(arg.get())->getName(), VarType::VAR,
                                                      false));
-            args.push_back(Var(dynamic_cast<IdAST *>(arg.get())->getName(), VarType::VAR, false));
+            args.emplace_back(dynamic_cast<IdAST *>(arg.get())->getName(), VarType::VAR, false);
         }
         BlockVars[parentBlock.size()][dynamic_cast<IdAST *>(arg.get())->getName()] = args[args.size() - 1];
     }
