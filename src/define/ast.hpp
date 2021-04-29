@@ -41,6 +41,13 @@ public:
     const std::string &getName() const { return name; }
     const ASTPtrList &getArgs() const { return args; }
     const ASTPtr &getBody() const { return body; }
+
+    ~FuncDefAST() override {
+        for (auto & arg : args) {
+            arg.reset();
+        }
+        body.reset();
+    }
 };
 
 class BlockAST: public BaseAST {
@@ -53,6 +60,12 @@ public:
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
     const ASTPtrList &getStmts() const { return stmts; };
+
+    ~BlockAST() override {
+        for (auto &stmt:stmts) {
+            stmt.reset();
+        }
+    }
 };
 
 class BinaryExpAST: public BaseAST {
@@ -66,6 +79,11 @@ public:
     const Operator &getOp() const { return op; }
     const ASTPtr &getLHS() const { return left; }
     const ASTPtr &getRHS() const { return right; }
+
+    ~BinaryExpAST() override {
+        if (left) left.reset();
+        if (right) right.reset();
+    }
 private:
     Operator op;
     ASTPtr left;
@@ -88,6 +106,12 @@ public:
     const ASTPtr &getCond() const { return cond; }
     const ASTPtr &getThenStmt() const { return thenStmt; }
     const ASTPtr &getElseStmt() const { return elseStmt; }
+
+    ~IfElseAST() override {
+        if (cond) cond.reset();
+        if (thenStmt) thenStmt.reset();
+        if (elseStmt) elseStmt.reset();
+    }
 };
 
 class WhileAST: public BaseAST {
@@ -104,6 +128,11 @@ public:
 
     const ASTPtr &getCond() const { return cond; }
     const ASTPtr &getStmt() const { return stmt; }
+
+    ~WhileAST() override {
+        if (cond) cond.reset();
+        if (stmt) stmt.reset();
+    }
 };
 
 class NumberAST: public BaseAST {
@@ -136,6 +165,12 @@ public:
      const VarType getType() const { return type; }
      const ASTPtrList &getDim() const { return dim; }
      const bool isConst() const { return Const; }
+
+     ~IdAST() override {
+         for (auto &d : dim) {
+             d.reset();
+         }
+     }
 };
 
 class ProcessedIdAST: public BaseAST {
@@ -169,6 +204,10 @@ public:
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
+
+    ~UnaryExpAST() override {
+        if (unaryExp) unaryExp.reset();
+    }
 };
 
 class ControlAST: public BaseAST {
@@ -210,6 +249,12 @@ public:
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
+
+    ~ControlAST() {
+        if (returnExp) {
+            returnExp.reset();
+        }
+    }
 };
 
 class AssignAST: public BaseAST {
@@ -224,6 +269,11 @@ public:
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
+
+    ~AssignAST() override {
+        if (left) left.reset();
+        if (right) right.reset();
+    }
 };
 
 class StmtAST: public BaseAST {
@@ -237,6 +287,10 @@ public:
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
+
+    ~StmtAST() override {
+        if (stmt) stmt.reset();
+    }
 };
 
 class LValAST: public BaseAST {
@@ -254,6 +308,12 @@ public:
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
+
+    ~LValAST() {
+        for (auto & pos: position) {
+            pos.reset();
+        }
+    }
 };
 
 class FuncCallAST: public BaseAST {
@@ -269,6 +329,12 @@ public:
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
+
+    ~FuncCallAST() override {
+        for (auto & arg: args) {
+            arg.reset();
+        }
+    }
 };
 
 class VarDeclAST: public BaseAST {
@@ -283,6 +349,12 @@ public:
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
+
+    ~VarDeclAST() override {
+        for (auto & varDef: varDefs) {
+            varDef.reset();
+        }
+    }
 };
 
 class VarDefAST: public BaseAST {
@@ -300,6 +372,11 @@ public:
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
+
+    ~VarDefAST() override {
+        if (var) var.reset();
+        if (init) init.reset();
+    }
 };
 
 class InitValAST: public BaseAST {
@@ -320,6 +397,12 @@ public:
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
+
+    ~InitValAST() override {
+        for (auto & val : values) {
+            val.reset();
+        }
+    }
 };
 
 class CompUnitAST: public BaseAST {
@@ -332,6 +415,12 @@ public:
 
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
+
+    ~CompUnitAST() override {
+        for (auto & node : nodes) {
+            node.reset();
+        }
+    }
 };
 
 #endif
