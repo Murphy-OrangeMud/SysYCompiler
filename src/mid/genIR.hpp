@@ -44,7 +44,11 @@ public:
         currentBlock = 0;
         currentFunc = "";
         std::string path = R"(../../logs/log_generator_)" + i;
+#ifndef OJ
         logger = Logger(path);
+#else
+        logger = Logger();
+#endif
     }
 
     void GenerateValue(const std::string &varName, int &idx, InitValAST *init, std::vector<int> dim, int i,

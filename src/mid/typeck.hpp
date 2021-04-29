@@ -26,7 +26,11 @@ public:
 
     TypeCheck(const std::string &i) {
         std::string path = R"(../../logs/log_checker_)" + i;
+#ifndef OJ
         logger = Logger(path);
+#else
+        logger = Logger();
+#endif
         currentFunc = "";
         currentBlock = 0;
 

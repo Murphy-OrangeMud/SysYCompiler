@@ -21,8 +21,11 @@ public:
     Parser(const std::string& i) {
         lexer = Lexer();
         std::string path = R"(./logs/log_parser_)" + i;
+#ifndef OJ
         logger = Logger(path);
-        // logger.open();
+#else
+        logger = Logger();
+#endif
     }
 
     void NextToken();
