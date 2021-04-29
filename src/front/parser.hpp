@@ -21,7 +21,7 @@ public:
         lexer = Lexer();
         std::string path = R"(./logs/log_parser_)" + i;
         logger = Logger(path);
-        logger.open();
+        // logger.open();
     }
 
     void NextToken();

@@ -5,12 +5,19 @@
 #include "mid/genIR.hpp"
 
 // TODO:释放掉智能指针
+// TODO: Add command parser
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
+#ifndef OJ
+    if (argc < 3) {
         std::cerr << "Please enter filename\n";
         exit(1);
     }
     freopen(argv[1], "r", stdin);
+    if (!freopen(argv[2], "w", stdout))
+        std::cerr << "Open output file failed\n";
+#else
+    // Parse command
+#endif
     std::string path = argv[1];
     int idx = path.rfind('/');
     path = path.substr(idx+1, path.length() - idx-4);
@@ -31,6 +38,6 @@ int main(int argc, char *argv[]) {
     IRGenerator generator = IRGenerator(argv[1], std::move(FuncTable), std::move(BlockVars));
     std::string out;
     generator.GenCompUnit(*dynamic_cast<CompUnitAST*>(nRoot.get()), out);
-    std::cout << out;
+    std::cout << out << std::endl;
     return 0;
 }

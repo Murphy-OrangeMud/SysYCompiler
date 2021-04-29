@@ -337,7 +337,7 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                         return nullptr;
                     }
                     for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1; j < iter->second.dims.size(); j++) {
-                        std::cout << j << " " << iter->second.dims[j] << " " << FuncTable[func.getName()].argTable[i].dims[j - dynamic_cast<LValAST *>(arg.get())->getPosition().size()] << "\n";
+                        // std::cout << j << " " << iter->second.dims[j] << " " << FuncTable[func.getName()].argTable[i].dims[j - dynamic_cast<LValAST *>(arg.get())->getPosition().size()] << "\n";
                         if (iter->second.dims[j] != FuncTable[func.getName()].argTable[i].dims[j - dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
                             logger.Error("Unmatched parameter dim");
                             return nullptr;
@@ -538,7 +538,7 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
         }
         const std::string &name = lval.getName();
         int tmpCurrentBlock = currentBlock;
-        std::cout << tmpCurrentBlock << std::endl;
+        // std::cout << tmpCurrentBlock << std::endl;
         std::map<std::string, Var>::iterator iter;
         while (tmpCurrentBlock != -1) {
             iter = BlockVars[tmpCurrentBlock].find(name);
@@ -551,7 +551,7 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
             logger.Error("Undefined identifier " + name);
             return nullptr;
         }
-        std::cout << iter->second.name << " " << iter->second.type << std::endl;
+        // std::cout << iter->second.name << " " << iter->second.type << std::endl;
         return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
 
     } else {
@@ -848,7 +848,7 @@ std::unique_ptr<FuncDefAST> TypeCheck::EvalFuncDef(FuncDefAST &funcDef) {
             std::vector<int> dims;
             for (const auto &exp: dynamic_cast<IdAST *>(arg.get())->getDim()) {
                 auto res = exp->Eval(*this);
-                std::cout << dynamic_cast<NumberAST *>(res.get())->getVal() << std::endl;
+                // std::cout << dynamic_cast<NumberAST *>(res.get())->getVal() << std::endl;
                 logger.UnSetFunc("EvalFuncDef");
                 if (!res || !dynamic_cast<NumberAST *>(res.get())) {
                     logger.Error("Inconstant value for typed array arg dim");

@@ -38,6 +38,9 @@ void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST
                                 dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get())->getValues()[0].get())->getVal()) + "\n");
                     } else {
                         std::string res = dynamic_cast<InitValAST *>(initval.get())->getValues()[0]->GenerateIR(*this, code);
+                        for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+                        code += ("t" + std::to_string(t_num++) + " = " + res + "\n");
+                        res = "t" + std::to_string(t_num - 1);
                         index++;
                         if (index == elem) {
                             index = 0;
@@ -130,6 +133,9 @@ std::string IRGenerator::GenBinaryExp(BinaryExpAST &exp, std::string &code) {
     logger.UnSetFunc("GenBinaryExp");
     std::string t2 = exp.getRHS()->GenerateIR(*this, code);
     logger.UnSetFunc("GenBinaryExp");
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += ("t" + std::to_string(t_num++) + " = " + t2 + "\n");
+    t2 = "t" + std::to_string(t_num - 1);
     std::string res = "t" + std::to_string(t_num++);
     for (int j = 0; j < currentDepth; j++) { code += "\t"; }
     code += (res + " = " + t1 + " " + op2char(exp.getOp()) + " " + t2 + "\n");
@@ -169,7 +175,7 @@ std::string IRGenerator::GenId(ProcessedIdAST &id, std::string &code) {
     logger.SetFunc("GenId");
     std::map<std::string, GenVar>::iterator iter;
     int tmpCurrentBlock = currentBlock;
-    std::cout << currentBlock << std::endl;
+    // std::cout << currentBlock << std::endl;
     while (tmpCurrentBlock != -1) {
         iter = BlockSymbolTable[tmpCurrentBlock].find(id.getName());
         if (iter != BlockSymbolTable[tmpCurrentBlock].end()) {
@@ -205,6 +211,9 @@ std::string IRGenerator::GenAssign(AssignAST &assign, std::string &code) {
     logger.UnSetFunc("GenAssign");
     std::string r = assign.getRight()->GenerateIR(*this, code);
     logger.UnSetFunc("GenAssign");
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += ("t" + std::to_string(t_num++) + " = " + r + "\n");
+    r = "t" + std::to_string(t_num - 1);
     for (int i = 0; i < currentDepth; i++) { code += "\t"; }
     code += (l + " = " + r + "\n");
     return l;
@@ -222,6 +231,7 @@ void IRGenerator::GenCompUnit(CompUnitAST &unit, std::string &code) {
     logger.SetFunc("GenCompUnit");
     std::string str;
     int tmp = T_num;
+    int tmp2 = t_num;
     parentBlock.push_back(-1);
     for (const auto &node: unit.getNodes()) {
         if (dynamic_cast<VarDeclAST *>(node.get())) {
@@ -256,9 +266,12 @@ std::string IRGenerator::GenFuncCall(FuncCallAST &func, std::string &code) {
     logger.SetFunc("GenFuncCall");
     std::vector<std::string> args;
     for (const auto &arg: func.getArgs()) {
-        std::cout << "Begin loop " << (arg == nullptr) << "\n";
+        // std::cout << "Begin loop " << (arg == nullptr) << "\n";
         std::string res = arg->GenerateIR(*this, code);
         logger.UnSetFunc("GenFuncCall");
+        for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+        code += ("t" + std::to_string(t_num++) + " = " + res + "\n");
+        res = "t" + std::to_string(t_num - 1);
         args.push_back(res);
     }
     for (const auto &res: args) {
@@ -278,11 +291,15 @@ std::string IRGenerator::GenFuncCall(FuncCallAST &func, std::string &code) {
 
 std::string IRGenerator::GenUnaryExp(UnaryExpAST &exp, std::string &code) {
     logger.SetFunc("GenUnaryExp");
-    std::string res;
-    res += op2char(exp.getOp());
-    res += exp.getNode()->GenerateIR(*this, code);
+    std::string ret;
+    ret += op2char(exp.getOp());
+    std::string res = exp.getNode()->GenerateIR(*this, code);
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += ("t" + std::to_string(t_num++) + " = " + res + "\n");
+    res = "t" + std::to_string(t_num - 1);
+    ret += res;
     logger.UnSetFunc("GenUnaryExp");
-    return res;
+    return ret;
 }
 
 std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
@@ -305,6 +322,9 @@ std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
         for (size_t i = 0; i < lval.getPosition().size(); i++) {
             std::string var = lval.getPosition()[i]->GenerateIR(*this, code);
             logger.UnSetFunc("GenLVal");
+            for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+            code += ("t" + std::to_string(t_num++) + " = " + var + "\n");
+            var = "t" + std::to_string(t_num - 1);
             if (i < lval.getPosition().size() - 1) {
                 for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                 code += ("t" + std::to_string(t_num) + " = " + var + " * " + std::to_string(dim[i + 1]) + "\n");
@@ -327,6 +347,9 @@ std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
         code += ("t" + std::to_string(tmp) + " = 4 * t" + std::to_string(tmp) + "\n");
         std::string res = name + "[t" + std::to_string(tmp) + "]";
         return res;
+        // for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+        // code += ("t" + std::to_string(t_num++) + " = " + res + "\n");
+        // return "t" + std::to_string(t_num - 1);
     }
 }
 
