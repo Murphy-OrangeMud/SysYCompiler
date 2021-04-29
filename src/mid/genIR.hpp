@@ -25,18 +25,8 @@ private:
     std::map<std::string, Function> FuncTable;
     std::vector<GenVar> ReverseSymbolTable;
 
-    /*
-    std::map<std::string, int> SymbolTable;
-    std::vector<std::pair<std::string, VarType>> ReverseSymbolTable;
-
-    std::map<std::string, std::map<std::string, std::string>> FuncVarTable;
-    std::map<std::string, std::vector<int>> ArrayTable;
-    std::map<std::string, std::map<std::string, std::pair<std::string, std::vector<int>>>> FuncArrayTable;
-     */
-
-
 public:
-    IRGenerator(std::string &i, std::map<std::string, Function> __FuncTable, const std::map<int, std::map<std::string, Var>>& BlockVars) :FuncTable(std::move(__FuncTable)) {
+    IRGenerator(std::string i, std::map<std::string, Function> __FuncTable, const std::map<int, std::map<std::string, Var>>& BlockVars) :FuncTable(std::move(__FuncTable)) {
         for (auto &item1 : BlockVars) {
             for (auto &item2 : item1.second) {
                 if (item2.second.isConst && item2.second.argType == VarType::VAR) continue;
