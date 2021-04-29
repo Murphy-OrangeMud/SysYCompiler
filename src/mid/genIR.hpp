@@ -7,6 +7,7 @@
 #include "../define/ast.hpp"
 #include "../front/logger.hpp"
 #include "utils.hpp"
+#include "../oj.hpp"
 
 class IRGenerator {
 private:

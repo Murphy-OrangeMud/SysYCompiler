@@ -10,6 +10,7 @@
 #include "../front/logger.hpp"
 #include "../define/ast.hpp"
 #include "utils.hpp"
+#include "../oj.hpp"
 
 class TypeCheck {
 private:

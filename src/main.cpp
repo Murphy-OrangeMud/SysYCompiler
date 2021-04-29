@@ -16,7 +16,10 @@ int main(int argc, char *argv[]) {
     if (!freopen(argv[2], "w", stdout))
         std::cerr << "Open output file failed\n";
 #else
-    // Parse command
+    // std::string in_path = argv[3];
+    // std::string out_path = argv[5];
+    freopen(argv[3], "r", stdin);
+    freopen(argv[5], "w", stdout);
 #endif
     std::string path = argv[1];
     int idx = path.rfind('/');

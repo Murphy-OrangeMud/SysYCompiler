@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../define/token.hpp"
+#include "../oj.hpp"
 
 class Lexer {
 public:

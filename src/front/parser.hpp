@@ -10,6 +10,7 @@
 #include "logger.hpp"
 #include <cstdlib>
 #include <ctime>
+#include "../oj.hpp"
 
 class Parser {
 private:
