@@ -3,6 +3,7 @@
 #include <functional>
 #include <vector>
 
+// TODO: call func的结果用一个局部变量存储
 void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST *init, std::vector<int> dim, int i,
                                 std::string &code) {
     logger.SetFunc("GenerateValue");
@@ -154,9 +155,11 @@ std::string IRGenerator::GenVarDef(VarDefAST &varDef, std::string &code) {
                 code += (var + " = 0\n");
             }
         } else {
-            int idx = 0;
-            GenerateValue(var, idx, nullptr, dynamic_cast<ProcessedIdAST *>(varDef.getVar().get())->getDim(), 0, code);
-            logger.UnSetFunc("GenVarDef");
+            if (currentFunc.empty()) {
+                int idx = 0;
+                GenerateValue(var, idx, nullptr, dynamic_cast<ProcessedIdAST *>(varDef.getVar().get())->getDim(), 0, code);
+                logger.UnSetFunc("GenVarDef");
+            }
         }
     }
 }
@@ -253,6 +256,7 @@ std::string IRGenerator::GenFuncCall(FuncCallAST &func, std::string &code) {
     logger.SetFunc("GenFuncCall");
     std::vector<std::string> args;
     for (const auto &arg: func.getArgs()) {
+        std::cout << "Begin loop " << (arg == nullptr) << "\n";
         std::string res = arg->GenerateIR(*this, code);
         logger.UnSetFunc("GenFuncCall");
         args.push_back(res);
@@ -266,7 +270,9 @@ std::string IRGenerator::GenFuncCall(FuncCallAST &func, std::string &code) {
         code += ("call f_" + func.getName() + "\n");
         return {};
     } else {
-        return ("call f_" + func.getName() + "\n");
+        for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+        code += ("t" + std::to_string(t_num++) + " = call f_" + func.getName() + "\n");
+        return ("t" + std::to_string(t_num - 1));
     }
 }
 
@@ -387,7 +393,7 @@ void IRGenerator::GenIfElse(IfElseAST &stmt, std::string &code) {
     std::string cond = stmt.getCond()->GenerateIR(*this, code);
     logger.UnSetFunc("GenIfElse");
     int tmp1 = l_num;
-    for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
     code += ("if " + cond + " == 0 goto l" + std::to_string(tmp1) + "\n");
     l_num++;
     stmt.getThenStmt()->GenerateIR(*this, code);

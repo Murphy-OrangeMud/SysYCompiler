@@ -58,7 +58,7 @@ Token Lexer::parseIDKeyword() {
         c = std::cin.get();
         s += c;
         c = std::cin.peek();
-        if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_'))) {
+        if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_') || (c >= '0' && c <= '9'))) {
             if (s == "while") {
                 return Token::WHILE;
             }

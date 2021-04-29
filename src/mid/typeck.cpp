@@ -292,7 +292,12 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
         for (size_t i = 0; i < func.getArgs().size(); i++) {
             // 检查参数合法性
             auto arg = func.getArgs()[i]->Eval(*this);
-            if (FuncTable[func.getName()].argTable[i].argType == VarType::ARRAY) {
+            logger.UnSetFunc("EvalFuncCall");
+            if (!arg) {
+                logger.Error("Eval arg failed");
+                return nullptr;
+            }
+            if (FuncTable[func.getName()].argTable[i].type == VarType::ARRAY) {
                 if (dynamic_cast<NumberAST *>(arg.get())) {
                     logger.Error("Unmatched parameter type: int[] and int");
                     return nullptr;
@@ -310,10 +315,6 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                     return nullptr;
                 }
                 if (dynamic_cast<LValAST*>(arg.get())) {
-                    if (dynamic_cast<LValAST *>(arg.get())->getType() == VarType::VAR) {
-                        logger.Error("Unmatched parameter type: int[] and variable");
-                        return nullptr;
-                    }
                     int tmpCurrentBlock = currentBlock;
                     std::map<std::string, Var>::iterator iter;
                     while (tmpCurrentBlock != -1) {
@@ -327,15 +328,16 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
                         logger.Error("Undefined identifier " + dynamic_cast<LValAST *>(arg.get())->getName());
                         return nullptr;
                     }
-                    if (iter->second.argType == VarType::VAR) {
-                        logger.Error("Unmatched parameter type: int[] and variable");
+                    if (iter->second.type == VarType::VAR) {
+                        logger.Error("Unmatched parameter type: int[] and variable 2");
                         return nullptr;
                     }
                     if (iter->second.dims.size() == dynamic_cast<LValAST *>(arg.get())->getPosition().size()) {
-                        logger.Error("Unmatched parameter type: int[] and variable");
+                        logger.Error("Unmatched parameter type: int[] and variable 3");
                         return nullptr;
                     }
                     for (size_t j = dynamic_cast<LValAST *>(arg.get())->getPosition().size() + 1; j < iter->second.dims.size(); j++) {
+                        std::cout << j << " " << iter->second.dims[j] << " " << FuncTable[func.getName()].argTable[i].dims[j - dynamic_cast<LValAST *>(arg.get())->getPosition().size()] << "\n";
                         if (iter->second.dims[j] != FuncTable[func.getName()].argTable[i].dims[j - dynamic_cast<LValAST *>(arg.get())->getPosition().size()]) {
                             logger.Error("Unmatched parameter dim");
                             return nullptr;
@@ -484,7 +486,7 @@ std::unique_ptr<AssignAST> TypeCheck::EvalAssign(AssignAST &assign) {
         logger.Error("Undefined identifier " + dynamic_cast<LValAST *>(lhs.get())->getName());
         return nullptr;
     }
-    if (iter->second.argType == VarType::ARRAY && iter->second.dims.size() != dynamic_cast<LValAST *>(lhs.get())->getPosition().size()) {
+    if (iter->second.type == VarType::ARRAY && iter->second.dims.size() != dynamic_cast<LValAST *>(lhs.get())->getPosition().size()) {
         logger.Error("Mismatched type, array to assign value");
         return nullptr;
     }
@@ -512,7 +514,7 @@ std::unique_ptr<AssignAST> TypeCheck::EvalAssign(AssignAST &assign) {
             logger.Error("Undefined identifier " + dynamic_cast<LValAST *>(rhs.get())->getName());
             return nullptr;
         }
-        if (iter->second.argType == VarType::ARRAY && iter->second.dims.size() != dynamic_cast<LValAST *>(rhs.get())->getPosition().size()) {
+        if (iter->second.type == VarType::ARRAY && iter->second.dims.size() != dynamic_cast<LValAST *>(rhs.get())->getPosition().size()) {
             logger.Error("Mismatched type, array as right value");
             return nullptr;
         }
@@ -549,6 +551,7 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
             logger.Error("Undefined identifier " + name);
             return nullptr;
         }
+        std::cout << iter->second.name << " " << iter->second.type << std::endl;
         return std::make_unique<LValAST>(lval.getName(), lval.getType(), std::move(pos));
 
     } else {
@@ -843,9 +846,9 @@ std::unique_ptr<FuncDefAST> TypeCheck::EvalFuncDef(FuncDefAST &funcDef) {
         //语义要求函数定义中变量维度数一定是常量
         if (dynamic_cast<IdAST *>(arg.get())->getType() == VarType::ARRAY) {
             std::vector<int> dims;
-            dims.push_back(0);
             for (const auto &exp: dynamic_cast<IdAST *>(arg.get())->getDim()) {
                 auto res = exp->Eval(*this);
+                std::cout << dynamic_cast<NumberAST *>(res.get())->getVal() << std::endl;
                 logger.UnSetFunc("EvalFuncDef");
                 if (!res || !dynamic_cast<NumberAST *>(res.get())) {
                     logger.Error("Inconstant value for typed array arg dim");

@@ -18,14 +18,14 @@ struct GenVar {
 
 struct Var {
     std::string name;
-    VarType argType;
+    VarType type;
     bool isConst;
     std::vector<int> dims;
     int val;
 
     Var() {}
     Var(std::string _n, VarType _t, bool _c, std::vector<int> _d = std::vector<int>{}, int _v = 0) : name(
-            std::move(_n)), argType(_t), isConst(_c), dims(std::move(_d)), val(_v) {}
+            std::move(_n)), type(_t), isConst(_c), dims(std::move(_d)), val(_v) {}
 };
 
 struct Function {

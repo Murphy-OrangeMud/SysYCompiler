@@ -29,8 +29,8 @@ public:
     IRGenerator(std::string i, std::map<std::string, Function> __FuncTable, const std::map<int, std::map<std::string, Var>>& BlockVars) :FuncTable(std::move(__FuncTable)) {
         for (auto &item1 : BlockVars) {
             for (auto &item2 : item1.second) {
-                if (item2.second.isConst && item2.second.argType == VarType::VAR) continue;
-                BlockSymbolTable[item1.first][item2.first] = GenVar(item2.second.name, item2.second.argType, item2.second.dims);
+                if (item2.second.isConst && item2.second.type == VarType::VAR) continue;
+                BlockSymbolTable[item1.first][item2.first] = GenVar(item2.second.name, item2.second.type, item2.second.dims);
             }
         }
 
