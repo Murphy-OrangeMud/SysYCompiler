@@ -3,54 +3,54 @@
 
 #include <iostream>
 #include <map>
+#include <utility>
 #include "../define/ast.hpp"
 #include "../front/logger.hpp"
+#include "utils.hpp"
 
 class IRGenerator {
 private:
     int t_num;
     int T_num;
     int l_if_num;
-    int l_while_num;
     std::string tab;
-    // 所有全局符号
-    std::map<std::string, int> SymbolTable;
-    std::vector <std::pair<std::string, VarType>> ReverseSymbolTable;
-    std::string currentFunc;
-    std::map <std::string, Type> FuncTable;
-    std::map <std::string, std::map<std::string, std::string> /*编号*/> FuncVarTable;
-    std::map <std::string, std::vector<int> /*dims*/> ArrayTable;
-    std::map <std::string, std::map<std::string, std::pair<std::string, /*编号*/ std::vector < int> /*dims*/>>> FuncArrayTable;
-
     Logger logger;
+    int currentBlock;
+    std::string currentFunc;
+
+    std::map<int, std::map<std::string, GenVar>> BlockSymbolTable;
+    std::vector<int> parentBLock;
+    std::map<std::string, Function> FuncTable;
+    std::vector<std::vector<GenVar>> ReverseSymbolTable;
+
+    /*
+    std::map<std::string, int> SymbolTable;
+    std::vector<std::pair<std::string, VarType>> ReverseSymbolTable;
+
+    std::map<std::string, std::map<std::string, std::string>> FuncVarTable;
+    std::map<std::string, std::vector<int>> ArrayTable;
+    std::map<std::string, std::map<std::string, std::pair<std::string, std::vector<int>>>> FuncArrayTable;
+     */
+
+
 public:
-    IRGenerator(std::map <std::string, std::vector<int>> _table1,
-                std::map <std::string, std::map<std::string, std::vector < int>>
-
-    > _table2, const std::string& i):
-
-    ArrayTable (std::move(_table1)) {
-        for (auto & iter1 : _table2) {
-            for (auto iter2 = iter1.second.begin(); iter2 != iter1.second.end(); iter2++) {
-                FuncArrayTable[iter1.first][iter2->first].second = iter2->second;
+    IRGenerator(std::string &i, std::vector<int> _pB, std::map<std::string, Function> __FuncTable, const std::map<int, std::map<std::string, Var>>& BlockVars) :parentBLock(std::move(_pB)), FuncTable(std::move(__FuncTable)) {
+        for (auto &item1 : BlockVars) {
+            for (auto &item2 : item1.second) {
+                if (item2.second.isConst && item2.second.argType == VarType::VAR) continue;
+                BlockSymbolTable[item1.first][item2.first] = GenVar(item2.second.name, item2.second.argType, item2.second.dims);
             }
         }
+
         t_num = 0;
         T_num = 0;
         l_if_num = 0;
-        l_while_num = 0;
         std::string path = R"(../../logs/log_generator_)" + i;
         logger = Logger(path);
-        FuncTable["getint"] = Type::INT;
-        FuncTable["getch"] = Type::INT;
-        FuncTable["getarray"] = Type::INT;
-        FuncTable["putint"] = Type::VOID;
-        FuncTable["putch"] = Type::VOID;
-        FuncTable["putarray"] = Type::VOID;
-        // std::cout << (FuncArrayTable["main"].find("a") == FuncArrayTable["main"].end()) << std::endl;
     }
 
-    void GenerateValue(const std::string& varName, int &idx, InitValAST *init, std::vector<int> dim, int i, std::string &code);
+    void GenerateValue(const std::string &varName, int &idx, InitValAST *init, std::vector<int> dim, int i,
+                       std::string &code);
 
     void GenVarDecl(VarDeclAST &varDecl, std::string &code);
 

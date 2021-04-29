@@ -9,33 +9,14 @@
 #include "../define/token.hpp"
 #include "../front/logger.hpp"
 #include "../define/ast.hpp"
+#include "utils.hpp"
 
 class TypeCheck {
 private:
     Logger logger;
-    int blockNum;
     int currentBlock;
     std::string currentFunc;
 public:
-    struct Var {
-        std::string name;
-        VarType argType;
-        std::vector<int> dims;
-        bool isConst;
-        int val;
-
-        Var(std::string _n, VarType _t, bool _c, std::vector<int> _d = std::vector<int>{}, int _v = 0) : name(
-                std::move(_n)), argType(_t), isConst(_c), dims(std::move(_d)), val(_v) {}
-    };
-
-    struct Function {
-        std::string funcName;
-        Type funcType;
-        std::vector<Var> argTable;
-
-        Function(std::string _n, Type _t, std::vector<Var> _a) : funcName(std::move(_n)), funcType(_t),
-                                                                 argTable(std::move(_a)) {}
-    };
 
     std::vector<int> parentBlock;
 
@@ -45,7 +26,6 @@ public:
     TypeCheck(const std::string &i) {
         std::string path = R"(../../logs/log_checker_)" + i;
         logger = Logger(path);
-        blockNum = 0;
         currentFunc = "";
 
         FuncTable["getint"] = Function("getint", Type::INT, std::vector<Var>{});
