@@ -190,12 +190,12 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
                 logger.Error("Repeated definition: " + name);
                 return nullptr;
             }
-            if (!dynamic_cast<NumberAST *>(initVal.get())) {
-                logger.Error("Initialize constant variable with inconstant value");
+            if (!dynamic_cast<NumberAST *>(dynamic_cast<InitValAST*>(initVal.get())->getValues()[0].get())) {
+                logger.Error("Initialize const variable with inconstant value");
                 return nullptr;
             }
             BlockVars[currentBlock][name] = Var(name, VarType::VAR, varDef.isConst(), std::vector<int>{},
-                                            dynamic_cast<NumberAST *>(initVal.get())->getVal());
+                                                dynamic_cast<NumberAST *>(dynamic_cast<InitValAST*>(initVal.get())->getValues()[0].get())->getVal());
         }
 
         dynamic_cast<InitValAST *>(initVal.get())->setDim(ndim);
@@ -245,28 +245,34 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
             }
             if (varDef.getInitVal()) {
                 auto initVal = varDef.getInitVal()->Eval(*this);
+                logger.UnSetFunc("EvalVarDef");
                 if (!initVal) {
                     logger.Error("Invalid initialization");
                     return nullptr;
                 }
                 if (currentBlock == 0) {
-                    if (!dynamic_cast<NumberAST *>(initVal.get())) {
+                    if (!dynamic_cast<NumberAST *>(dynamic_cast<InitValAST*>(initVal.get())->getValues()[0].get())) {
                         logger.Error("Mismatched type in variable initialization");
                         return nullptr;
                     }
                     BlockVars[currentBlock][name] = Var(name, VarType::VAR, varDef.isConst(), std::vector<int>{},
-                                                    dynamic_cast<NumberAST *>(initVal.get())->getVal());
+                                                        dynamic_cast<NumberAST *>(dynamic_cast<InitValAST*>(initVal.get())->getValues()[0].get())->getVal());
+                } else {
+                    BlockVars[currentBlock][name] = Var(name, VarType::VAR, varDef.isConst(), std::vector<int>{});
                 }
                 return std::make_unique<VarDefAST>(varDef.isConst(), std::move(id), std::move(initVal));
             } else {
                 if (currentBlock == 0) {
                     BlockVars[currentBlock][name] = Var(name, VarType::VAR, varDef.isConst(), std::vector<int>{}, 0);
+                    ASTPtrList retlist;
+                    retlist.push_back(std::make_unique<NumberAST>(0));
+                    return std::make_unique<VarDefAST>(varDef.isConst(), std::move(id),
+                                                       std::make_unique<InitValAST>(VarType::VAR,
+                                                                                    std::move(retlist)));
+                } else {
+                    BlockVars[currentBlock][name] = Var(name, VarType::VAR, varDef.isConst(), std::vector<int>{});
+                    return std::make_unique<VarDefAST>(varDef.isConst(), std::move(id));
                 }
-                ASTPtrList retlist;
-                retlist.push_back(std::make_unique<NumberAST>(0));
-                return std::make_unique<VarDefAST>(varDef.isConst(), std::move(id),
-                                                   std::make_unique<InitValAST>(VarType::VAR,
-                                                                                std::move(retlist)));
             }
         }
     }
@@ -367,12 +373,6 @@ std::unique_ptr<FuncCallAST> TypeCheck::EvalFuncCall(FuncCallAST &func) {
 std::unique_ptr<BlockAST> TypeCheck::EvalBlock(BlockAST &block) {
     logger.SetFunc("EvalBlock");
     ASTPtrList stmts;
-    if (!currentFunc.empty() && currentBlock == 0) {
-        std::vector<Var> args = FuncTable[currentFunc].argTable;
-        for (const auto& arg: args) {
-            BlockVars[parentBlock.size()][arg.name] = arg;
-        }
-    }
     parentBlock.push_back(currentBlock);
     currentBlock = parentBlock.size() - 1;
     for (const auto &stmt: block.getStmts()) {
@@ -527,7 +527,7 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
         ASTPtrList pos;
         for (const auto &exp: lval.getPosition()) {
             auto val = exp->Eval(*this);
-            logger.UnSetFunc("EvalLValExp");
+            logger.UnSetFunc("EvalLVal");
             if (!val) {
                 logger.Error("Eval dim failed");
                 return nullptr;
@@ -536,6 +536,7 @@ ASTPtr TypeCheck::EvalLVal(LValAST &lval) {
         }
         const std::string &name = lval.getName();
         int tmpCurrentBlock = currentBlock;
+        std::cout << tmpCurrentBlock << std::endl;
         std::map<std::string, Var>::iterator iter;
         while (tmpCurrentBlock != -1) {
             iter = BlockVars[tmpCurrentBlock].find(name);
@@ -594,13 +595,13 @@ ASTPtr TypeCheck::EvalAddExp(BinaryExpAST &exp) {
     auto lval = exp.getLHS()->Eval(*this);
     logger.UnSetFunc("EvalAddExp");
     if (!lval) {
-        logger.Error("Parse rhs for eval_mul_exp failed");
+        logger.Error("Eval lhs for eval_add_exp failed");
         return nullptr;
     }
     auto rval = exp.getRHS()->Eval(*this);
     logger.UnSetFunc("EvalAddExp");
     if (!rval) {
-        logger.Error("Parse rhs for eval_mul_exp failed");
+        logger.Error("Eval rhs for eval_add_exp failed");
         return nullptr;
     }
     if (!dynamic_cast<NumberAST *>(lval.get()) || !dynamic_cast<NumberAST *>(rval.get())) {
@@ -862,6 +863,7 @@ std::unique_ptr<FuncDefAST> TypeCheck::EvalFuncDef(FuncDefAST &funcDef) {
                                                      false));
             args.push_back(Var(dynamic_cast<IdAST *>(arg.get())->getName(), VarType::VAR, false));
         }
+        BlockVars[parentBlock.size()][dynamic_cast<IdAST *>(arg.get())->getName()] = args[args.size() - 1];
     }
     if (FuncTable.find(funcDef.getName()) != FuncTable.end()) {
         logger.Error("Repeated definition of function");

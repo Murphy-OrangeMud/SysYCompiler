@@ -421,7 +421,6 @@ ASTPtr Parser::ParseBlock() {
     }
 }
 
-// TODO:按照语义要求重写ParseInitVal，根据维数手动补0
 /*
  * InitVal : Exp | "{" [InitVal {"," InitVal}] "}";
  */

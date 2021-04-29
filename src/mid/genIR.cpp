@@ -25,7 +25,8 @@ void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST
                          std::to_string(dynamic_cast<NumberAST *>(initval.get())->getVal()) + "\n");
             } else if (dynamic_cast<InitValAST *>(initval.get())) {
                 if (dynamic_cast<InitValAST *>(initval.get())->getType() == VarType::VAR) {
-                    if (dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get()))) {
+                    //列表中只有一个元素
+                    if (dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get())->getValues()[0].get())) {
                         index++;
                         if (index == elem) {
                             index = 0;
@@ -33,9 +34,9 @@ void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST
                         }
                         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                         code += (varName + "[" + std::to_string(idx++) + "] = " + std::to_string(
-                                dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get()))->getVal()) + "\n");
+                                dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get())->getValues()[0].get())->getVal()) + "\n");
                     } else {
-                        std::string res = initval->GenerateIR(*this, code);
+                        std::string res = dynamic_cast<InitValAST *>(initval.get())->getValues()[0]->GenerateIR(*this, code);
                         index++;
                         if (index == elem) {
                             index = 0;
@@ -301,6 +302,10 @@ std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
             if (i < lval.getPosition().size() - 1) {
                 for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                 code += ("t" + std::to_string(t_num) + " = " + var + " * " + std::to_string(dim[i + 1]) + "\n");
+                for (int k = i + 2; k < lval.getPosition().size(); k++) {
+                    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+                    code += ("t" + std::to_string(t_num) + " = " + "t" + std::to_string(t_num) + " * " + std::to_string(dim[k]) + "\n");
+                }
             } else {
                 for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                 code += ("t" + std::to_string(t_num) + " = " + var + "\n");
@@ -312,6 +317,7 @@ std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
             }
             tmp = t_num++;
         }
+        for (int j = 0; j < currentDepth; j++) { code += "\t"; }
         code += ("t" + std::to_string(tmp) + " = 4 * t" + std::to_string(tmp) + "\n");
         std::string res = name + "[t" + std::to_string(tmp) + "]";
         return res;
@@ -322,7 +328,7 @@ void IRGenerator::GenFuncDef(FuncDefAST &funcDef, std::string &code) {
     logger.SetFunc("GenFuncDef");
     currentFunc = funcDef.getName();
     for (size_t i = 0; i < funcDef.getArgs().size(); i++) {
-        BlockSymbolTable[currentDepth][dynamic_cast<ProcessedIdAST *>(funcDef.getArgs()[i].get())->getName()].id = "p" + std::to_string(i);
+        BlockSymbolTable[parentBlock.size()][dynamic_cast<ProcessedIdAST *>(funcDef.getArgs()[i].get())->getName()].id = "p" + std::to_string(i);
     }
     code += ("f_" + funcDef.getName() + "[" + std::to_string(funcDef.getArgs().size()) + "]\n");
     int T_tmp = T_num;
@@ -350,7 +356,6 @@ void IRGenerator::GenFuncDef(FuncDefAST &funcDef, std::string &code) {
     }
     code += code2;
     for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
-    // TODO: 检查分支是否有返回然后考虑是否硬编码
     code += "return";
     code += (funcDef.getType() == Type::INT ? " 0 " : " ");
     code += "\nend f_" + funcDef.getName() + "\n";
@@ -365,7 +370,6 @@ void IRGenerator::GenStmt(StmtAST &stmt, std::string &code) {
 }
 
 void IRGenerator::GenBlock(BlockAST &block, std::string &code) {
-    // TODO: 增加字段或者像typecheck同构更新currentBlock。
     logger.SetFunc("GenBlock");
     ++currentDepth;
     parentBlock.push_back(currentBlock);
