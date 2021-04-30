@@ -298,6 +298,11 @@ std::string IRGenerator::GenUnaryExp(UnaryExpAST &exp, std::string &code) {
     code += ("t" + std::to_string(t_num++) + " = " + res + "\n");
     res = "t" + std::to_string(t_num - 1);
     ret += res;
+    if (exp.getOp() != Operator::NONE) {
+        for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+        code += ("t" + std::to_string(t_num++) + " = " + ret + "\n");
+        ret = "t" + std::to_string(t_num - 1);
+    }
     logger.UnSetFunc("GenUnaryExp");
     return ret;
 }

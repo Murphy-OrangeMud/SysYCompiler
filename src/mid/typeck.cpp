@@ -919,5 +919,6 @@ std::unique_ptr<StmtAST> TypeCheck::EvalStmt(StmtAST &stmt) {
 }
 
 std::unique_ptr<NumberAST> TypeCheck::EvalNumber(NumberAST &num) {
+    logger.SetFunc("EvalNumber");
     return std::make_unique<NumberAST>(num.getVal());
 }

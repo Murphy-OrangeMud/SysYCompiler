@@ -4,8 +4,6 @@
 #include "front/parser.hpp"
 #include "mid/genIR.hpp"
 
-// TODO:释放掉智能指针
-// TODO: Add command parser
 int main(int argc, char *argv[]) {
 #ifndef OJ
     if (argc < 0) {
