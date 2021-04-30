@@ -18,19 +18,25 @@ int main(int argc, char *argv[]) {
 #else
     // std::string in_path = argv[3];
     // std::string out_path = argv[5];
-    freopen(argv[3], "r", stdin);
-    freopen(argv[5], "w", stdout);
+    if (!freopen(argv[3], "r", stdin)) std::cerr << "open input file failed" << std::endl;
+    if (!freopen(argv[5], "w", stdout)) std::cerr << "open output file failed" << std::endl;
 #endif
+#ifndef OJ
     std::string path = argv[1];
     int idx = path.rfind('/');
     path = path.substr(idx+1, path.length() - idx-4);
+#else
+    std::string path;
+#endif
     Parser parser = Parser(path);
+    std::cerr << "parse" << std::endl;
     ASTPtr root = parser.ParseCompUnit();
     if (!root) {
         std::cerr << "Parse error, syntax error\n";
         exit(1);
     }
     TypeCheck checker = TypeCheck(path);
+    std::cerr << "check" << std::endl;
     ASTPtr nRoot = checker.EvalCompUnit(*dynamic_cast<CompUnitAST*>(root.get()));
     if (!nRoot) {
         std::cerr << "Type check error\n";
@@ -39,6 +45,7 @@ int main(int argc, char *argv[]) {
     std::map<std::string, Function> FuncTable = checker.FuncTable;
     std::map<int, std::map<std::string, Var>> BlockVars = checker.BlockVars;
     IRGenerator generator = IRGenerator(argv[1], std::move(FuncTable), std::move(BlockVars));
+    std::cerr << "generate" << std::endl;
     std::string out;
     generator.GenCompUnit(*dynamic_cast<CompUnitAST*>(nRoot.get()), out);
     std::cout << out << std::endl;
