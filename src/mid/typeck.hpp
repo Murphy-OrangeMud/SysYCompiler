@@ -24,9 +24,9 @@ public:
     std::map<std::string, Function> FuncTable;
     std::map<int, std::map<std::string, Var>> BlockVars;
 
-    TypeCheck(const std::string &i) {
-        std::string path = R"(../../logs/log_checker_)" + i;
+    TypeCheck(const std::string &i="") {
 #ifndef OJ
+        std::string path = R"(../../logs/log_checker_)" + i;
         logger = Logger(path);
 #else
         logger = Logger();
@@ -90,6 +90,8 @@ public:
     std::unique_ptr<StmtAST> EvalStmt(StmtAST &stmt);
 
     std::unique_ptr<InitValAST> EvalInitVal(InitValAST &init);
+
+    std::unique_ptr<NumberAST> EvalNumber(NumberAST &num);
 };
 
 #endif

@@ -8,46 +8,38 @@
 // TODO: Add command parser
 int main(int argc, char *argv[]) {
 #ifndef OJ
-    if (argc < 3) {
+    if (argc < 0) {
         std::cerr << "Please enter filename\n";
         exit(1);
     }
-    freopen(argv[1], "r", stdin);
-    if (!freopen(argv[2], "w", stdout))
+    freopen("/mnt/c/Users/cheng/SysYCompiler/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy", "r", stdin);
+    if (!freopen("00.eeyore", "w", stdout))
         std::cerr << "Open output file failed\n";
 #else
-    // std::string in_path = argv[3];
-    // std::string out_path = argv[5];
-    if (!freopen(argv[3], "r", stdin)) std::cerr << "open input file failed" << std::endl;
-    if (!freopen(argv[5], "w", stdout)) std::cerr << "open output file failed" << std::endl;
+    if (argc < 6) {
+        std::cerr << "Please enter filename\n";
+        exit(1);
+    }
+    if (!freopen(argv[3], "r", stdin)) { std::cerr << "open input file failed" << std::endl; exit(1); }
+    if (!freopen(argv[5], "w", stdout)) { std::cerr << "open output file failed" << std::endl; exit(1); }
 #endif
-#ifndef OJ
-    std::string path = argv[1];
-    int idx = path.rfind('/');
-    path = path.substr(idx+1, path.length() - idx-4);
-#else
-    std::string path;
-#endif
-    Parser parser = Parser(path);
-    std::cerr << "parse" << std::endl;
+    Parser parser = Parser();
     ASTPtr root = parser.ParseCompUnit();
     if (!root) {
         std::cerr << "Parse error, syntax error\n";
         exit(1);
     }
-    TypeCheck checker = TypeCheck(path);
-    std::cerr << "check" << std::endl;
-    ASTPtr nRoot = checker.EvalCompUnit(*dynamic_cast<CompUnitAST*>(root.get()));
+    TypeCheck checker = TypeCheck();
+    ASTPtr nRoot = root->Eval(checker);
     if (!nRoot) {
         std::cerr << "Type check error\n";
         exit(1);
     }
     std::map<std::string, Function> FuncTable = checker.FuncTable;
     std::map<int, std::map<std::string, Var>> BlockVars = checker.BlockVars;
-    IRGenerator generator = IRGenerator(argv[1], std::move(FuncTable), std::move(BlockVars));
-    std::cerr << "generate" << std::endl;
+    IRGenerator generator = IRGenerator(std::move(FuncTable), std::move(BlockVars));
     std::string out;
-    generator.GenCompUnit(*dynamic_cast<CompUnitAST*>(nRoot.get()), out);
+    nRoot->GenerateIR(generator, out);
     std::cout << out << std::endl;
     return 0;
 }

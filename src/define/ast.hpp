@@ -145,6 +145,9 @@ public:
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
     const int &getVal() const { return value; }
+    ~NumberAST() override {
+        std::cerr << "~Number" << std::endl;
+    }
 };
 
 class IdAST: public BaseAST {
@@ -250,8 +253,10 @@ public:
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
-    ~ControlAST() {
+    ~ControlAST() override {
+        std::cerr << "~ControlAST" << std::endl;
         if (returnExp) {
+            std::cerr << "ready to destruct return exp" << std::endl;
             returnExp.reset();
         }
     }
@@ -309,7 +314,7 @@ public:
     ASTPtr Eval(TypeCheck &checker) override;
     std::string GenerateIR(IRGenerator &gen, std::string &code) override;
 
-    ~LValAST() {
+    ~LValAST() override {
         for (auto & pos: position) {
             pos.reset();
         }

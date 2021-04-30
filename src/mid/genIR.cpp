@@ -168,6 +168,7 @@ std::string IRGenerator::GenVarDef(VarDefAST &varDef, std::string &code) {
             }
         }
     }
+    return {};
 }
 
 // ID：全是变量，没有函数，和左值也是分开的
@@ -231,7 +232,6 @@ void IRGenerator::GenCompUnit(CompUnitAST &unit, std::string &code) {
     logger.SetFunc("GenCompUnit");
     std::string str;
     int tmp = T_num;
-    int tmp2 = t_num;
     parentBlock.push_back(-1);
     for (const auto &node: unit.getNodes()) {
         if (dynamic_cast<VarDeclAST *>(node.get())) {
@@ -347,9 +347,6 @@ std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
         code += ("t" + std::to_string(tmp) + " = 4 * t" + std::to_string(tmp) + "\n");
         std::string res = name + "[t" + std::to_string(tmp) + "]";
         return res;
-        // for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-        // code += ("t" + std::to_string(t_num++) + " = " + res + "\n");
-        // return "t" + std::to_string(t_num - 1);
     }
 }
 

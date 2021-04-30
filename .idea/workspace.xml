@@ -31,8 +31,16 @@
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/define/ast.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/ast.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/define/eval.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/eval.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/front/logger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/logger.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mid/genIR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mid/genIR.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mid/typeck.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mid/typeck.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +78,7 @@
     <property name="cf.first.check.clang-format" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/CMakeLists.txt" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
+    <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -155,14 +163,46 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="93" y="93" width="1093" height="573" key="DiffContextDialog/0.0.1280.760@0.0.1280.760" timestamp="1619282357229" />
-    <state x="421" y="135" key="FileChooserDialogImpl" timestamp="1619445094217">
+    <state x="421" y="135" key="FileChooserDialogImpl" timestamp="1619743766941">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="421" y="135" key="FileChooserDialogImpl/0.0.1280.760@0.0.1280.760" timestamp="1619445094217" />
-    <state x="147" y="10" key="SettingsEditor" timestamp="1619420987844">
+    <state x="421" y="135" key="FileChooserDialogImpl/0.0.1280.760@0.0.1280.760" timestamp="1619743766941" />
+    <state width="1238" height="190" key="GridCell.Tab.0.bottom" timestamp="1619761216444">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="147" y="10" key="SettingsEditor/0.0.1280.760@0.0.1280.760" timestamp="1619420987844" />
+    <state width="1238" height="190" key="GridCell.Tab.0.bottom/0.0.1280.760@0.0.1280.760" timestamp="1619761216444" />
+    <state width="1238" height="190" key="GridCell.Tab.0.center" timestamp="1619761216444">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state width="1238" height="190" key="GridCell.Tab.0.center/0.0.1280.760@0.0.1280.760" timestamp="1619761216444" />
+    <state width="1238" height="190" key="GridCell.Tab.0.left" timestamp="1619761216444">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state width="1238" height="190" key="GridCell.Tab.0.left/0.0.1280.760@0.0.1280.760" timestamp="1619761216444" />
+    <state width="1238" height="190" key="GridCell.Tab.0.right" timestamp="1619761216444">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state width="1238" height="190" key="GridCell.Tab.0.right/0.0.1280.760@0.0.1280.760" timestamp="1619761216444" />
+    <state width="1238" height="236" key="GridCell.Tab.1.bottom" timestamp="1619758770301">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state width="1238" height="236" key="GridCell.Tab.1.bottom/0.0.1280.760@0.0.1280.760" timestamp="1619758770301" />
+    <state width="1238" height="236" key="GridCell.Tab.1.center" timestamp="1619758770301">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state width="1238" height="236" key="GridCell.Tab.1.center/0.0.1280.760@0.0.1280.760" timestamp="1619758770301" />
+    <state width="1238" height="236" key="GridCell.Tab.1.left" timestamp="1619758770301">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state width="1238" height="236" key="GridCell.Tab.1.left/0.0.1280.760@0.0.1280.760" timestamp="1619758770301" />
+    <state width="1238" height="236" key="GridCell.Tab.1.right" timestamp="1619758770301">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state width="1238" height="236" key="GridCell.Tab.1.right/0.0.1280.760@0.0.1280.760" timestamp="1619758770301" />
+    <state x="147" y="10" key="SettingsEditor" timestamp="1619746768080">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state x="147" y="10" key="SettingsEditor/0.0.1280.760@0.0.1280.760" timestamp="1619746768080" />
     <state width="498" height="446" key="SwitcherDM" timestamp="1619445094113">
       <screen x="0" y="0" width="1280" height="760" />
     </state>

@@ -917,3 +917,7 @@ std::unique_ptr<StmtAST> TypeCheck::EvalStmt(StmtAST &stmt) {
         return std::make_unique<StmtAST>(std::move(nStmt));
     }
 }
+
+std::unique_ptr<NumberAST> TypeCheck::EvalNumber(NumberAST &num) {
+    return std::make_unique<NumberAST>(num.getVal());
+}

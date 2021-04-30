@@ -5,7 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) # ?
 
-add_compile_options(-Wall -Wno-error)
+#add_compile_options(-Wall -Wno-error -O2)
+add_compile_options(-O2 -lm -std=c++17 -Wno-register) # the same as oj
 
 include_directories(src)
 

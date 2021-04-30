@@ -45,7 +45,7 @@ ASTPtr WhileAST::Eval(TypeCheck &checker) {
 }
 
 ASTPtr NumberAST::Eval(TypeCheck &checker) {
-    return std::unique_ptr<NumberAST>(this);
+    return checker.EvalNumber(*this);
 }
 
 ASTPtr ProcessedIdAST::Eval(TypeCheck &checker) {

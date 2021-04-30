@@ -27,7 +27,7 @@ private:
     std::vector<GenVar> ReverseSymbolTable;
 
 public:
-    IRGenerator(std::string i, std::map<std::string, Function> __FuncTable, const std::map<int, std::map<std::string, Var>>& BlockVars) :FuncTable(std::move(__FuncTable)) {
+    IRGenerator(std::map<std::string, Function> __FuncTable, const std::map<int, std::map<std::string, Var>>& BlockVars, std::string i="") :FuncTable(std::move(__FuncTable)) {
         for (auto &item1 : BlockVars) {
             for (auto &item2 : item1.second) {
                 if (item2.second.isConst && item2.second.type == VarType::VAR) continue;
@@ -43,8 +43,8 @@ public:
         currentDepth = 0;
         currentBlock = 0;
         currentFunc = "";
-        std::string path = R"(../../logs/log_generator_)" + i;
 #ifndef OJ
+        std::string path = R"(../../logs/log_generator_)" + i;
         logger = Logger(path);
 #else
         logger = Logger();

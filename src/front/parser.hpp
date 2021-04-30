@@ -18,11 +18,11 @@ private:
     Logger logger;
     Token current;
 public:
-    Parser(const std::string& i) {
+    Parser(const std::string& i="") {
         lexer = Lexer();
-        std::string path = R"(./logs/log_parser_)" + i;
 #ifndef OJ
         logger = Logger(path);
+        std::string path = R"(./logs/log_parser_)" + i;
 #else
         logger = Logger();
 #endif
