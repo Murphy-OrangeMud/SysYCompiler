@@ -78,6 +78,10 @@ public:
 
     std::string GenUnaryExp(UnaryExpAST &exp, std::string &code);
 
+    std::string GenLAndExp(BinaryExpAST &exp, std::string &code);
+
+    std::string GenLOrExp(BinaryExpAST &exp, std::string &code);
+
     void GenFuncDef(FuncDefAST &funcDef, std::string &code);
 
     void GenCompUnit(CompUnitAST &unit, std::string &code);

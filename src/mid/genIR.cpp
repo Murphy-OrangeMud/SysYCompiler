@@ -501,3 +501,50 @@ void IRGenerator::GenControl(ControlAST &stmt, std::string &code) {
             break;
     }
 }
+
+std::string IRGenerator::GenLAndExp(BinaryExpAST &exp, std::string &code) {
+    logger.SetFunc("GenLAndExp");
+    std::string t1 = exp.getLHS()->GenerateIR(*this, code);
+    logger.UnSetFunc("GenLAndExp");
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += ("t" + std::to_string(t_num++) + " = " + t1 + "\n");
+    t1 = "t" + std::to_string(t_num - 1);
+    int shorthand = l_num;
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += ("if " + t1 + " == 0 goto l" + std::to_string(l_num++) + "\n");
+    std::string t2 = exp.getRHS()->GenerateIR(*this, code);
+    logger.UnSetFunc("GenLAndExp");
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += ("t" + std::to_string(t_num++) + " = " + t2 + "\n");
+    t2 = "t" + std::to_string(t_num - 1);
+    code += ("goto l" + std::to_string(l_num++) + "\n");
+    code += ("l" + std::to_string(shorthand) + ":\n");
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += (t2 + " = 0\n");
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += ("l" + std::to_string(l_num - 1) + ":\n");
+    return t2;
+}
+
+std::string IRGenerator::GenLOrExp(BinaryExpAST &exp, std::string &code) {
+    logger.SetFunc("GenLOrExp");
+    std::string t1 = exp.getLHS()->GenerateIR(*this, code);
+    logger.UnSetFunc("GenLOrExp");
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += ("t" + std::to_string(t_num++) + " = " + t1 + "\n");
+    t1 = "t" + std::to_string(t_num - 1);
+    int shorthand = l_num;
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += ("if " + t1 + " == 1 goto l" + std::to_string(l_num++) + "\n");
+    std::string t2 = exp.getRHS()->GenerateIR(*this, code);
+    logger.UnSetFunc("GenLOrExp");
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += ("t" + std::to_string(t_num++) + " = " + t2 + "\n");
+    t2 = "t" + std::to_string(t_num - 1);
+    code += ("goto l" + std::to_string(l_num++) + "\n");
+    code += ("l" + std::to_string(shorthand) + ":\n");
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += (t2 + " = 1\n");
+    code += ("l" + std::to_string(l_num - 1) + ":\n");
+    return t2;
+}

@@ -14,7 +14,13 @@ std::string BlockAST::GenerateIR(IRGenerator &gen, std::string &code) {
 }
 
 std::string BinaryExpAST::GenerateIR(IRGenerator &gen, std::string &code) {
-    return gen.GenBinaryExp(*this, code);
+    if (this->getOp() == Operator::AND) {
+        return gen.GenLAndExp(*this, code);
+    } else if (this->getOp() == Operator::OR) {
+        return gen.GenLOrExp(*this, code);
+    } else {
+        return gen.GenBinaryExp(*this, code);
+    }
 }
 
 std::string IfElseAST::GenerateIR(IRGenerator &gen, std::string &code) {
