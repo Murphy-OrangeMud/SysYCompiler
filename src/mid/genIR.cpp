@@ -131,6 +131,9 @@ std::string IRGenerator::GenBinaryExp(BinaryExpAST &exp, std::string &code) {
     logger.SetFunc("GenBinaryExp");
     std::string t1 = exp.getLHS()->GenerateIR(*this, code);
     logger.UnSetFunc("GenBinaryExp");
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+    code += ("t" + std::to_string(t_num++) + " = " + t1 + "\n");
+    t1 = "t" + std::to_string(t_num - 1);
     std::string t2 = exp.getRHS()->GenerateIR(*this, code);
     logger.UnSetFunc("GenBinaryExp");
     for (int j = 0; j < currentDepth; j++) { code += "\t"; }
