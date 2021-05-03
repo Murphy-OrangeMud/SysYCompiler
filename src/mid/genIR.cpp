@@ -491,6 +491,9 @@ void IRGenerator::GenControl(ControlAST &stmt, std::string &code) {
                 std::string ret = stmt.getReturnExp()->GenerateIR(*this, code);
                 logger.UnSetFunc("GenControl");
                 for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+                code += ("t" + std::to_string(t_num++) + " = " + ret + "\n");
+                ret = ("t" + std::to_string(t_num - 1));
+                for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                 code += ("return " + ret + "\n");
             } else {
                 for (int j = 0; j < currentDepth; j++) { code += "\t"; }
