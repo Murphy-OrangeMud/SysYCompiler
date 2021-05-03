@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     ASTPtr nRoot = root->Eval(checker);
     if (!nRoot) {
         std::cerr << "Type check error\n";
-        exit(1);
+        exit(2);
     }
     std::map<std::string, Function> FuncTable = checker.FuncTable;
     std::map<int, std::map<std::string, Var>> BlockVars = checker.BlockVars;
