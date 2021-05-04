@@ -51,7 +51,7 @@ public:
 #endif
     }
 
-    void GenerateValue(const std::string &varName, int &idx, InitValAST *init, std::vector<int> dim, int i,
+    void GenerateValue(const std::string &varName, int &idx, int indx, InitValAST *init, std::vector<int> dim, int i,
                        std::string &code);
 
     void GenVarDecl(VarDeclAST &varDecl, std::string &code);

@@ -3,7 +3,7 @@
 #include <functional>
 #include <vector>
 
-void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST *init, std::vector<int> dim, int i,
+void IRGenerator::GenerateValue(const std::string &varName, int &idx, int indx, InitValAST *init, std::vector<int> dim, int i,
                                 std::string &code) {
     logger.SetFunc("GenerateValue");
     int elem = 1;
@@ -52,26 +52,32 @@ void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST
                         idx++;
                     }
                 } else {
+                    // 新的一维初始化，和前面那一维没关系
                     i_idx++;
-                    GenerateValue(varName, idx, dynamic_cast<InitValAST *>(initval.get()), dim, i + 1, code);
+                    GenerateValue(varName, idx, 0, dynamic_cast<InitValAST *>(initval.get()), dim, i + 1, code);
                     logger.UnSetFunc("GenerateValue");
                 }
             }
         }
         for (int j = i_idx; j < dim[i]; j++) {
-            GenerateValue(varName, idx, nullptr, dim, i + 1, code);
+            GenerateValue(varName, idx, index, nullptr, dim, i + 1, code);
             logger.UnSetFunc("GenerateValue");
         }
     } else {
-        if (i == dim.size() - 1) {
-            for (int j = 0; j < dim[i]; j++) {
+        if (i == dim.size()) {
+            for (int k = 0; k < currentDepth; k++) { code += "\t"; }
+            code += (varName + "[" + std::to_string(idx*4) + "] = 0\n");
+            idx++;
+        }
+        else if (i == dim.size() - 1) {
+            for (int j = indx; j < dim[i]; j++) {
                 for (int k = 0; k < currentDepth; k++) { code += "\t"; }
                 code += (varName + "[" + std::to_string(idx*4) + "] = 0\n");
                 idx++;
             }
         } else {
-            for (int j = 0; j < dim[i]; j++) {
-                GenerateValue(varName, idx, nullptr, dim, i + 1, code);
+            for (int j = indx; j < dim[i]; j++) {
+                GenerateValue(varName, idx, 0, nullptr, dim, i + 1, code);
                 logger.UnSetFunc("GenerateValue");
             }
         }
@@ -169,7 +175,7 @@ std::string IRGenerator::GenVarDef(VarDefAST &varDef, std::string &code) {
         } else {
             if (currentFunc.empty()) {
                 int idx = 0;
-                GenerateValue(var, idx, nullptr, dynamic_cast<ProcessedIdAST *>(varDef.getVar().get())->getDim(), 0, code);
+                GenerateValue(var, idx, 0, nullptr, dynamic_cast<ProcessedIdAST *>(varDef.getVar().get())->getDim(), 0, code);
                 logger.UnSetFunc("GenVarDef");
             }
         }
@@ -182,7 +188,6 @@ std::string IRGenerator::GenId(ProcessedIdAST &id, std::string &code) {
     logger.SetFunc("GenId");
     std::map<std::string, GenVar>::iterator iter;
     int tmpCurrentBlock = currentBlock;
-    // std::cout << currentBlock << std::endl;
     while (tmpCurrentBlock != -1) {
         iter = BlockSymbolTable[tmpCurrentBlock].find(id.getName());
         if (iter != BlockSymbolTable[tmpCurrentBlock].end()) {
@@ -206,7 +211,7 @@ std::string IRGenerator::GenInitVal(InitValAST &init, std::string &code) {
         code += ("T" + std::to_string(T_num - 1) + " = " + res + "\n");
     } else {
         int idx = 0;
-        GenerateValue("T" + std::to_string(T_num - 1), idx, &init, init.getDims(), 0, code);
+        GenerateValue("T" + std::to_string(T_num - 1), idx, 0, &init, init.getDims(), 0, code);
         logger.SetFunc("GenInitVal");
     }
     return "T" + std::to_string(T_num - 1);
