@@ -130,14 +130,14 @@ Token Lexer::NextToken() {
         else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_')) {
             return parseIDKeyword();
         }
+        else if (c == EOF) {
+            return Token::END;
+        }
         else if (c <= 32) {
             c = std::cin.get();
             continue;
         }
         else {
-            if (c == EOF) {
-                return Token::END;
-            }
             switch(c) {
                 case '+': {
                     c = std::cin.get();
