@@ -3,7 +3,6 @@
 #include <functional>
 #include <vector>
 
-// TODO: call func的结果用一个局部变量存储
 void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST *init, std::vector<int> dim, int i,
                                 std::string &code) {
     logger.SetFunc("GenerateValue");
@@ -22,8 +21,9 @@ void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST
                     i_idx++;
                 }
                 for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-                code += (varName + "[" + std::to_string(idx++) + "] = " +
+                code += (varName + "[" + std::to_string(idx*4) + "] = " +
                          std::to_string(dynamic_cast<NumberAST *>(initval.get())->getVal()) + "\n");
+                idx++;
             } else if (dynamic_cast<InitValAST *>(initval.get())) {
                 if (dynamic_cast<InitValAST *>(initval.get())->getType() == VarType::VAR) {
                     //列表中只有一个元素
@@ -34,8 +34,9 @@ void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST
                             i_idx++;
                         }
                         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-                        code += (varName + "[" + std::to_string(idx++) + "] = " + std::to_string(
+                        code += (varName + "[" + std::to_string(idx*4) + "] = " + std::to_string(
                                 dynamic_cast<NumberAST *>(dynamic_cast<InitValAST *>(initval.get())->getValues()[0].get())->getVal()) + "\n");
+                        idx++;
                     } else {
                         std::string res = dynamic_cast<InitValAST *>(initval.get())->getValues()[0]->GenerateIR(*this, code);
                         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
@@ -47,7 +48,8 @@ void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST
                             i_idx++;
                         }
                         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-                        code += (varName + "[" + std::to_string(idx++) + "] = " + res + "\n");
+                        code += (varName + "[" + std::to_string(idx*4) + "] = " + res + "\n");
+                        idx++;
                     }
                 } else {
                     i_idx++;
@@ -64,7 +66,8 @@ void IRGenerator::GenerateValue(const std::string &varName, int &idx, InitValAST
         if (i == dim.size() - 1) {
             for (int j = 0; j < dim[i]; j++) {
                 for (int k = 0; k < currentDepth; k++) { code += "\t"; }
-                code += (varName + "[" + std::to_string(idx++) + "] = 0\n");
+                code += (varName + "[" + std::to_string(idx*4) + "] = 0\n");
+                idx++;
             }
         } else {
             for (int j = 0; j < dim[i]; j++) {
