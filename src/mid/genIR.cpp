@@ -168,9 +168,9 @@ std::string IRGenerator::GenVarDef(VarDefAST &varDef, std::string &code) {
             }
         } else {
             if (currentFunc.empty()) {
-                //int idx = 0;
-                //GenerateValue(var, idx, nullptr, dynamic_cast<ProcessedIdAST *>(varDef.getVar().get())->getDim(), 0, code);
-                //logger.UnSetFunc("GenVarDef");
+                int idx = 0;
+                GenerateValue(var, idx, nullptr, dynamic_cast<ProcessedIdAST *>(varDef.getVar().get())->getDim(), 0, code);
+                logger.UnSetFunc("GenVarDef");
             }
         }
     }
