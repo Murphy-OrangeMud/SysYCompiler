@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
         std::cerr << "Please enter filename\n";
         exit(1);
     }
-    if (!freopen(argv[3], "r", stdin)) { std::cerr << "open input file failed" << std::endl; exit(1); }
-    if (!freopen(argv[5], "w", stdout)) { std::cerr << "open output file failed" << std::endl; exit(1); }
+    if (!freopen(argv[3], "r", stdin)) { std::cerr << "open input file failed" << std::endl; exit(7); }
+    if (!freopen(argv[5], "w", stdout)) { std::cerr << "open output file failed" << std::endl; exit(8); }
 #endif
     Parser parser = Parser();
     ASTPtr root = parser.ParseCompUnit();

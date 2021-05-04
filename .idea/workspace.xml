@@ -31,14 +31,8 @@
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/define/ast.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/ast.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/define/eval.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/eval.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/front/logger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/logger.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/front/parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/genIR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mid/genIR.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/typeck.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/typeck.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.hpp" afterDir="false" />
     </list>
@@ -199,6 +193,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state width="1238" height="236" key="GridCell.Tab.1.right/0.0.1280.760@0.0.1280.760" timestamp="1619758770301" />
+    <state x="140" y="100" key="RollbackChangesDialog" timestamp="1620113187090">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state x="140" y="100" key="RollbackChangesDialog/0.0.1280.760@0.0.1280.760" timestamp="1620113187090" />
     <state x="147" y="10" key="SettingsEditor" timestamp="1619746768080">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
@@ -215,10 +213,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="448" y="293" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1280.760@0.0.1280.760" timestamp="1619421626079" />
-    <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1619711239362">
+    <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1620055382107">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1619711239362" />
+    <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1620055382107" />
     <state x="301" y="174" key="run.anything.popup" timestamp="1619433496345">
       <screen x="0" y="0" width="1280" height="760" />
     </state>

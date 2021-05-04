@@ -6,7 +6,6 @@
 #include "../define/ast.hpp"
 #include "typeck.hpp"
 
-// TODO: 确认FillInValue的正确性
 bool TypeCheck::FillInValue(int *memory, InitValAST *init, std::vector<int> &dim, size_t i) {
     logger.SetFunc("FillInValue");
     int idx = 0;
@@ -122,6 +121,7 @@ std::unique_ptr<VarDeclAST> TypeCheck::EvalVarDecl(VarDeclAST &varDecl) {
 
 std::unique_ptr<ProcessedIdAST> TypeCheck::EvalId(IdAST &id) {
     logger.SetFunc("EvalId");
+    logger.Info("Var Name: " + id.getName() + ", Var type: " + std::to_string(id.getType()) + ", var dim size: " + std::to_string(id.getDim().size()));
     std::vector<int> ndim;
     for (const auto &exp: id.getDim()) {
         if (dynamic_cast<NumberAST *>(exp.get())) {
@@ -142,12 +142,19 @@ std::unique_ptr<ProcessedIdAST> TypeCheck::EvalId(IdAST &id) {
                 return nullptr;
             }
             ndim.push_back(dynamic_cast<NumberAST *>(result.get())->getVal());
+        } else if (dynamic_cast<LValAST *>(exp.get())) {
+            auto result = dynamic_cast<LValAST *>(exp.get())->Eval(*this);
+            logger.UnSetFunc("EvalId");
+            if (!dynamic_cast<NumberAST *>(result.get())) {
+                logger.Error("Declare array with variable size");
+                return nullptr;
+            }
+            ndim.push_back(dynamic_cast<NumberAST *>(result.get())->getVal());
         }
     }
     return std::make_unique<ProcessedIdAST>(id.getName(), id.getType(), id.isConst(), std::move(ndim));
 }
 
-// FillInValue没用，只是用来检查初始值是否都是常量
 std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
     logger.SetFunc("EvalVarDef");
     if (varDef.isConst()) {
@@ -206,7 +213,7 @@ std::unique_ptr<VarDefAST> TypeCheck::EvalVarDef(VarDefAST &varDef) {
         std::string name = dynamic_cast<ProcessedIdAST *>(id.get())->getName();
         VarType type = dynamic_cast<ProcessedIdAST *>(id.get())->getType();
         std::vector<int> ndim = dynamic_cast<ProcessedIdAST *>(id.get())->getDim();
-        logger.Info("Var name: " + name + ", var type: " + std::to_string(type));
+        logger.Info("Var name: " + name + ", var type: " + std::to_string(type) + ", var dim size: " + std::to_string(ndim.size()));
         if (type == VarType::ARRAY) {
             int size = 1;
             for (auto x: ndim) {
