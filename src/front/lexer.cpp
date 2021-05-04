@@ -219,7 +219,8 @@ Token Lexer::NextToken() {
                         op = Operator::AND;
                         return Token::OPERATOR;
                     }
-                    return Token::ERROR;
+                    //return Token::ERROR;
+                    exit(11);
                 }
                 case '|': {
                     c = std::cin.get();
@@ -229,7 +230,8 @@ Token Lexer::NextToken() {
                         op = Operator::OR;
                         return Token::OPERATOR;
                     }
-                    return Token::ERROR;
+                    //return Token::ERROR;
+                    exit(12);
                 }
                 case '(': {
                     c = std::cin.get();
@@ -279,7 +281,8 @@ Token Lexer::NextToken() {
                     break;
                 }
                 default:
-                    return Token::ERROR;
+                    //return Token::ERROR;
+                    exit(13);
             }
         }
     }
