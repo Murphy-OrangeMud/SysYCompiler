@@ -21,6 +21,9 @@ int main(int argc, char *argv[]) {
     if (!freopen(argv[3], "r", stdin)) { std::cerr << "open input file failed" << std::endl; exit(7); }
     if (!freopen(argv[5], "w", stdout)) { std::cerr << "open output file failed" << std::endl; exit(8); }
 #endif
+
+#ifdef SYSY2EEYORE
+    using namespace SysYToEeyore;
     Parser parser = Parser();
     ASTPtr root = parser.ParseCompUnit();
     if (!root) {
@@ -39,5 +42,14 @@ int main(int argc, char *argv[]) {
     std::string out;
     nRoot->GenerateIR(generator, out);
     std::cout << out << std::endl;
+#else
+#ifdef EEYORE2TIGGER
+    using namespace EeyoreToTigger;
+#else
+#ifdef TIGGER2RISCV
+#else
+#endif
+#endif
+#endif
     return 0;
 }

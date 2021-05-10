@@ -7,9 +7,9 @@
 #include <utility>
 #include <vector>
 #include "../define/token.hpp"
-#include "../front/logger.hpp"
+#include "utils/logger.hpp"
 #include "../define/ast.hpp"
-#include "utils.hpp"
+#include "../utils/utils.hpp"
 #include "../oj.hpp"
 
 class TypeCheck {
@@ -24,10 +24,10 @@ public:
     std::map<std::string, Function> FuncTable;
     std::map<int, std::map<std::string, Var>> BlockVars;
 
-    TypeCheck(const std::string &i="") {
+    TypeCheck(const std::string &i = "") {
 #ifndef OJ
         std::string path = R"(../../logs/log_checker_)" + i;
-        logger = Logger(path);
+    logger = Logger(path);
 #else
         logger = Logger();
 #endif
@@ -37,7 +37,7 @@ public:
         FuncTable["getint"] = Function("getint", Type::INT, std::vector<Var>{});
         FuncTable["getch"] = Function("getch", Type::INT, std::vector<Var>{});
         FuncTable["getarray"] = Function("getarray", Type::INT,
-                                          std::vector<Var>{Var("a", VarType::ARRAY, false, std::vector<int>{0})});
+                                         std::vector<Var>{Var("a", VarType::ARRAY, false, std::vector<int>{0})});
         FuncTable["putint"] = Function("putint", Type::VOID, std::vector<Var>{Var("a", VarType::VAR, false)});
         FuncTable["putch"] = Function("putch", Type::VOID, std::vector<Var>{Var("a", VarType::VAR, false)});
         FuncTable["putarray"] = Function("putarray", Type::VOID, std::vector<Var>{Var("a", VarType::VAR, false),

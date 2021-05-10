@@ -1,10 +1,9 @@
-#include <iostream>
-#include <string>
 #include "lexer.hpp"
+#include <define/irtok.hpp>
+#include <iostream>
 
-namespace SysYToEeyore {
-
-    Token Lexer::parseInt() {
+namespace EeyoreToTigger {
+    Token Lexer::ParseNum() {
         char c = std::cin.peek();
         int val = 0;
         if (c == '0') {
@@ -53,7 +52,7 @@ namespace SysYToEeyore {
         }
     }
 
-    Token Lexer::parseIDKeyword() {
+    Token Lexer::ParseSymbol() {
         std::string s;
         char c;
         while (true) {
@@ -61,63 +60,38 @@ namespace SysYToEeyore {
             s += c;
             c = std::cin.peek();
             if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_') || (c >= '0' && c <= '9'))) {
-                if (s == "while") {
-                    return Token::WHILE;
+                if (s == "var") {
+                    return Token::VAR;
                 }
-                if (s == "break") {
-                    return Token::BREAK;
-                }
-                if (s == "continue") {
-                    return Token::CONTINUE;
-                }
-                if (s == "return") {
-                    return Token::RETURN;
-                }
-                if (s == "int") {
-                    type = Type::INT;
-                    return Token::TYPE;
-                }
-                if (s == "void") {
-                    type = Type::VOID;
-                    return Token::TYPE;
+                if (s == "end") {
+                    return Token::FUNCEND;
                 }
                 if (s == "if") {
                     return Token::IF;
                 }
-                if (s == "else") {
-                    return Token::ELSE;
+                if (s == "goto") {
+                    return Token::GOTO;
                 }
-                if (s == "const")  {
-                    return Token::CONST;
+                if (s == "return") {
+                    return Token::RETURN;
                 }
-                name = std::move(s);
-                return Token::IDENTIFIER;
+                if (s == "call") {
+                    return Token::CALL;
+                }
+                if (s == "param") {
+                    return Token::PARAM;
+                }
+                name = s;
+                return Token::SYMBOL;
             }
         }
     }
 
-    Token Lexer::parseComment() {
+    Token Lexer::ParseComment() {
         char c;
         c = std::cin.get();
-        if (c == '*') {
-            // multi-line comment
-            while (true) {
-                c = std::cin.peek();
-                if (c == '*') {
-                    c = std::cin.get();
-                    c = std::cin.peek();
-                    if (c == '/') {
-                        c = std::cin.get();
-                        break;
-                    }
-                }
-                c = std::cin.get();
-            }
-        } else if (c == '/') {
-            // single-line comment
-            while ((c = std::cin.peek()) != '\n') {
-                c = std::cin.get();
-            }
+        while ((c = std::cin.peek()) != '\n') {
+            c = std::cin.get();
         }
         return Token::COMMENT;
     }
@@ -127,48 +101,51 @@ namespace SysYToEeyore {
         while (true) {
             c = std::cin.peek();
             if (c >= '0' && c <= '9') {
-                return parseInt();
+                return ParseNum();
             }
             else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_')) {
-                return parseIDKeyword();
+                return ParseSymbol();
             }
             else if (c == EOF) {
                 return Token::END;
             }
             else if (c <= 32) {
+                if (c == '\n') {
+                    lineno++;
+                }
                 c = std::cin.get();
                 continue;
             }
             else {
-                switch(c) {
+                switch (c) {
                     case '+': {
                         c = std::cin.get();
                         op = Operator::ADD;
-                        return Token::OPERATOR;
+                        return Token::OP;
                     }
                     case '-': {
                         c = std::cin.get();
                         op = Operator::SUB;
-                        return Token::OPERATOR;
+                        return Token::OP;
                     }
                     case '*': {
                         c = std::cin.get();
                         op = Operator::MUL;
-                        return Token::OPERATOR;
+                        return Token::OP;
                     }
                     case '/': {
                         c = std::cin.get();
                         c = std::cin.peek();
-                        if (c == '/' || c == '*') {
-                            return parseComment();
+                        if (c == '/') {
+                            return ParseComment();
                         }
                         op = Operator::DIV;
-                        return Token::OPERATOR;
+                        return Token::OP;
                     }
                     case '%': {
                         c = std::cin.get();
                         op = Operator::MOD;
-                        return Token::OPERATOR;
+                        return Token::OP;
                     }
                     case '>': {
                         c = std::cin.get();
@@ -176,10 +153,10 @@ namespace SysYToEeyore {
                         if (c == '=') {
                             c = std::cin.get();
                             op = Operator::GE;
-                            return Token::OPERATOR;
+                            return Token::LOGICOP;
                         } else {
                             op = Operator::GT;
-                            return Token::OPERATOR;
+                            return Token::LOGICOP;
                         }
                     }
                     case '<': {
@@ -188,10 +165,10 @@ namespace SysYToEeyore {
                         if (c == '=') {
                             c = std::cin.get();
                             op = Operator::LE;
-                            return Token::OPERATOR;
+                            return Token::LOGICOP;
                         } else {
                             op = Operator::LT;
-                            return Token::OPERATOR;
+                            return Token::LOGICOP;
                         }
                     }
                     case '=': {
@@ -200,7 +177,7 @@ namespace SysYToEeyore {
                         if (c == '=') {
                             c = std::cin.get();
                             op = Operator::EQ;
-                            return Token::OPERATOR;
+                            return Token::LOGICOP;
                         } else {
                             return Token::ASSIGN;
                         }
@@ -211,41 +188,11 @@ namespace SysYToEeyore {
                         if (c == '=') {
                             c = std::cin.get();
                             op = Operator::NEQ;
-                            return Token::OPERATOR;
+                            return Token::LOGICOP;
                         } else {
                             op = Operator::NOT;
-                            return Token::OPERATOR;
+                            return Token::OP;
                         }
-                    }
-                    case '&': {
-                        c = std::cin.get();
-                        c = std::cin.peek();
-                        if (c == '&') {
-                            c = std::cin.get();
-                            op = Operator::AND;
-                            return Token::OPERATOR;
-                        }
-                        //return Token::ERROR;
-                        exit(11);
-                    }
-                    case '|': {
-                        c = std::cin.get();
-                        c = std::cin.peek();
-                        if (c == '|') {
-                            c = std::cin.get();
-                            op = Operator::OR;
-                            return Token::OPERATOR;
-                        }
-                        //return Token::ERROR;
-                        exit(12);
-                    }
-                    case '(': {
-                        c = std::cin.get();
-                        return Token::LP;
-                    }
-                    case ')': {
-                        c = std::cin.get();
-                        return Token::RP;
                     }
                     case '[': {
                         c = std::cin.get();
@@ -255,35 +202,15 @@ namespace SysYToEeyore {
                         c = std::cin.get();
                         return Token::RSB;
                     }
-                    case '{': {
+                    case ':': {
                         c = std::cin.get();
-                        return Token::LB;
-                    }
-                    case '}': {
-                        c = std::cin.get();
-                        return Token::RB;
-                    }
-                    case '\'': {
-                        c = std::cin.get();
-                        return Token::SQM;
-                    }
-                    case '"': {
-                        c = std::cin.get();
-                        return Token::DQM;
-                    }
-                    case ';': {
-                        c = std::cin.get();
-                        return Token::SC;
-                    }
-                    case ',': {
-                        c = std::cin.get();
-                        return Token::CO;
+                        return Token::COLON;
                     }
                     default:
-                        //return Token::ERROR;
-                        exit(13);
+                        exit(23);
                 }
             }
         }
+
     }
 }

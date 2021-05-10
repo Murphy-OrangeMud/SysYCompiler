@@ -3,6 +3,8 @@
 #include "../mid/typeck.hpp"
 #include "../mid/genIR.hpp"
 
+using namespace SysYToEeyore;
+
 ASTPtr FuncDefAST::Eval(TypeCheck &checker) {
     return checker.EvalFuncDef(*this);
 }

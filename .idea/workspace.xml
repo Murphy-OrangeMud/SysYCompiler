@@ -20,7 +20,7 @@
   </component>
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated>
-      <config projectName="SysYCompiler" targetName="sysyc" />
+      <config projectName="SysYCompiler" targetName="compiler" />
     </generated>
   </component>
   <component name="CMakeSettings" AUTO_RELOAD="true">
@@ -30,9 +30,53 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/back/lexer.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/back/lexer.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/back/liveanalyze.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/back/liveanalyze.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/back/liveseg.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/back/liveseg.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/back/parser.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/back/parser.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/back/register_alloc.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/define/analysis.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/define/codegen.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/define/ir.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/define/irtok.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/define/seg.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/02_arr_defn4.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/02_arr_defn4.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/76_int_factor_sum.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/76_int_factor_sum.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/00_bitset1.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/00_bitset1.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/01_mm1.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/01_mm1.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/02_mv1.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/02_mv1.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/03_sort1.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/03_sort1.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/04_spmv1.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/04_spmv1.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/conv0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/conv0.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/fft0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/fft0.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/define/eval.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/eval.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/define/token.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/token.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/lexer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/lexer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/lexer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/lexer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/logger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/logger.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/logger.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/logger.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front/parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/genIR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/genIR.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mid/typeck.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mid/typeck.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mid/utils.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/utils.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/oj.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/oj.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +102,7 @@
     <option name="directoryName" value="w4nfj141" />
   </component>
   <component name="ProjectId" id="1qw9MwjBoVeBOz7rb32y0FxJ6ba" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -74,18 +119,20 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\cheng\SysYCompiler\src\utils" />
+      <recent name="C:\Users\cheng\SysYCompiler\src\back" />
       <recent name="C:\Users\cheng\SysYCompiler\src\define" />
       <recent name="C:\Users\cheng\SysYCompiler\src\front" />
       <recent name="C:\Users\cheng\SysYCompiler\src" />
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
-    <configuration name="sysyc" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SysYCompiler" TARGET_NAME="sysyc" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SysYCompiler" RUN_TARGET_NAME="sysyc">
+    <configuration name="compiler" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SysYCompiler" TARGET_NAME="compiler" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SysYCompiler" RUN_TARGET_NAME="compiler">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -107,6 +154,7 @@
       <workItem from="1617979742179" duration="69126000" />
       <workItem from="1618464254646" duration="75851000" />
       <workItem from="1619183989074" duration="150676000" />
+      <workItem from="1620549844733" duration="38587000" />
     </task>
     <task id="LOCAL-00001" summary="solve part of the bugs before doing if/else modification">
       <created>1619585423123</created>
@@ -147,10 +195,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="96" y="35" width="1086" height="713" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.760@0.0.1280.760" timestamp="1618734079411" />
-    <state x="352" y="181" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1619709884762">
+    <state x="352" y="181" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1620551327046">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="352" y="181" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.760@0.0.1280.760" timestamp="1619709884762" />
+    <state x="352" y="181" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.760@0.0.1280.760" timestamp="1620551327046" />
     <state x="93" y="93" width="1093" height="573" key="DiffContextDialog" timestamp="1619282357229">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
@@ -159,38 +207,38 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="421" y="135" key="FileChooserDialogImpl/0.0.1280.760@0.0.1280.760" timestamp="1619743766941" />
-    <state width="1238" height="190" key="GridCell.Tab.0.bottom" timestamp="1619761216444">
+    <state width="1238" height="236" key="GridCell.Tab.0.bottom" timestamp="1620543420563">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1238" height="190" key="GridCell.Tab.0.bottom/0.0.1280.760@0.0.1280.760" timestamp="1619761216444" />
-    <state width="1238" height="190" key="GridCell.Tab.0.center" timestamp="1619761216444">
+    <state width="1238" height="236" key="GridCell.Tab.0.bottom/0.0.1280.760@0.0.1280.760" timestamp="1620543420563" />
+    <state width="1238" height="236" key="GridCell.Tab.0.center" timestamp="1620543420562">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1238" height="190" key="GridCell.Tab.0.center/0.0.1280.760@0.0.1280.760" timestamp="1619761216444" />
-    <state width="1238" height="190" key="GridCell.Tab.0.left" timestamp="1619761216444">
+    <state width="1238" height="236" key="GridCell.Tab.0.center/0.0.1280.760@0.0.1280.760" timestamp="1620543420562" />
+    <state width="1238" height="236" key="GridCell.Tab.0.left" timestamp="1620543420562">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1238" height="190" key="GridCell.Tab.0.left/0.0.1280.760@0.0.1280.760" timestamp="1619761216444" />
-    <state width="1238" height="190" key="GridCell.Tab.0.right" timestamp="1619761216444">
+    <state width="1238" height="236" key="GridCell.Tab.0.left/0.0.1280.760@0.0.1280.760" timestamp="1620543420562" />
+    <state width="1238" height="236" key="GridCell.Tab.0.right" timestamp="1620543420562">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1238" height="190" key="GridCell.Tab.0.right/0.0.1280.760@0.0.1280.760" timestamp="1619761216444" />
-    <state width="1238" height="236" key="GridCell.Tab.1.bottom" timestamp="1619758770301">
+    <state width="1238" height="236" key="GridCell.Tab.0.right/0.0.1280.760@0.0.1280.760" timestamp="1620543420562" />
+    <state width="1238" height="236" key="GridCell.Tab.1.bottom" timestamp="1620543420564">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1238" height="236" key="GridCell.Tab.1.bottom/0.0.1280.760@0.0.1280.760" timestamp="1619758770301" />
-    <state width="1238" height="236" key="GridCell.Tab.1.center" timestamp="1619758770301">
+    <state width="1238" height="236" key="GridCell.Tab.1.bottom/0.0.1280.760@0.0.1280.760" timestamp="1620543420564" />
+    <state width="1238" height="236" key="GridCell.Tab.1.center" timestamp="1620543420563">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1238" height="236" key="GridCell.Tab.1.center/0.0.1280.760@0.0.1280.760" timestamp="1619758770301" />
-    <state width="1238" height="236" key="GridCell.Tab.1.left" timestamp="1619758770301">
+    <state width="1238" height="236" key="GridCell.Tab.1.center/0.0.1280.760@0.0.1280.760" timestamp="1620543420563" />
+    <state width="1238" height="236" key="GridCell.Tab.1.left" timestamp="1620543420563">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1238" height="236" key="GridCell.Tab.1.left/0.0.1280.760@0.0.1280.760" timestamp="1619758770301" />
-    <state width="1238" height="236" key="GridCell.Tab.1.right" timestamp="1619758770301">
+    <state width="1238" height="236" key="GridCell.Tab.1.left/0.0.1280.760@0.0.1280.760" timestamp="1620543420563" />
+    <state width="1238" height="236" key="GridCell.Tab.1.right" timestamp="1620543420564">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1238" height="236" key="GridCell.Tab.1.right/0.0.1280.760@0.0.1280.760" timestamp="1619758770301" />
+    <state width="1238" height="236" key="GridCell.Tab.1.right/0.0.1280.760@0.0.1280.760" timestamp="1620543420564" />
     <state x="140" y="100" key="RollbackChangesDialog" timestamp="1620113187090">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
@@ -211,10 +259,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="448" y="293" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1280.760@0.0.1280.760" timestamp="1619421626079" />
-    <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1620117619362">
+    <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1620655490528">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1620117619362" />
+    <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1620655490528" />
     <state x="301" y="174" key="run.anything.popup" timestamp="1619433496345">
       <screen x="0" y="0" width="1280" height="760" />
     </state>

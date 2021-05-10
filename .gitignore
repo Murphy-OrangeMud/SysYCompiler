@@ -3,3 +3,5 @@ open-test-cases/
 logs/
 build/
 README.md
+*.eeyore
+compiler

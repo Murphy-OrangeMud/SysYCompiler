@@ -5,8 +5,8 @@
 #include <map>
 #include <utility>
 #include "../define/ast.hpp"
-#include "../front/logger.hpp"
-#include "utils.hpp"
+#include "utils/logger.hpp"
+#include "../utils/utils.hpp"
 #include "../oj.hpp"
 
 class IRGenerator {

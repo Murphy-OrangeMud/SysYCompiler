@@ -4,6 +4,24 @@
 #include "../define/ast.hpp"
 #include "../define/token.hpp"
 
+struct Seg {
+    int begin;
+    int end;
+    Seg() {
+        begin = 0;
+        end = 2e9;
+    }
+    Seg(int _b, int _e=2e9): begin(_b), end(_e) {}
+    Seg(int _e, int _b=0): begin(_b), end(_e) {}
+    bool operator < (const Seg & other) const {
+        if (begin < other.begin) return true;
+        else if (begin == other.begin) {
+            return end < other.end;
+        }
+        return false;
+    }
+};
+
 
 struct GenVar {
     std::string name;

@@ -277,7 +277,6 @@ std::string IRGenerator::GenFuncCall(FuncCallAST &func, std::string &code) {
     logger.SetFunc("GenFuncCall");
     std::vector<std::string> args;
     for (const auto &arg: func.getArgs()) {
-        // std::cout << "Begin loop " << (arg == nullptr) << "\n";
         std::string res = arg->GenerateIR(*this, code);
         logger.UnSetFunc("GenFuncCall");
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
