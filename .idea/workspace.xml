@@ -30,24 +30,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/back/lexer.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/back/lexer.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/back/liveanalyze.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/back/liveanalyze.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/back/liveseg.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/back/liveseg.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/back/parser.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/back/parser.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/back/register_alloc.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/define/analysis.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/define/codegen.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/define/ir.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/define/irtok.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/define/seg.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/back/gen_tigger.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/back/gen_tigger.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/02_arr_defn4.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/02_arr_defn4.sy" afterDir="false" />
@@ -62,21 +47,22 @@
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/back/liveanalyze.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/liveanalyze.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/back/liveseg.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/liveseg.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/back/liveseg.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/liveseg.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/back/register_alloc.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/register_alloc.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/back/register_alloc.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/register_alloc.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/define/analysis.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/analysis.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/define/ast.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/ast.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/define/eval.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/eval.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/define/token.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/token.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/front/lexer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/lexer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/front/lexer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/lexer.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/front/logger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/logger.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/front/logger.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/logger.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/front/parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/front/parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/front/parser.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/define/gen.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/gen.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/define/ir.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/ir.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/define/seg.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/define/seg.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/genIR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/genIR.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/typeck.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/typeck.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/typeck.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mid/utils.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/utils.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/oj.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/oj.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/utils.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/utils.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -154,7 +140,7 @@
       <workItem from="1617979742179" duration="69126000" />
       <workItem from="1618464254646" duration="75851000" />
       <workItem from="1619183989074" duration="150676000" />
-      <workItem from="1620549844733" duration="38587000" />
+      <workItem from="1620549844733" duration="50480000" />
     </task>
     <task id="LOCAL-00001" summary="solve part of the bugs before doing if/else modification">
       <created>1619585423123</created>

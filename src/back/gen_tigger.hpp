@@ -1,0 +1,4 @@
+#ifndef GEN_TIGGER_INCLUDED
+#define GEN_TIGGER_INCLUDED
+
+#endif
