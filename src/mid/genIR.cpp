@@ -525,6 +525,7 @@ std::string IRGenerator::GenLAndExp(BinaryExpAST &exp, std::string &code) {
     for (int j = 0; j < currentDepth; j++) { code += "\t"; }
     code += ("t" + std::to_string(t_num++) + " = " + t2 + "\n");
     t2 = "t" + std::to_string(t_num - 1);
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
     code += ("goto l" + std::to_string(l_num++) + "\n");
     code += ("l" + std::to_string(shorthand) + ":\n");
     for (int j = 0; j < currentDepth; j++) { code += "\t"; }
@@ -549,6 +550,7 @@ std::string IRGenerator::GenLOrExp(BinaryExpAST &exp, std::string &code) {
     for (int j = 0; j < currentDepth; j++) { code += "\t"; }
     code += ("t" + std::to_string(t_num++) + " = " + t2 + "\n");
     t2 = "t" + std::to_string(t_num - 1);
+    for (int j = 0; j < currentDepth; j++) { code += "\t"; }
     code += ("goto l" + std::to_string(l_num++) + "\n");
     code += ("l" + std::to_string(shorthand) + ":\n");
     for (int j = 0; j < currentDepth; j++) { code += "\t"; }
