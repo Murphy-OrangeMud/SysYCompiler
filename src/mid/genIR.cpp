@@ -277,7 +277,6 @@ std::string IRGenerator::GenFuncCall(FuncCallAST &func, std::string &code) {
     logger.SetFunc("GenFuncCall");
     std::vector<std::string> args;
     for (const auto &arg: func.getArgs()) {
-        // std::cout << "Begin loop " << (arg == nullptr) << "\n";
         std::string res = arg->GenerateIR(*this, code);
         logger.UnSetFunc("GenFuncCall");
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
@@ -341,14 +340,12 @@ std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
             std::string var = lval.getPosition()[i]->GenerateIR(*this, code);
             logger.UnSetFunc("GenLVal");
             for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-            code += ("t" + std::to_string(t_num++) + " = " + var + "\n");
-            var = "t" + std::to_string(t_num - 1);
+            code += ("t" + std::to_string(t_num) + " = " + var + "\n");
+            var = "t" + std::to_string(t_num);
             if (i < lval.getPosition().size() - 1) {
-                for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-                code += ("t" + std::to_string(t_num) + " = " + var + " * " + std::to_string(dim[i + 1]) + "\n");
-                for (int k = i + 2; k < lval.getPosition().size(); k++) {
+                for (int k = i + 1; k < lval.getPosition().size(); k++) {
                     for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-                    code += ("t" + std::to_string(t_num) + " = " + "t" + std::to_string(t_num) + " * " + std::to_string(dim[k]) + "\n");
+                    code += (var + " = " + var + " * " + std::to_string(dim[k]) + "\n");
                 }
             } else {
                 for (int j = 0; j < currentDepth; j++) { code += "\t"; }
@@ -356,8 +353,8 @@ std::string IRGenerator::GenLVal(LValAST &lval, std::string &code) {
             }
             if (i > 0) {
                 for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-                code += ("t" + std::to_string(t_num) + " = t" + std::to_string(tmp) + " + t" +
-                         std::to_string(t_num) + "\n");
+                code += (var + " = t" + std::to_string(tmp) + " + " +
+                         var + "\n");
             }
             tmp = t_num++;
         }
@@ -437,9 +434,7 @@ void IRGenerator::GenIfElse(IfElseAST &stmt, std::string &code) {
     stmt.getThenStmt()->GenerateIR(*this, code);
     logger.UnSetFunc("GenIfElse");
     if (stmt.getElseStmt()) {
-        // code += (tab + "goto L" + std::to_string(l_num) + "\n");
         int tmp = tmp1;
-        // code += ("L" + std::to_string(tmp) + ":\n");
         std::string branch;
         stmt.getElseStmt()->GenerateIR(*this, branch);
         for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
