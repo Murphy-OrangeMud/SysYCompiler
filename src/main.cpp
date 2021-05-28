@@ -3,6 +3,8 @@
 #include "mid/typeck.hpp"
 #include "front/parser.hpp"
 #include "mid/genIR.hpp"
+#include "back/parser.hpp"
+#include "back/gen_tigger.hpp"
 
 int main(int argc, char *argv[]) {
 #ifndef OJ
@@ -45,6 +47,12 @@ int main(int argc, char *argv[]) {
 #else
 #ifdef EEYORE2TIGGER
     using namespace EeyoreToTigger;
+    Parser parser = Parser();
+    IRPtr root = parser.ParseProgram();
+    TiggerGenerator generator = TiggerGenerator();
+    std::string out;
+    root->Generate(generator, out);
+    std::cout << out << std::endl;
 #else
 #ifdef TIGGER2RISCV
 #else

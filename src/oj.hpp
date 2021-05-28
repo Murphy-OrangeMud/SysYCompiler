@@ -1,4 +1,4 @@
 #ifndef OJ
 #define OJ
-#define SYSY2EEYORE
+#define EEYORE2TIGGER
 #endif

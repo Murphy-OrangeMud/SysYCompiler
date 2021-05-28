@@ -16,6 +16,7 @@ namespace EeyoreToTigger {
     class RegisterAlloc;
     class LiveSeg;
     class LiveAnalysis;
+    class TiggerGenerator;
 
     class BaseIR {
     public:
@@ -28,6 +29,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) = 0;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) = 0;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) = 0;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code) = 0;
     };
 
     using IRPtr = std::unique_ptr<BaseIR>;
@@ -49,6 +51,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class InitIR: public BaseIR {
@@ -68,6 +71,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class FuncDefIR: public BaseIR {
@@ -85,6 +89,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class StatementsIR: public BaseIR {
@@ -97,6 +102,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class BinaryExpIR: public BaseIR {
@@ -113,6 +119,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class UnaryExpIR: public BaseIR {
@@ -128,6 +135,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class AssignIR: public BaseIR {
@@ -143,6 +151,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class CondGotoIR: public BaseIR {
@@ -158,6 +167,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class LValIR: public BaseIR {
@@ -175,6 +185,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class GotoIR: public BaseIR {
@@ -188,6 +199,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class Label: public BaseIR {
@@ -201,6 +213,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class ParamListIR: public BaseIR {
@@ -214,6 +227,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class FuncCallIR: public BaseIR {
@@ -227,6 +241,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class ReturnIR: public BaseIR {
@@ -240,6 +255,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class RightValIR: public BaseIR {
@@ -258,6 +274,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
     class ProgramIR: public BaseIR {
@@ -271,6 +288,7 @@ namespace EeyoreToTigger {
         virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
         virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
         virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
 }
