@@ -1,6 +1,7 @@
 #include "register_alloc.hpp"
 #include <algorithm>
 
+/*
 namespace EeyoreToTigger {
     void RegisterAlloc::AllocFuncDef(FuncDefIR &ir, std::set<std::string> prevVars) {
         logger.SetFunc("AllocFuncDef");
@@ -39,8 +40,8 @@ namespace EeyoreToTigger {
     void RegisterAlloc::AllocStmtExp(BaseIR &stmt, std::set<std::string> prevVars) {
         logger.SetFunc("AllocStmtExp");
         std::set<std::string> beginVars, endVars;
-        std::set_difference(stmt.liveVars.begin(), stmt.liveVars.end(), prevVars.begin(), prevVars.end(), beginVars);
-        std::set_difference(prevVars.begin(), prevVars.end(), stmt.liveVars.begin(), stmt.liveVars.end(), endVars);
+        std::set_difference(stmt.liveVars.begin(), stmt.liveVars.end(), prevVars.begin(), prevVars.end(), beginVars.begin());
+        std::set_difference(prevVars.begin(), prevVars.end(), stmt.liveVars.begin(), stmt.liveVars.end(), endVars.begin());
 
         if (stmt.lineno > 0) {
             regVars[stmt.lineno].insert(regVars[stmt.lineno - 1].begin(), regVars[stmt.lineno - 1].end());
@@ -68,4 +69,5 @@ namespace EeyoreToTigger {
         }
     }
 
-}
+ }
+ */

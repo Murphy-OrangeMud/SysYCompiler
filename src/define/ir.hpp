@@ -13,9 +13,9 @@
 
 namespace EeyoreToTigger {
 
-    class RegisterAlloc;
-    class LiveSeg;
-    class LiveAnalysis;
+    //class RegisterAlloc;
+    //class LiveSeg;
+    //class LiveAnalysis;
     class TiggerGenerator;
 
     class BaseIR {
@@ -26,9 +26,9 @@ namespace EeyoreToTigger {
         BaseIR(int l): lineno(l) {}
 
         virtual ~BaseIR() = default;
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) = 0;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) = 0;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) = 0;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) = 0;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) = 0;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) = 0;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code) = 0;
     };
 
@@ -48,9 +48,9 @@ namespace EeyoreToTigger {
         const int getSize() const { return size; }
         const std::string getName() const { return name; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -68,9 +68,9 @@ namespace EeyoreToTigger {
         const int getVal() const { return val; }
         const std::string getName() const { return name; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -86,9 +86,9 @@ namespace EeyoreToTigger {
         const int getParamNum() const { return paramNum; }
         const IRPtr &getBody() const { return body; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -99,9 +99,9 @@ namespace EeyoreToTigger {
 
         const IRPtrList &getStmts() const { return stmts; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -116,9 +116,9 @@ namespace EeyoreToTigger {
         const IRPtr &getRHS() const { return rhs; }
         const Operator getOp() const { return op; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -132,9 +132,9 @@ namespace EeyoreToTigger {
         const IRPtr &getExp() const { return exp; }
         const Operator &getOp() const { return op; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -148,9 +148,9 @@ namespace EeyoreToTigger {
         const IRPtr &getLHS() const { return lhs; }
         const IRPtr &getRHS() const { return rhs; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -164,9 +164,9 @@ namespace EeyoreToTigger {
         const IRPtr &getCond() const { return cond; }
         const int getLabel() const { return labelNum; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -182,9 +182,9 @@ namespace EeyoreToTigger {
         const IRPtr &getPos() const { return pos; }
         const std::string getName() const { return name; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -196,9 +196,9 @@ namespace EeyoreToTigger {
 
         const int getLabel() const { return label; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -210,9 +210,9 @@ namespace EeyoreToTigger {
 
         const int getNum() const { return num; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -224,9 +224,9 @@ namespace EeyoreToTigger {
 
         const IRPtrList &getParams() const { return params; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -238,9 +238,9 @@ namespace EeyoreToTigger {
 
         const std::string getName() const { return funcName; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -252,9 +252,9 @@ namespace EeyoreToTigger {
 
         const IRPtr &getReturnValue() const { return ret; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -271,9 +271,9 @@ namespace EeyoreToTigger {
         const int getVal() const { return value; }
         const std::string getName() const { return name; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 
@@ -285,9 +285,9 @@ namespace EeyoreToTigger {
 
         const IRPtrList &getNodes() const { return nodes; }
 
-        virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
-        virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
-        virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
+        //virtual void Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) override;
+        //virtual void Seg(LiveSeg &segger, std::set<std::string> &nextVars) override;
+        //virtual void AllocRegister(RegisterAlloc &allocator, std::set<std::string> &nextVars) override;
         virtual std::string Generate(TiggerGenerator &generator, std::string &code);
     };
 

@@ -61,7 +61,7 @@ namespace EeyoreToTigger {
             c = std::cin.peek();
             if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_') || (c >= '0' && c <= '9'))) {
                 if (s == "var") {
-                    return Token::VAR;
+                    return Token::VARDECL;
                 }
                 if (s == "end") {
                     return Token::FUNCEND;

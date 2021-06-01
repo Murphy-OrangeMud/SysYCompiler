@@ -1,5 +1,7 @@
 #include "ir.hpp"
+#include <back/liveanalyze.hpp>
 
+/*
 namespace EeyoreToTigger {
     void DeclIR::Analyze(LiveAnalysis &analyzer, std::set<std::string> &nextVars) {
         analyzer.AnalyzeDecl(*this, nextVars);
@@ -65,3 +67,4 @@ namespace EeyoreToTigger {
         analyzer.AnalyzeProgram(*this, nextVars);
     }
 }
+*/

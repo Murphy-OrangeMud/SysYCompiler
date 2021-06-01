@@ -7,6 +7,7 @@
 #include <define/ir.hpp>
 #include <utils/logger.hpp>
 
+/*
 namespace EeyoreToTigger {
     class LiveSeg {
         Logger logger;
@@ -26,5 +27,6 @@ namespace EeyoreToTigger {
 
     };
 }
+*/
 
 #endif

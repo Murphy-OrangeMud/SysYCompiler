@@ -9,6 +9,7 @@
 #include <utils/logger.hpp>
 #include <utils/utils.hpp>
 
+/*
 namespace EeyoreToTigger {
 
     // TODO: 在这之前加一层优化，把没用的赋值语句（两端都是局部变量）去掉，减少语句和变量数目。
@@ -52,4 +53,6 @@ namespace EeyoreToTigger {
     };
 
 }
+ */
+
 #endif

@@ -110,7 +110,7 @@ namespace EeyoreToTigger {
                 exit(207);
             }
         }
-        return std::make_unique<ProgramIR>(nodes, lexer.getLineno());
+        return std::make_unique<ProgramIR>(std::move(nodes), lexer.getLineno());
     }
 
     /*

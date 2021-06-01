@@ -1,6 +1,6 @@
 #include "ir.hpp"
 #include <back/liveseg.hpp>
-
+/*
 namespace EeyoreToTigger {
 
     void DeclIR::Seg(LiveSeg &segger, std::set<std::string> &nextVars) {}
@@ -50,3 +50,4 @@ namespace EeyoreToTigger {
     void RightValIR::Seg(LiveSeg &segger, std::set<std::string> &nextVars) {}
 
 }
+*/

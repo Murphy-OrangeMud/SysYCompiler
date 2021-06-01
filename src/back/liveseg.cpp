@@ -2,6 +2,7 @@
 #include <utils/logger.hpp>
 #include <algorithm>
 
+/*
 namespace EeyoreToTigger {
     void LiveSeg::SegFuncDef(FuncDefIR &funcDef, std::set<std::string> &nextVars) {
         logger.SetFunc("SegFuncDef");
@@ -60,3 +61,4 @@ namespace EeyoreToTigger {
         }
     }
 }
+*/
