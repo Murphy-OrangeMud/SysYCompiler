@@ -3,7 +3,7 @@
 #include "mid/typeck.hpp"
 #include "front/parser.hpp"
 #include "mid/genIR.hpp"
-#include "back/parser.hpp"
+#include "back/eeyore_parser.hpp"
 #include "back/gen_tigger.hpp"
 
 int main(int argc, char *argv[]) {

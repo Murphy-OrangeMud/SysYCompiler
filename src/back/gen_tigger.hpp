@@ -36,7 +36,7 @@ namespace EeyoreToTigger {
         TiggerGenerator() {
             v_num = 0;
             currentFunc = "";
-            reg_num = 0;
+            reg_num = 1;
         }
 
         std::string op2char(Operator op);

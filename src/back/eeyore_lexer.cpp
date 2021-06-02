@@ -1,4 +1,4 @@
-#include "lexer.hpp"
+#include "eeyore_lexer.hpp"
 #include <define/irtok.hpp>
 #include <iostream>
 

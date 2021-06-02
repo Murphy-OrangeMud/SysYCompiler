@@ -3,7 +3,7 @@
 
 #include <define/ir.hpp>
 #include "../define/irtok.hpp"
-#include "lexer.hpp"
+#include "eeyore_lexer.hpp"
 #include "../utils/logger.hpp"
 
 namespace EeyoreToTigger {
