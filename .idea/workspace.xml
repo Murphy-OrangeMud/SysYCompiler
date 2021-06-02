@@ -30,11 +30,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/back/gen_riscv.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/back/gen_riscv.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/back/tigger_lexer.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/back/tigger_lexer.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/02_arr_defn4.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/02_arr_defn4.sy" afterDir="false" />
@@ -54,12 +49,10 @@
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/gen_tigger.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/gen_tigger.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/lexer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/eeyore_lexer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/lexer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/eeyore_lexer.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/eeyore_parser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/eeyore_parser.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/back/liveanalyze.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/back/liveanalyze.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/back/liveseg.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/define/analysis.cpp" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,7 +131,7 @@
       <workItem from="1618464254646" duration="75851000" />
       <workItem from="1619183989074" duration="150676000" />
       <workItem from="1620549844733" duration="50480000" />
-      <workItem from="1622281009027" duration="35815000" />
+      <workItem from="1622281009027" duration="36187000" />
     </task>
     <task id="LOCAL-00001" summary="solve part of the bugs before doing if/else modification">
       <created>1619585423123</created>
@@ -183,6 +176,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="352" y="181" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.760@0.0.1280.760" timestamp="1620551327046" />
+    <state x="371" y="127" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1622619652103">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state x="371" y="127" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1280.760@0.0.1280.760" timestamp="1622619652103" />
     <state x="93" y="93" width="1093" height="573" key="DiffContextDialog" timestamp="1619282357229">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
