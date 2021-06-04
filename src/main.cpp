@@ -17,12 +17,14 @@ int main(int argc, char *argv[]) {
     if (!freopen("00.eeyore", "w", stdout))
         std::cerr << "Open output file failed\n";
 #else
+#ifndef TIGGER2RISCV
     if (argc < 6) {
         std::cerr << "Please enter filename\n";
         exit(1);
     }
     if (!freopen(argv[3], "r", stdin)) { std::cerr << "open input file failed" << std::endl; exit(7); }
     if (!freopen(argv[5], "w", stdout)) { std::cerr << "open output file failed" << std::endl; exit(8); }
+#endif
 #endif
 
 #ifdef SYSY2EEYORE
@@ -56,6 +58,12 @@ int main(int argc, char *argv[]) {
     std::cout << out << std::endl;
 #else
 #ifdef TIGGER2RISCV
+    if (argc < 5) {
+        std::cerr << "Please enter filename\n";
+        exit(1);
+    }
+    if (!freopen(argv[2], "r", stdin)) { std::cerr << "open input file failed" << std::endl; exit(7); }
+    if (!freopen(argv[4], "w", stdout)) { std::cerr << "open output file failed" << std::endl; exit(8); }
     using namespace TiggerToRiscV;
     RiscVGenerator generator = RiscVGenerator();
     generator.Generate();
