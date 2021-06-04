@@ -5,7 +5,7 @@
 #include <set>
 #include "gen_riscv.hpp"
 
-namespace Tigger2RiscV {
+namespace TiggerToRiscV {
     void RiscVGenerator::Generate() {
         std::string code;
         std::string currentFunc;
@@ -274,7 +274,7 @@ namespace Tigger2RiscV {
                         if (!(var2[0] >= 'a' && var2[0] <= 'z')) {
                             int tmp = std::stoi(var2);
                             if (tmp == 0) {
-                                // code += "snez "
+                                code += "li t0, " + var2 + "\nsnez " + lhs + ", t0\nsnez s0, t0\nand " + lhs + ", " + lhs + ", s0\n";
                             }
                         } else {
                             code += "snez " + lhs + ", " + var1 + "\nsnez s0, " + var2 + "\nand " + lhs + ", " + lhs + ", s0\n";

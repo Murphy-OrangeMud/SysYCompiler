@@ -1,4 +1,4 @@
 #ifndef OJ
 #define OJ
-#define EEYORE2TIGGER
+#define TIGGER2RISCV
 #endif

@@ -4,11 +4,12 @@
 #include <map>
 #include <string>
 
-namespace Tigger2RiscV {
+namespace TiggerToRiscV {
     class RiscVGenerator {
         std::map<std::string, int> funcStack;
     public:
         void Generate();
+        RiscVGenerator() = default;
     };
 }
 

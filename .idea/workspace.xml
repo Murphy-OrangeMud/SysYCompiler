@@ -30,7 +30,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" afterDir="false" />
@@ -51,10 +50,10 @@
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/eeyore_parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/eeyore_parser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/gen_tigger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/gen_tigger.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/gen_tigger.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/gen_tigger.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/logger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/logger.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/back/gen_riscv.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/gen_riscv.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/back/gen_riscv.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/gen_riscv.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/oj.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/oj.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +72,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/open-test-cases" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="MacroExpansionManager">
@@ -132,7 +131,7 @@
       <workItem from="1619183989074" duration="150676000" />
       <workItem from="1620549844733" duration="50480000" />
       <workItem from="1622281009027" duration="48382000" />
-      <workItem from="1622685814932" duration="50031000" />
+      <workItem from="1622685814932" duration="52363000" />
     </task>
     <task id="LOCAL-00001" summary="solve part of the bugs before doing if/else modification">
       <created>1619585423123</created>

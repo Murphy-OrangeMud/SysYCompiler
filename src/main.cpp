@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <back/gen_riscv.hpp>
 #include "mid/typeck.hpp"
 #include "front/parser.hpp"
 #include "mid/genIR.hpp"
@@ -55,6 +56,9 @@ int main(int argc, char *argv[]) {
     std::cout << out << std::endl;
 #else
 #ifdef TIGGER2RISCV
+    using namespace TiggerToRiscV;
+    RiscVGenerator generator = RiscVGenerator();
+    generator.Generate();
 #else
 #endif
 #endif
