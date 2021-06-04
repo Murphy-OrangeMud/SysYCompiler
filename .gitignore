@@ -4,4 +4,5 @@ logs/
 build/
 README.md
 *.eeyore
+*.tigger
 compiler

@@ -24,9 +24,10 @@ namespace EeyoreToTigger {
         struct StackVar {
             int pos_min;
             int pos_max;
+            VarType type;
             std::string func;
             StackVar() {}
-            StackVar(int _p_min, int _p_max, std::string _f): pos_min(_p_min), pos_max(_p_max), func(std::move(_f)) {}
+            StackVar(int _p_min, int _p_max, std::string _f, VarType _t): pos_min(_p_min), pos_max(_p_max), func(std::move(_f)), type(_t) {}
         };
 
         std::map<std::string, Variable> globalVars;

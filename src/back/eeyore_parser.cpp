@@ -223,17 +223,42 @@ namespace EeyoreToTigger {
         IRPtr rhs;
         if (current == Token::OP) {
             // SYMBOL "=" OP RightValue
-            if (dynamic_cast<LValIR *>(lhs.get())->getType() == VarType::ARRAY) {
-                logger.Error("Wrong type, lhs must be variable when rhs is not rightvalue");
-                exit(216);
-            }
             Operator op = lexer.getOp();
-            NextToken();
+            NextToken(); // consume OP
             IRPtr rValue;
             if (current == Token::SYMBOL) {
+                if (dynamic_cast<LValIR *>(lhs.get())->getType() == VarType::ARRAY) {
+                    logger.Error("Wrong type, lhs must be variable when rhs is not rightvalue");
+                    exit(216);
+                }
                 rValue = std::make_unique<RightValIR>(current, lexer.getName(), lexer.getLineno() - 1);
             } else if (current == Token::NUMBER) {
                 rValue = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno() - 1);
+            } else if (current == Token::OP) {
+                Operator op2 = lexer.getOp();
+                NextToken();
+                if (current != Token::NUMBER) {
+                    logger.Error("Wrong unary op with var, not right value");
+                    exit(241);
+                }
+                switch(op2) {
+                    case Operator::ADD: {
+                        rValue = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+                        break;
+                    }
+                    case Operator::SUB: {
+                        rValue = std::make_unique<RightValIR>(current, -lexer.getVal(), lexer.getLineno());
+                        break;
+                    }
+                    case Operator::NOT: {
+                        rValue = std::make_unique<RightValIR>(current, !lexer.getVal(), lexer.getLineno());
+                        break;
+                    }
+                    default: {
+                        logger.Error("Wrong unary op, Not right value");
+                        exit(242);
+                    }
+                }
             } else {
                 logger.Error("Not right value");
                 exit(217);
@@ -257,6 +282,31 @@ namespace EeyoreToTigger {
                     rValue_2 = std::make_unique<RightValIR>(current, lexer.getName(), lexer.getLineno());
                 } else if (current == Token::NUMBER) {
                     rValue_2 = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+                } else if (current == Token::OP) {
+                    Operator op2 = lexer.getOp();
+                    NextToken();
+                    if (current != Token::NUMBER) {
+                        logger.Error("Wrong unary op with var, not right value");
+                        exit(241);
+                    }
+                    switch(op2) {
+                        case Operator::ADD: {
+                            rValue_2 = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+                            break;
+                        }
+                        case Operator::SUB: {
+                            rValue_2 = std::make_unique<RightValIR>(current, -lexer.getVal(), lexer.getLineno());
+                            break;
+                        }
+                        case Operator::NOT: {
+                            rValue_2 = std::make_unique<RightValIR>(current, !lexer.getVal(), lexer.getLineno());
+                            break;
+                        }
+                        default: {
+                            logger.Error("Wrong unary op, Not right value");
+                            exit(242);
+                        }
+                    }
                 } else {
                     logger.Error("Not right value");
                     exit(219);
@@ -279,10 +329,36 @@ namespace EeyoreToTigger {
                     exit(220);
                 }
                 IRPtr rValue;
+                NextToken(); // consume LSB
                 if (current == Token::SYMBOL) {
                     rValue = std::make_unique<RightValIR>(current, lexer.getName(), lexer.getLineno());
                 } else if (current == Token::NUMBER) {
                     rValue = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+                } else if (current == Token::OP) {
+                    Operator op2 = lexer.getOp();
+                    NextToken();
+                    if (current != Token::NUMBER) {
+                        logger.Error("Wrong unary op with var, not right value");
+                        exit(241);
+                    }
+                    switch(op2) {
+                        case Operator::ADD: {
+                            rValue = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+                            break;
+                        }
+                        case Operator::SUB: {
+                            rValue = std::make_unique<RightValIR>(current, -lexer.getVal(), lexer.getLineno());
+                            break;
+                        }
+                        case Operator::NOT: {
+                            rValue = std::make_unique<RightValIR>(current, !lexer.getVal(), lexer.getLineno());
+                            break;
+                        }
+                        default: {
+                            logger.Error("Wrong unary op, Not right value");
+                            exit(242);
+                        }
+                    }
                 } else {
                     logger.Error("Not right value");
                     exit(221);
@@ -304,12 +380,37 @@ namespace EeyoreToTigger {
                         exit(223);
                     }
                     Operator op = lexer.getOp();
-                    NextToken();
+                    NextToken(); // consume OP
                     IRPtr rValue_2;
                     if (current == Token::SYMBOL) {
                         rValue_2 = std::make_unique<RightValIR>(current, lexer.getName(), lexer.getLineno());
                     } else if (current == Token::NUMBER) {
                         rValue_2 = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+                    } else if (current == Token::OP) {
+                        Operator op2 = lexer.getOp();
+                        NextToken();
+                        if (current != Token::NUMBER) {
+                            logger.Error("Wrong unary op with var, not right value");
+                            exit(241);
+                        }
+                        switch(op2) {
+                            case Operator::ADD: {
+                                rValue_2 = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+                                break;
+                            }
+                            case Operator::SUB: {
+                                rValue_2 = std::make_unique<RightValIR>(current, -lexer.getVal(), lexer.getLineno());
+                                break;
+                            }
+                            case Operator::NOT: {
+                                rValue_2 = std::make_unique<RightValIR>(current, !lexer.getVal(), lexer.getLineno());
+                                break;
+                            }
+                            default: {
+                                logger.Error("Wrong unary op, Not right value");
+                                exit(242);
+                            }
+                        }
                     } else {
                         logger.Error("Not right value");
                         exit(224);
@@ -348,10 +449,36 @@ namespace EeyoreToTigger {
         NextToken();
         if (current == Token::LSB) {
             IRPtr rValue;
+            NextToken(); // consume LSB
             if (current == Token::SYMBOL) {
                 rValue = std::make_unique<RightValIR>(current, lexer.getName(), lexer.getLineno());
             } else if (current == Token::NUMBER) {
                 rValue = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+            } else if (current == Token::OP) {
+                Operator op2 = lexer.getOp();
+                NextToken();
+                if (current != Token::NUMBER) {
+                    logger.Error("Wrong unary op with var, not right value");
+                    exit(241);
+                }
+                switch(op2) {
+                    case Operator::ADD: {
+                        rValue = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+                        break;
+                    }
+                    case Operator::SUB: {
+                        rValue = std::make_unique<RightValIR>(current, -lexer.getVal(), lexer.getLineno());
+                        break;
+                    }
+                    case Operator::NOT: {
+                        rValue = std::make_unique<RightValIR>(current, !lexer.getVal(), lexer.getLineno());
+                        break;
+                    }
+                    default: {
+                        logger.Error("Wrong unary op, Not right value");
+                        exit(242);
+                    }
+                }
             } else {
                 logger.Error("Not right value");
                 exit(227);
@@ -382,8 +509,9 @@ namespace EeyoreToTigger {
             logger.Error("Func call lack symbol");
             exit(230);
         }
+        std::string funcName = lexer.getName();
         NextToken(); // consume symbol
-        return std::make_unique<FuncCallIR>(lexer.getName(), lexer.getLineno() - 1);
+        return std::make_unique<FuncCallIR>(funcName, lexer.getLineno() - 1);
     }
 
     /*
@@ -422,6 +550,31 @@ namespace EeyoreToTigger {
                 params.push_back(std::make_unique<RightValIR>(current, lexer.getName(), lexer.getLineno()));
             } else if (current == Token::NUMBER) {
                 params.push_back(std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno()));
+            } else if (current == Token::OP) {
+                Operator op2 = lexer.getOp();
+                NextToken();
+                if (current != Token::NUMBER) {
+                    logger.Error("Wrong unary op with var, not right value");
+                    exit(241);
+                }
+                switch(op2) {
+                    case Operator::ADD: {
+                        params.push_back(std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno()));
+                        break;
+                    }
+                    case Operator::SUB: {
+                        params.push_back(std::make_unique<RightValIR>(current, -lexer.getVal(), lexer.getLineno()));
+                        break;
+                    }
+                    case Operator::NOT: {
+                        params.push_back(std::make_unique<RightValIR>(current, !lexer.getVal(), lexer.getLineno()));
+                        break;
+                    }
+                    default: {
+                        logger.Error("Wrong unary op, Not right value");
+                        exit(242);
+                    }
+                }
             }
             NextToken();
         }
@@ -456,8 +609,33 @@ namespace EeyoreToTigger {
             r1 = std::make_unique<RightValIR>(current, lexer.getName(), lexer.getLineno());
         } else if (current == Token::NUMBER) {
             r1 = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+        } else if (current == Token::OP) {
+            Operator op2 = lexer.getOp();
+            NextToken();
+            if (current != Token::NUMBER) {
+                logger.Error("Wrong unary op with var, not right value");
+                exit(241);
+            }
+            switch(op2) {
+                case Operator::ADD: {
+                    r1 = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+                    break;
+                }
+                case Operator::SUB: {
+                    r1 = std::make_unique<RightValIR>(current, -lexer.getVal(), lexer.getLineno());
+                    break;
+                }
+                case Operator::NOT: {
+                    r1 = std::make_unique<RightValIR>(current, !lexer.getVal(), lexer.getLineno());
+                    break;
+                }
+                default: {
+                    logger.Error("Wrong unary op, Not right value");
+                    exit(242);
+                }
+            }
         } else {
-            logger.Error("not right value");
+            logger.Error("Not right value");
             exit(235);
         }
         NextToken(); // consume symbol
