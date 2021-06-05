@@ -307,7 +307,9 @@ namespace SysYToEeyore {
     std::string IRGenerator::GenUnaryExp(UnaryExpAST &exp, std::string &code) {
         logger.SetFunc("GenUnaryExp");
         std::string ret;
-        ret += op2char(exp.getOp());
+        if (exp.getOp() != Operator::ADD) {
+            ret += op2char(exp.getOp());
+        }
         std::string res = exp.getNode()->GenerateIR(*this, code);
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
         code += ("t" + std::to_string(t_num++) + " = " + res + "\n");
