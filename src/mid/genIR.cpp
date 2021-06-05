@@ -229,7 +229,7 @@ namespace SysYToEeyore {
         std::string r = assign.getRight()->GenerateIR(*this, code);
         logger.UnSetFunc("GenAssign");
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-        code += ("t" + std::to_string(t_num++) + " = 1 * " + r + "\n");
+        code += ("t" + std::to_string(t_num++) + " = " + r + "\n");
         r = "t" + std::to_string(t_num - 1);
         for (int i = 0; i < currentDepth; i++) { code += "\t"; }
         code += (l + " = " + r + "\n");
