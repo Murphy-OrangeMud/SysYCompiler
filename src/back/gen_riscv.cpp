@@ -8,7 +8,7 @@
 namespace TiggerToRiscV {
     void RiscVGenerator::Generate(std::string &code) {
         char stmt[1005];
-        while (std::cin.getline(stmt, 1005)) {
+        while (cinstream.getline(stmt, 1005)) {
             std::string str_stmt;
             int init_idx = 0;
             for (; stmt[init_idx] <= 32; init_idx++);
