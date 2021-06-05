@@ -33,8 +33,10 @@ namespace TiggerToRiscV {
                 }
                 for (; !(stmt[idx] >= '0' && stmt[idx] <= '9'); idx++);
                 for (; stmt[idx] >= '0' && stmt[idx] <= '9'; idx++) {
+                    std::cerr << "for int2: " << stmt[idx] << "\n";
                     int2 = int2 * 10 + stmt[idx] - '0';
                 }
+                std::cerr << "int2: " << int2 << "\n";
                 funcStack[func_name] = 16 * (int2 / 4 + 1);
                 code += "\t.text\n\t.align 2\n\t.global " + func_name + "\n\t.type " + func_name + ", @function\n" + func_name +
                         ":\n\taddi sp, sp, -" + std::to_string(16 * (int2 / 4 + 1)) + "\n\tsw ra, " +

@@ -57,13 +57,8 @@
       <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/08_arr_assign.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/08_arr_assign.tigger" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/09_void_func.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/09_void_func.tigger" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/11_while.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/11_while.tigger" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/eeyore_lexer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/eeyore_lexer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/eeyore_lexer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/eeyore_lexer.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/eeyore_parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/eeyore_parser.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/back/gen_riscv.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/gen_riscv.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/gen_riscv.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/gen_riscv.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/oj.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/oj.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,15 +100,15 @@
     <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\cheng\SysYCompiler" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\cheng\SysYCompiler" />
       <recent name="C:\Users\cheng\SysYCompiler\src\utils" />
       <recent name="C:\Users\cheng\SysYCompiler\src\back" />
       <recent name="C:\Users\cheng\SysYCompiler\src\define" />
       <recent name="C:\Users\cheng\SysYCompiler\src\front" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\cheng\SysYCompiler" />
     </key>
   </component>
   <component name="RunManager">
