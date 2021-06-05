@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "../oj.hpp"
+#include "oj.hpp"
 
 class Logger {
 private:

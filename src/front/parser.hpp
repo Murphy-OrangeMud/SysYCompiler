@@ -7,62 +7,63 @@
 #include <map>
 #include "../define/ast.hpp"
 #include "lexer.hpp"
-#include "logger.hpp"
+#include "utils/logger.hpp"
 #include <cstdlib>
 #include <ctime>
 #include "../oj.hpp"
 
-class Parser {
-private:
-    Lexer lexer;
-    Logger logger;
-    Token current;
-public:
-    Parser(const std::string& i="") {
-        lexer = Lexer();
+namespace SysYToEeyore {
+    class Parser {
+    private:
+        Lexer lexer;
+        Logger logger;
+        Token current;
+    public:
+        Parser(const std::string& i="") {
+            lexer = Lexer();
 #ifndef OJ
-        logger = Logger(path);
+            logger = Logger(path);
         std::string path = R"(./logs/log_parser_)" + i;
 #else
-        logger = Logger();
+            logger = Logger();
 #endif
-    }
+        }
 
-    void NextToken();
+        void NextToken();
 
-    ASTPtr ParseBinary(const std::function<ASTPtr()> &parser, std::initializer_list <Operator> ops);
+        ASTPtr ParseBinary(const std::function<ASTPtr()> &parser, std::initializer_list <Operator> ops);
 
-    ASTPtr ParseRelExp();
+        ASTPtr ParseRelExp();
 
-    ASTPtr ParseEqExp();
+        ASTPtr ParseEqExp();
 
-    ASTPtr ParseAddExp();
+        ASTPtr ParseAddExp();
 
-    ASTPtr ParseMulExp();
+        ASTPtr ParseMulExp();
 
-    ASTPtr ParseLAndExp();
+        ASTPtr ParseLAndExp();
 
-    ASTPtr ParseLOrExp();
+        ASTPtr ParseLOrExp();
 
-    ASTPtr ParseUnaryExp();
+        ASTPtr ParseUnaryExp();
 
-    ASTPtr ParseIfElseStmt();
+        ASTPtr ParseIfElseStmt();
 
-    ASTPtr ParseWhileStmt();
+        ASTPtr ParseWhileStmt();
 
-    ASTPtr ParseStmt();
+        ASTPtr ParseStmt();
 
-    ASTPtr ParseBlock();
+        ASTPtr ParseBlock();
 
-    ASTPtr ParseInitVal();
+        ASTPtr ParseInitVal();
 
-    ASTPtr ParseFuncDef();
+        ASTPtr ParseFuncDef();
 
-    ASTPtr ParseVarDecl();
+        ASTPtr ParseVarDecl();
 
-    ASTPtr ParseVarDef(bool isConst);
+        ASTPtr ParseVarDef(bool isConst);
 
-    ASTPtr ParseCompUnit();
-};
-
+        ASTPtr ParseCompUnit();
+    };
+}
 #endif
