@@ -57,8 +57,8 @@
       <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/08_arr_assign.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/08_arr_assign.tigger" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/09_void_func.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/09_void_func.tigger" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/11_while.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/11_while.tigger" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/eeyore_parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/eeyore_parser.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mid/genIR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/oj.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/oj.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

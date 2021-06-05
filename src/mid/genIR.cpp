@@ -407,7 +407,7 @@ namespace SysYToEeyore {
         code += code2;
         for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
         code += "return";
-        code += (funcDef.getType() == Type::INT ? " 0 " : " ");
+        code += (funcDef.getType() == Type::INT ? " 0\n" : " \n");
         code += "\nend f_" + funcDef.getName() + "\n";
     }
 
@@ -516,7 +516,7 @@ namespace SysYToEeyore {
                     code += ("return " + ret + "\n");
                 } else {
                     for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-                    code += ("return\n");
+                    code += ("return \n");
                 }
             }
             default:
