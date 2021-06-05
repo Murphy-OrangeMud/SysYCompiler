@@ -437,15 +437,18 @@ namespace SysYToEeyore {
         std::string cond = stmt.getCond()->GenerateIR(*this, code);
         logger.UnSetFunc("GenIfElse");
         int tmp1 = l_num;
+        if (cond.find("[") != std::string::npos) {
+            for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+            code += ("t" + std::to_string(t_num++) + " = " + cond + "\n");
+            cond = "t" + std::to_string(t_num - 1);
+        }
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
         code += ("if " + cond + " == 0 goto l" + std::to_string(tmp1) + "\n");
         l_num++;
         stmt.getThenStmt()->GenerateIR(*this, code);
         logger.UnSetFunc("GenIfElse");
         if (stmt.getElseStmt()) {
-            // code += (tab + "goto L" + std::to_string(l_num) + "\n");
             int tmp = tmp1;
-            // code += ("L" + std::to_string(tmp) + ":\n");
             std::string branch;
             stmt.getElseStmt()->GenerateIR(*this, branch);
             for (int j = 0; j < currentDepth + 1; j++) { code += "\t"; }
