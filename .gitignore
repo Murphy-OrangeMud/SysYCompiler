@@ -5,4 +5,5 @@ build/
 README.md
 *.eeyore
 *.tigger
+*.S
 compiler

@@ -30,6 +30,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/02_arr_defn4.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/02_arr_defn4.sy" afterDir="false" />
@@ -49,8 +51,14 @@
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/00_arr_defn2.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/00_arr_defn2.tigger" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/gen_riscv.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/gen_riscv.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/02_arr_defn4.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/02_arr_defn4.tigger" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/04_func_defn.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/04_func_defn.tigger" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/05_const_array_defn.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/05_const_array_defn.tigger" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/07_return_var.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/07_return_var.tigger" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/08_arr_assign.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/08_arr_assign.tigger" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/09_void_func.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/09_void_func.tigger" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/11_while.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/11_while.tigger" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/oj.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/oj.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -133,7 +141,7 @@
       <workItem from="1619183989074" duration="150676000" />
       <workItem from="1620549844733" duration="50480000" />
       <workItem from="1622281009027" duration="48382000" />
-      <workItem from="1622685814932" duration="62907000" />
+      <workItem from="1622685814932" duration="64802000" />
     </task>
     <task id="LOCAL-00001" summary="solve part of the bugs before doing if/else modification">
       <created>1619585423123</created>
