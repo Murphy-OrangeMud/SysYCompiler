@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
     if (!freopen(argv[2], "r", stdin)) { std::cerr << "open input file failed" << std::endl; exit(7); }
     if (!freopen(argv[4], "w", stdout)) { std::cerr << "open output file failed" << std::endl; exit(8); }
     using namespace TiggerToRiscV;
-    RiscVGenerator generator = RiscVGenerator();
+    RiscVGenerator generator = RiscVGenerator(std::cin);
     std::string out;
     generator.Generate(out);
     std::cout << out << std::endl;
