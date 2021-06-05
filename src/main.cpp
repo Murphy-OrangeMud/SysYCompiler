@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
 #ifdef SYSY2RISCV
     if (argc < 5) {
         std::cerr << "Please enter filename\n";
-        exit(1);
+        exit(-1);
     }
     if (!freopen(argv[2], "r", stdin)) { std::cerr << "open input file failed" << std::endl; exit(7); }
     if (!freopen(argv[4], "w", stdout)) { std::cerr << "open output file failed" << std::endl; exit(8); }
