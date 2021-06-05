@@ -82,7 +82,7 @@ namespace TiggerToRiscV {
                 if (int10 >= -512 && int10 <= 511) {
                     code += "\tsw " + reg + ", " + std::to_string(int10*4) + "(sp)\n";
                 } else {
-                    code += "\tli " + std::to_string(int10) + " s0\n\tsw " + reg + ", s0*4(sp)\n";
+                    code += "\tli " + std::to_string(int10) + ", s0\n\tsw " + reg + ", (s0*4)(sp)\n";
                 }
             } else if (first == "load") {
                 std::string var, reg;
@@ -94,7 +94,7 @@ namespace TiggerToRiscV {
                     if (int10 >= -512 && int10 <= 511) {
                         code += "\tlw " + reg + ", " + std::to_string(int10*4) + "(sp)\n";
                     } else {
-                        code += "\tli " + var + " s0\n\tlw " + reg + ", (s0*4)(sp)\n";
+                        code += "\tli " + var + ", s0\n\tlw " + reg + ", (s0*4)(sp)\n";
                     }
                 }
             } else if (first == "loadaddr") {
@@ -107,7 +107,7 @@ namespace TiggerToRiscV {
                     if (int10 >= -512 && int10 <= 511) {
                         code += "\taddi " + reg + ", sp, " + std::to_string(int10*4) + "\n";
                     } else {
-                        code += "\tli " + var + " s0\naddi " + reg + ", sp, s0*4\n";
+                        code += "\tli " + var + ", s0\naddi " + reg + ", sp, s0*4\n";
                     }
                 }
             } else if (first == "if") {
