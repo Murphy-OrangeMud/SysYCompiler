@@ -8,26 +8,13 @@
 #include "back/gen_tigger.hpp"
 
 int main(int argc, char *argv[]) {
-#ifndef OJ
-    if (argc < 0) {
-        std::cerr << "Please enter filename\n";
-        exit(1);
-    }
-    freopen("/mnt/c/Users/cheng/SysYCompiler/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy", "r", stdin);
-    if (!freopen("00.eeyore", "w", stdout))
-        std::cerr << "Open output file failed\n";
-#else
-#ifndef TIGGER2RISCV
+#ifdef SYSY2EEYORE
     if (argc < 6) {
         std::cerr << "Please enter filename\n";
         exit(1);
     }
     if (!freopen(argv[3], "r", stdin)) { std::cerr << "open input file failed" << std::endl; exit(7); }
     if (!freopen(argv[5], "w", stdout)) { std::cerr << "open output file failed" << std::endl; exit(8); }
-#endif
-#endif
-
-#ifdef SYSY2EEYORE
     using namespace SysYToEeyore;
     Parser parser = Parser();
     ASTPtr root = parser.ParseCompUnit();
@@ -49,6 +36,12 @@ int main(int argc, char *argv[]) {
     std::cout << out << std::endl;
 #else
 #ifdef EEYORE2TIGGER
+    if (argc < 6) {
+        std::cerr << "Please enter filename\n";
+        exit(1);
+    }
+    if (!freopen(argv[3], "r", stdin)) { std::cerr << "open input file failed" << std::endl; exit(7); }
+    if (!freopen(argv[5], "w", stdout)) { std::cerr << "open output file failed" << std::endl; exit(8); }
     using namespace EeyoreToTigger;
     Parser parser = Parser();
     IRPtr root = parser.ParseProgram();
@@ -66,8 +59,19 @@ int main(int argc, char *argv[]) {
     if (!freopen(argv[4], "w", stdout)) { std::cerr << "open output file failed" << std::endl; exit(8); }
     using namespace TiggerToRiscV;
     RiscVGenerator generator = RiscVGenerator();
-    generator.Generate();
+    std::string out;
+    generator.Generate(out);
+    std::cout << out << std::endl;
 #else
+#ifdef SYSY2RISCV
+    if (argc < 5) {
+        std::cerr << "Please enter filename\n";
+        exit(1);
+    }
+    if (!freopen(argv[2], "r", stdin)) { std::cerr << "open input file failed" << std::endl; exit(7); }
+    if (!freopen(argv[4], "w", stdout)) { std::cerr << "open output file failed" << std::endl; exit(8); }
+
+#endif
 #endif
 #endif
 #endif

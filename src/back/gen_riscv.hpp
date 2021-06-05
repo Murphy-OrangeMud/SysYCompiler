@@ -8,7 +8,7 @@ namespace TiggerToRiscV {
     class RiscVGenerator {
         std::map<std::string, int> funcStack;
     public:
-        void Generate();
+        void Generate(std::string &code);
         RiscVGenerator() = default;
     };
 }
