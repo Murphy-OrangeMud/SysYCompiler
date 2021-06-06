@@ -135,8 +135,10 @@ namespace TiggerToRiscV {
                 std::string op, var1, var2;
                 std::set<std::string> ops{"+", "-", "*", "/", "%", "<", ">", "<=", ">=", "&&", "||", "!=", "=="};
                 while (stream_stmt >> token) {
-                    if (token == "[") {
-                        if (var2.empty()) {
+                    if (token[0] == '[') {
+                        if (var1.empty()) {
+                            lhs += token;
+                        } else if (var2.empty()) {
                             var1 += token;
                         } else {
                             var2 += token;
@@ -151,6 +153,7 @@ namespace TiggerToRiscV {
                     if (var1.empty()) { var1 = token; continue; }
                     if (var2.empty()) var2 = token;
                 }
+                std::cerr << var1 << " " << var2 << std::endl;
                 if (op.empty()) {
                     if (var1[0] == '!') {
                         // reg1 = !reg2

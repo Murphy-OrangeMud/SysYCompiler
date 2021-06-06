@@ -50,13 +50,6 @@
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/02_arr_defn4.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/02_arr_defn4.tigger" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/04_func_defn.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/04_func_defn.tigger" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/05_const_array_defn.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/05_const_array_defn.tigger" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/07_return_var.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/07_return_var.tigger" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/08_arr_assign.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/08_arr_assign.tigger" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/09_void_func.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/09_void_func.tigger" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/tigger/functional/11_while.tigger" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/tigger/functional/11_while.tigger" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/back/gen_riscv.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/gen_riscv.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -111,11 +104,6 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="compiler" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SysYCompiler" TARGET_NAME="compiler" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SysYCompiler" RUN_TARGET_NAME="compiler">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -141,6 +129,7 @@
       <workItem from="1620549844733" duration="50480000" />
       <workItem from="1622281009027" duration="48382000" />
       <workItem from="1622685814932" duration="66067000" />
+      <workItem from="1622981399828" duration="349000" />
     </task>
     <task id="LOCAL-00001" summary="solve part of the bugs before doing if/else modification">
       <created>1619585423123</created>
@@ -189,10 +178,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="371" y="127" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1280.760@0.0.1280.760" timestamp="1622619652103" />
-    <state x="93" y="93" width="1093" height="573" key="DiffContextDialog" timestamp="1619282357229">
+    <state x="93" y="93" width="1093" height="573" key="DiffContextDialog" timestamp="1622980581722">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="93" y="93" width="1093" height="573" key="DiffContextDialog/0.0.1280.760@0.0.1280.760" timestamp="1619282357229" />
+    <state x="93" y="93" width="1093" height="573" key="DiffContextDialog/0.0.1280.760@0.0.1280.760" timestamp="1622980581722" />
     <state x="421" y="135" key="FileChooserDialogImpl" timestamp="1619743766941">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
