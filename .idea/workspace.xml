@@ -92,9 +92,6 @@
     <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\cheng\SysYCompiler" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\cheng\SysYCompiler" />
       <recent name="C:\Users\cheng\SysYCompiler\src\utils" />
@@ -102,16 +99,19 @@
       <recent name="C:\Users\cheng\SysYCompiler\src\define" />
       <recent name="C:\Users\cheng\SysYCompiler\src\front" />
     </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\cheng\SysYCompiler" />
+    </key>
   </component>
   <component name="RunManager">
-    <configuration name="compiler" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SysYCompiler" TARGET_NAME="compiler" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SysYCompiler" RUN_TARGET_NAME="compiler">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="compiler" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SysYCompiler" TARGET_NAME="compiler" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SysYCompiler" RUN_TARGET_NAME="compiler">
       <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -129,7 +129,8 @@
       <workItem from="1620549844733" duration="50480000" />
       <workItem from="1622281009027" duration="48382000" />
       <workItem from="1622685814932" duration="66067000" />
-      <workItem from="1622981399828" duration="349000" />
+      <workItem from="1622981399828" duration="860000" />
+      <workItem from="1622982681412" duration="3899000" />
     </task>
     <task id="LOCAL-00001" summary="solve part of the bugs before doing if/else modification">
       <created>1619585423123</created>
@@ -246,9 +247,9 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="301" y="174" key="run.anything.popup/0.0.1280.760@0.0.1280.760" timestamp="1619433496345" />
-    <state x="312" y="90" width="672" height="678" key="search.everywhere.popup" timestamp="1622855177964">
+    <state x="313" y="91" width="672" height="678" key="search.everywhere.popup" timestamp="1622986029489">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="312" y="90" width="672" height="678" key="search.everywhere.popup/0.0.1280.760@0.0.1280.760" timestamp="1622855177964" />
+    <state x="313" y="91" width="672" height="678" key="search.everywhere.popup/0.0.1280.760@0.0.1280.760" timestamp="1622986029489" />
   </component>
 </project>
