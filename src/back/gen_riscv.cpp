@@ -118,7 +118,7 @@ namespace TiggerToRiscV {
                     if (int10 >= -512 && int10 <= 511) {
                         code += "\taddi " + reg + ", sp, " + std::to_string(int10*4) + "\n";
                     } else {
-                        code += "\tli s0, " + var + "\n\tadd " + reg + ", sp, s0*4\n";
+                        code += "\tli s0, " + var + "\n\tadd s0, s0, s0\n\tadd s0, s0, s0\n\tadd " + reg + ", sp, s0\n";
                     }
                 }
             } else if (first == "if") {
