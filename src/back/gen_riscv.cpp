@@ -82,7 +82,7 @@ namespace TiggerToRiscV {
                 if (stk >= -2048 && stk <= 2047) {
                     code += "\tlw ra, " + std::to_string(stk-4) + "(sp)\n\taddi sp, sp, " + std::to_string(stk) + "\n\tret\n";
                 } else {
-                    code += "\tli s0, " + std::to_string(stk-4) + "\n\tadd sp, sp, s0\n\tlw ra, 0(sp)\naddi sp, sp, 4\tret\n";
+                    code += "\tli s0, " + std::to_string(stk-4) + "\n\tadd sp, sp, s0\n\tlw ra, 0(sp)\naddi sp, sp, 4\n\tret\n";
                 }
             } else if (first == "store") {
                 std::string reg;
