@@ -8,7 +8,7 @@
 namespace TiggerToRiscV {
     void RiscVGenerator::Generate(std::string &code) {
         char stmt[1005];
-        while (std::cin.getline(stmt, 1005)) {
+        while (cinstream.getline(stmt, 1005)) {
             std::string str_stmt;
             int init_idx = 0;
             for (; stmt[init_idx] <= 32; init_idx++);
@@ -25,7 +25,7 @@ namespace TiggerToRiscV {
             if (first[0] == 'f' && first[1] == '_') {
                 // func header
                 std::string func_name = first.substr(2, first.length() - 2);
-                int int1, int2;
+                int int1 = 0, int2 = 0;
                 int idx = 0;
                 for (; !(stmt[idx] >= '0' && stmt[idx] <= '9'); idx++);
                 for (; stmt[idx] >= '0' && stmt[idx] <= '9'; idx++) {
@@ -36,9 +36,14 @@ namespace TiggerToRiscV {
                     int2 = int2 * 10 + stmt[idx] - '0';
                 }
                 funcStack[func_name] = 16 * (int2 / 4 + 1);
-                code += "\t.text\n\t.align 2\n\t.global " + func_name + "\n\t.type " + func_name + ", @function\n" + func_name +
-                        ":\n\taddi sp, sp, -" + std::to_string(16 * (int2 / 4 + 1)) + "\n\tsw ra, " +
-                        std::to_string(16 * (int2 / 4 + 1) - 4) + "(sp)\n";
+                if (16 * (int2 / 4 + 1) - 4 >= -2048 && 16 * (int2 / 4 + 1) <= 2047) {
+                    code += "\t.text\n\t.align 2\n\t.global " + func_name + "\n\t.type " + func_name + ", @function\n" + func_name +
+                            ":\n\taddi sp, sp, -" + std::to_string(16 * (int2 / 4 + 1)) + "\n\tsw ra, " +
+                            std::to_string(16 * (int2 / 4 + 1) - 4) + "(sp)\n";
+                } else {
+                    code += "\t.text\n\t.align 2\n\t.global " + func_name + "\n\t.type " + func_name + ", @function\n" + func_name +
+                            ":\n\tli s0, " + std::to_string(16 * (int2 / 4 + 1) - 4) + "\n\tsw ra, 0(sp)\n\taddi s0, s0, 4\n\tsub sp, sp, s0\n";
+                }
                 currentFunc = func_name;
             } else if (first == "end") {
                 // func end
@@ -74,7 +79,11 @@ namespace TiggerToRiscV {
                 code += "\tcall " + func_name + "\n";
             } else if (first == "return") {
                 int stk = funcStack[currentFunc];
-                code += "\tlw ra, " + std::to_string(stk-4) + "(sp)\n\taddi sp, sp, " + std::to_string(stk) + "\n\tret\n";
+                if (stk - 4 >= -2048 && stk <= 2047) {
+                    code += "\tlw ra, " + std::to_string(stk-4) + "(sp)\n\taddi sp, sp, " + std::to_string(stk) + "\n\tret\n";
+                } else {
+                    code += "\tli s0, " + std::to_string(stk-4) + "\n\tadd sp, sp, s0\n\tlw ra, 0(sp)\naddi sp, sp, 4\n\tret\n";
+                }
             } else if (first == "store") {
                 std::string reg;
                 int int10;
@@ -82,7 +91,8 @@ namespace TiggerToRiscV {
                 if (int10 >= -512 && int10 <= 511) {
                     code += "\tsw " + reg + ", " + std::to_string(int10*4) + "(sp)\n";
                 } else {
-                    code += "\tli " + std::to_string(int10) + ", s0\n\tsw " + reg + ", s0*4(sp)\n";
+                    code += "\tli s0, " + std::to_string(int10) + "\n\tadd s0, s0, s0\n"
+                            + "\tadd s0, s0, s0\n\tadd sp, sp, s0\n\tsw " + reg + ", 0(sp)\n\tsub sp, sp, s0\n";
                 }
             } else if (first == "load") {
                 std::string var, reg;
@@ -94,7 +104,8 @@ namespace TiggerToRiscV {
                     if (int10 >= -512 && int10 <= 511) {
                         code += "\tlw " + reg + ", " + std::to_string(int10*4) + "(sp)\n";
                     } else {
-                        code += "\tli " + var + ", s0\n\tlw " + reg + ", s0*4(sp)\n";
+                        code += "\tli s0, " + std::to_string(int10) + "\n\tadd s0, s0, s0\n"
+                                + "\tadd s0, s0, s0\n\tadd sp, sp, s0\n\tlw " + reg + ", 0(sp)\n\tsub sp, sp, s0\n";
                     }
                 }
             } else if (first == "loadaddr") {
@@ -107,7 +118,7 @@ namespace TiggerToRiscV {
                     if (int10 >= -512 && int10 <= 511) {
                         code += "\taddi " + reg + ", sp, " + std::to_string(int10*4) + "\n";
                     } else {
-                        code += "\tli " + var + ", s0\naddi " + reg + ", sp, s0*4\n";
+                        code += "\tli s0, " + var + "\n\tadd s0, s0, s0\n\tadd s0, s0, s0\n\tadd " + reg + ", sp, s0\n";
                     }
                 }
             } else if (first == "if") {
@@ -132,7 +143,26 @@ namespace TiggerToRiscV {
                 std::string token;
                 std::string op, var1, var2;
                 std::set<std::string> ops{"+", "-", "*", "/", "%", "<", ">", "<=", ">=", "&&", "||", "!=", "=="};
+                std::string unary_op_1, unary_op_2; // unary op for var1 and var2
                 while (stream_stmt >> token) {
+                    if (token[0] == '[') {
+                        if (var1.empty()) {
+                            lhs += token;
+                        } else if (var2.empty()) {
+                            var1 += token;
+                        } else {
+                            var2 += token;
+                        }
+                        continue;
+                    }
+                    if (token == "!") {
+                        if (var1.empty()) unary_op_1 = token;
+                        else if (var2.empty()) unary_op_2 = token;
+                        continue;
+                    }
+                    if (token == "-") {
+                        if (var1.empty()) { unary_op_1 = token; continue; }
+                    }
                     if (token == "=") continue;
                     if (ops.find(token) != ops.end()) {
                         op = token;
@@ -141,6 +171,8 @@ namespace TiggerToRiscV {
                     if (var1.empty()) { var1 = token; continue; }
                     if (var2.empty()) var2 = token;
                 }
+                var1 = unary_op_1 + var1;
+                var2 = unary_op_2 + var2;
                 if (op.empty()) {
                     if (var1[0] == '!') {
                         // reg1 = !reg2
@@ -151,6 +183,7 @@ namespace TiggerToRiscV {
                             // reg = int
                             code += "\tli " + lhs + ", " + var1 + "\n";
                         } else {
+                            var1 = var1.substr(1, var1.length() - 1);
                             // reg1 = -reg2
                             code += "\tneg " + lhs + ", " + var1 + "\n";
                         }

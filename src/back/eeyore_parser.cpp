@@ -649,6 +649,31 @@ namespace EeyoreToTigger {
             r2 = std::make_unique<RightValIR>(current, lexer.getName(), lexer.getLineno());
         } else if (current == Token::NUMBER) {
             r2 = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+        } else if (current == Token::OP) {
+            Operator op2 = lexer.getOp();
+            NextToken();
+            if (current != Token::NUMBER) {
+                logger.Error("Wrong unary op with var, not right value");
+                exit(243);
+            }
+            switch(op2) {
+                case Operator::ADD: {
+                    r1 = std::make_unique<RightValIR>(current, lexer.getVal(), lexer.getLineno());
+                    break;
+                }
+                case Operator::SUB: {
+                    r1 = std::make_unique<RightValIR>(current, -lexer.getVal(), lexer.getLineno());
+                    break;
+                }
+                case Operator::NOT: {
+                    r1 = std::make_unique<RightValIR>(current, !lexer.getVal(), lexer.getLineno());
+                    break;
+                }
+                default: {
+                    logger.Error("Wrong unary op, Not right value");
+                    exit(244);
+                }
+            }
         } else {
             logger.Error("not right value");
             exit(237);

@@ -4,24 +4,24 @@
 
 namespace EeyoreToTigger {
     Token Lexer::ParseNum() {
-        char c = std::cin.peek();
+        char c = cinstream.peek();
         int val = 0;
         if (c == '0') {
-            c = std::cin.get();
-            c = std::cin.peek();
+            c = cinstream.get();
+            c = cinstream.peek();
             if (c == 'x' || c == 'X') {
                 // hexadecimal const
-                c = std::cin.get();
+                c = cinstream.get();
                 while (true) {
-                    c = std::cin.peek();
+                    c = cinstream.peek();
                     if (c >= '0' && c <= '9') {
-                        c = std::cin.get();
+                        c = cinstream.get();
                         val = val * 16 + c - '0';
                     } else if (c >= 'A' && c <= 'F') {
-                        c = std::cin.get();
+                        c = cinstream.get();
                         val = val * 16 + c - 'A' + 10;
                     } else if (c >= 'a' && c <= 'f') {
-                        c = std::cin.get();
+                        c = cinstream.get();
                         val = val * 16 + c - 'a' + 10;
                     } else {
                         value = val;
@@ -32,20 +32,20 @@ namespace EeyoreToTigger {
                 // octal number
                 while (true) {
                     if (c >= '0' && c <= '7') {
-                        c = std::cin.get();
+                        c = cinstream.get();
                         val = val * 8 + c - '0';
                     } else {
                         value = val;
                         return Token::NUMBER;
                     }
-                    c = std::cin.peek();
+                    c = cinstream.peek();
                 }
             }
         } else {
             while (c >= '0' && c <= '9') {
-                c = std::cin.get();
+                c = cinstream.get();
                 val = val * 10 + (int)(c - '0');
-                c = std::cin.peek();
+                c = cinstream.peek();
             }
             value = val;
             return Token::NUMBER;
@@ -56,9 +56,9 @@ namespace EeyoreToTigger {
         std::string s;
         char c;
         while (true) {
-            c = std::cin.get();
+            c = cinstream.get();
             s += c;
-            c = std::cin.peek();
+            c = cinstream.peek();
             if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_') || (c >= '0' && c <= '9'))) {
                 if (s == "var") {
                     return Token::VARDECL;
@@ -89,9 +89,9 @@ namespace EeyoreToTigger {
 
     Token Lexer::ParseComment() {
         char c;
-        c = std::cin.get();
-        while ((c = std::cin.peek()) != '\n') {
-            c = std::cin.get();
+        c = cinstream.get();
+        while ((c = cinstream.peek()) != '\n') {
+            c = cinstream.get();
         }
         return Token::COMMENT;
     }
@@ -99,7 +99,7 @@ namespace EeyoreToTigger {
     Token Lexer::NextToken() {
         char c;
         while (true) {
-            c = std::cin.peek();
+            c = cinstream.peek();
             if (c >= '0' && c <= '9') {
                 return ParseNum();
             }
@@ -113,29 +113,29 @@ namespace EeyoreToTigger {
                 if (c == '\n') {
                     lineno++;
                 }
-                c = std::cin.get();
+                c = cinstream.get();
                 continue;
             }
             else {
                 switch (c) {
                     case '+': {
-                        c = std::cin.get();
+                        c = cinstream.get();
                         op = Operator::ADD;
                         return Token::OP;
                     }
                     case '-': {
-                        c = std::cin.get();
+                        c = cinstream.get();
                         op = Operator::SUB;
                         return Token::OP;
                     }
                     case '*': {
-                        c = std::cin.get();
+                        c = cinstream.get();
                         op = Operator::MUL;
                         return Token::OP;
                     }
                     case '/': {
-                        c = std::cin.get();
-                        c = std::cin.peek();
+                        c = cinstream.get();
+                        c = cinstream.peek();
                         if (c == '/') {
                             return ParseComment();
                         }
@@ -143,15 +143,15 @@ namespace EeyoreToTigger {
                         return Token::OP;
                     }
                     case '%': {
-                        c = std::cin.get();
+                        c = cinstream.get();
                         op = Operator::MOD;
                         return Token::OP;
                     }
                     case '>': {
-                        c = std::cin.get();
-                        c = std::cin.peek();
+                        c = cinstream.get();
+                        c = cinstream.peek();
                         if (c == '=') {
-                            c = std::cin.get();
+                            c = cinstream.get();
                             op = Operator::GE;
                             return Token::LOGICOP;
                         } else {
@@ -160,10 +160,10 @@ namespace EeyoreToTigger {
                         }
                     }
                     case '<': {
-                        c = std::cin.get();
-                        c = std::cin.peek();
+                        c = cinstream.get();
+                        c = cinstream.peek();
                         if (c == '=') {
-                            c = std::cin.get();
+                            c = cinstream.get();
                             op = Operator::LE;
                             return Token::LOGICOP;
                         } else {
@@ -172,10 +172,10 @@ namespace EeyoreToTigger {
                         }
                     }
                     case '=': {
-                        c = std::cin.get();
-                        c = std::cin.peek();
+                        c = cinstream.get();
+                        c = cinstream.peek();
                         if (c == '=') {
-                            c = std::cin.get();
+                            c = cinstream.get();
                             op = Operator::EQ;
                             return Token::LOGICOP;
                         } else {
@@ -183,10 +183,10 @@ namespace EeyoreToTigger {
                         }
                     }
                     case '!': {
-                        c = std::cin.get();
-                        c = std::cin.peek();
+                        c = cinstream.get();
+                        c = cinstream.peek();
                         if (c == '=') {
-                            c = std::cin.get();
+                            c = cinstream.get();
                             op = Operator::NEQ;
                             return Token::LOGICOP;
                         } else {
@@ -195,15 +195,15 @@ namespace EeyoreToTigger {
                         }
                     }
                     case '[': {
-                        c = std::cin.get();
+                        c = cinstream.get();
                         return Token::LSB;
                     }
                     case ']': {
-                        c = std::cin.get();
+                        c = cinstream.get();
                         return Token::RSB;
                     }
                     case ':': {
-                        c = std::cin.get();
+                        c = cinstream.get();
                         return Token::COLON;
                     }
                     default:

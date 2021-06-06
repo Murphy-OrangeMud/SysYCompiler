@@ -2,12 +2,14 @@
 #define EEYORE_LEXER_INCLUDED
 
 #include <string>
+#include <iostream>
 #include "define/irtok.hpp"
 
 namespace EeyoreToTigger {
     class Lexer {
     public:
-        Lexer() = default;
+        std::istream &cinstream;
+        Lexer(std::istream & _cinstream): cinstream(_cinstream) {};
         ~Lexer() = default;
 
         Token NextToken();
