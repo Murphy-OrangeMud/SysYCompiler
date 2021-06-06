@@ -30,6 +30,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/02_arr_defn4.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/02_arr_defn4.sy" afterDir="false" />

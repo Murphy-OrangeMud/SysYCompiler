@@ -138,17 +138,10 @@ namespace TiggerToRiscV {
                     if (token == "[") {
                         if (var2.empty()) {
                             var1 += token;
-                            stream_stmt >> token;
-                            var1 += token;
-                            stream_stmt >> token;
-                            var1 += token;
                         } else {
                             var2 += token;
-                            stream_stmt >> token;
-                            var2 += token;
-                            stream_stmt >> token;
-                            var2 += token;
                         }
+                        continue;
                     }
                     if (token == "=") continue;
                     if (ops.find(token) != ops.end()) {
