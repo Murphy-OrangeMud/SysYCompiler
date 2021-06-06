@@ -36,7 +36,7 @@ namespace TiggerToRiscV {
                     int2 = int2 * 10 + stmt[idx] - '0';
                 }
                 funcStack[func_name] = 16 * (int2 / 4 + 1);
-                if (16 * (int2 / 4 + 1) >= -2048 && 16 * (int2 / 4 + 1) <= 2047) {
+                if (16 * (int2 / 4 + 1) - 4 >= -2048 && 16 * (int2 / 4 + 1) <= 2047) {
                     code += "\t.text\n\t.align 2\n\t.global " + func_name + "\n\t.type " + func_name + ", @function\n" + func_name +
                             ":\n\taddi sp, sp, -" + std::to_string(16 * (int2 / 4 + 1)) + "\n\tsw ra, " +
                             std::to_string(16 * (int2 / 4 + 1) - 4) + "(sp)\n";
@@ -79,7 +79,7 @@ namespace TiggerToRiscV {
                 code += "\tcall " + func_name + "\n";
             } else if (first == "return") {
                 int stk = funcStack[currentFunc];
-                if (stk >= -2048 && stk <= 2047) {
+                if (stk - 4 >= -2048 && stk <= 2047) {
                     code += "\tlw ra, " + std::to_string(stk-4) + "(sp)\n\taddi sp, sp, " + std::to_string(stk) + "\n\tret\n";
                 } else {
                     code += "\tli s0, " + std::to_string(stk-4) + "\n\tadd sp, sp, s0\n\tlw ra, 0(sp)\naddi sp, sp, 4\n\tret\n";
