@@ -88,7 +88,6 @@ int main(int argc, char *argv[]) {
     SysYToEeyore::IRGenerator generator = SysYToEeyore::IRGenerator(std::move(FuncTable), std::move(BlockVars));
     std::string out;
     nRoot->GenerateIR(generator, out);
-    std::cerr << out << std::endl;
 
     std::istringstream stream_stmt(out);
     EeyoreToTigger::Parser parser2 = EeyoreToTigger::Parser(stream_stmt);
@@ -96,14 +95,12 @@ int main(int argc, char *argv[]) {
     EeyoreToTigger::TiggerGenerator generator2 = EeyoreToTigger::TiggerGenerator();
     std::string out2;
     root2->Generate(generator2, out2);
-    std::cerr << out2 << std::endl;
 
     std::istringstream stream_stmt2(out2);
     TiggerToRiscV::RiscVGenerator generator3 = TiggerToRiscV::RiscVGenerator(stream_stmt2);
     std::string out3;
     generator3.Generate(out3);
     std::cout << out3 << std::endl;
-    std::cerr << out3 << std::endl;
 #endif
 #endif
 #endif

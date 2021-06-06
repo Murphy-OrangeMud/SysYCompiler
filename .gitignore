@@ -2,7 +2,6 @@ cmake-build-debug/
 open-test-cases/
 logs/
 build/
-README.md
 *.eeyore
 *.tigger
 *.S
