@@ -147,7 +147,7 @@ namespace EeyoreToTigger {
         logger.UnSetFunc("ParseFuncDef");
         if (current != Token::FUNCEND) {
             logger.Error("function end wrong lacked end");
-            exit(current);
+            exit(212);
         }
         NextToken();
         if (current != Token::SYMBOL || lexer.getName() != funcName) {

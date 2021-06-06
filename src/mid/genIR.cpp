@@ -176,14 +176,14 @@ namespace SysYToEeyore {
                     for (int i = 0; i < currentDepth; i++) { code += "\t"; }
                     code += (var + " = 0\n");
                 }
-            } /* else {
+            } else {
                 if (currentFunc.empty()) {
                     int idx = 0;
                     GenerateValue(var, idx, 0, nullptr, dynamic_cast<ProcessedIdAST *>(varDef.getVar().get())->getDim(),
                                   0, code);
                     logger.UnSetFunc("GenVarDef");
                 }
-            }*/
+            }
         }
         return {};
     }
@@ -251,8 +251,10 @@ namespace SysYToEeyore {
         parentBlock.push_back(-1);
         for (const auto &node: unit.getNodes()) {
             if (dynamic_cast<VarDeclAST *>(node.get())) {
+                currentDepth += 1;
                 node->GenerateIR(*this, str);
                 logger.UnSetFunc("GenCompUnit");
+                currentDepth -= 1;
             }
         }
         for (int i = tmp; i < T_num; i++) {
@@ -269,9 +271,12 @@ namespace SysYToEeyore {
                 code += ("var T" + std::to_string(i) + "\n");
             }
         }
-        code += str;
         for (const auto &node: unit.getNodes()) {
             if (!dynamic_cast<VarDeclAST *>(node.get())) {
+                if (dynamic_cast<FuncDefAST *>(node.get()) && dynamic_cast<FuncDefAST *>(node.get())->getName() == "main") {
+                    code += "f_main [0]\n";
+                    code += str;
+                }
                 node->GenerateIR(*this, code);
                 logger.UnSetFunc("GenCompUnit");
             }
@@ -380,7 +385,9 @@ namespace SysYToEeyore {
             BlockSymbolTable[parentBlock.size()][dynamic_cast<ProcessedIdAST *>(funcDef.getArgs()[i].get())->getName()].id =
                     "p" + std::to_string(i);
         }
-        code += ("f_" + funcDef.getName() + "[" + std::to_string(funcDef.getArgs().size()) + "]\n");
+        if (funcDef.getName() != "main") {
+            code += ("f_" + funcDef.getName() + " [" + std::to_string(funcDef.getArgs().size()) + "]\n");
+        }
         int T_tmp = T_num;
         int t_tmp = t_num;
         std::string code2;
@@ -438,6 +445,11 @@ namespace SysYToEeyore {
         logger.UnSetFunc("GenIfElse");
         int tmp1 = l_num;
         if (cond.find("[") != std::string::npos) {
+            for (int j = 0; j < currentDepth; j++) { code += "\t"; }
+            code += ("t" + std::to_string(t_num++) + " = " + cond + "\n");
+            cond = "t" + std::to_string(t_num - 1);
+        }
+        if (!(cond[0] >= 'a' && cond[0] <= 'z')) {
             for (int j = 0; j < currentDepth; j++) { code += "\t"; }
             code += ("t" + std::to_string(t_num++) + " = " + cond + "\n");
             cond = "t" + std::to_string(t_num - 1);
