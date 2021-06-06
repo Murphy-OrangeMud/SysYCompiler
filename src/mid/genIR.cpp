@@ -45,8 +45,9 @@ namespace SysYToEeyore {
                             std::string res = dynamic_cast<InitValAST *>(initval.get())->getValues()[0]->GenerateIR(
                                     *this, code);
                             for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-                            code += ("t" + std::to_string(t_num++) + " = " + res + "\n");
-                            res = "t" + std::to_string(t_num - 1);
+                            code += ("t" + std::to_string(t_num) + " = " + res + "\n");
+                            res = "t" + std::to_string(t_num);
+                            t_num++;
                             index++;
                             if (index == elem) {
                                 index = 0;
@@ -145,13 +146,15 @@ namespace SysYToEeyore {
         std::string t1 = exp.getLHS()->GenerateIR(*this, code);
         logger.UnSetFunc("GenBinaryExp");
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-        code += ("t" + std::to_string(t_num++) + " = " + t1 + "\n");
-        t1 = "t" + std::to_string(t_num - 1);
+        code += ("t" + std::to_string(t_num) + " = " + t1 + "\n");
+        t1 = "t" + std::to_string(t_num);
+        t_num++;
         std::string t2 = exp.getRHS()->GenerateIR(*this, code);
         logger.UnSetFunc("GenBinaryExp");
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-        code += ("t" + std::to_string(t_num++) + " = " + t2 + "\n");
-        t2 = "t" + std::to_string(t_num - 1);
+        code += ("t" + std::to_string(t_num) + " = " + t2 + "\n");
+        t2 = "t" + std::to_string(t_num);
+        t_num++;
         std::string res = "t" + std::to_string(t_num++);
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
         code += (res + " = " + t1 + " " + op2char(exp.getOp()) + " " + t2 + "\n");
@@ -229,8 +232,9 @@ namespace SysYToEeyore {
         std::string r = assign.getRight()->GenerateIR(*this, code);
         logger.UnSetFunc("GenAssign");
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-        code += ("t" + std::to_string(t_num++) + " = " + r + "\n");
-        r = "t" + std::to_string(t_num - 1);
+        code += ("t" + std::to_string(t_num) + " = " + r + "\n");
+        r = "t" + std::to_string(t_num);
+        t_num++;
         for (int i = 0; i < currentDepth; i++) { code += "\t"; }
         code += (l + " = " + r + "\n");
         return l;
@@ -290,8 +294,9 @@ namespace SysYToEeyore {
             std::string res = arg->GenerateIR(*this, code);
             logger.UnSetFunc("GenFuncCall");
             for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-            code += ("t" + std::to_string(t_num++) + " = " + res + "\n");
-            res = "t" + std::to_string(t_num - 1);
+            code += ("t" + std::to_string(t_num) + " = " + res + "\n");
+            res = "t" + std::to_string(t_num);
+            t_num++;
             args.push_back(res);
         }
         for (const auto &res: args) {
@@ -304,8 +309,8 @@ namespace SysYToEeyore {
             return {};
         } else {
             for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-            code += ("t" + std::to_string(t_num++) + " = call f_" + func.getName() + "\n");
-            return ("t" + std::to_string(t_num - 1));
+            code += ("t" + std::to_string(t_num) + " = call f_" + func.getName() + "\n");
+            return ("t" + std::to_string(t_num++));
         }
     }
 
@@ -317,13 +322,15 @@ namespace SysYToEeyore {
         }
         std::string res = exp.getNode()->GenerateIR(*this, code);
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-        code += ("t" + std::to_string(t_num++) + " = " + res + "\n");
-        res = "t" + std::to_string(t_num - 1);
+        code += ("t" + std::to_string(t_num) + " = " + res + "\n");
+        res = "t" + std::to_string(t_num);
+        t_num++;
         ret += res;
         if (exp.getOp() != Operator::NONE) {
             for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-            code += ("t" + std::to_string(t_num++) + " = " + ret + "\n");
-            ret = "t" + std::to_string(t_num - 1);
+            code += ("t" + std::to_string(t_num) + " = " + ret + "\n");
+            ret = "t" + std::to_string(t_num);
+            t_num++;
         }
         logger.UnSetFunc("GenUnaryExp");
         return ret;
@@ -350,8 +357,9 @@ namespace SysYToEeyore {
                 std::string var = lval.getPosition()[i]->GenerateIR(*this, code);
                 logger.UnSetFunc("GenLVal");
                 for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-                code += ("t" + std::to_string(t_num++) + " = " + var + "\n");
-                var = "t" + std::to_string(t_num - 1);
+                code += ("t" + std::to_string(t_num) + " = " + var + "\n");
+                var = "t" + std::to_string(t_num);
+                t_num++;
                 if (i < lval.getPosition().size() - 1) {
                     for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                     code += ("t" + std::to_string(t_num) + " = " + var + " * " + std::to_string(dim[i + 1]) + "\n");
@@ -446,13 +454,15 @@ namespace SysYToEeyore {
         int tmp1 = l_num;
         if (cond.find("[") != std::string::npos) {
             for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-            code += ("t" + std::to_string(t_num++) + " = " + cond + "\n");
-            cond = "t" + std::to_string(t_num - 1);
+            code += ("t" + std::to_string(t_num) + " = " + cond + "\n");
+            cond = "t" + std::to_string(t_num);
+            t_num++;
         }
         if (!(cond[0] >= 'a' && cond[0] <= 'z')) {
             for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-            code += ("t" + std::to_string(t_num++) + " = " + cond + "\n");
-            cond = "t" + std::to_string(t_num - 1);
+            code += ("t" + std::to_string(t_num) + " = " + cond + "\n");
+            cond = "t" + std::to_string(t_num);
+            t_num++;
         }
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
         code += ("if " + cond + " == 0 goto l" + std::to_string(tmp1) + "\n");
@@ -522,8 +532,9 @@ namespace SysYToEeyore {
                     std::string ret = stmt.getReturnExp()->GenerateIR(*this, code);
                     logger.UnSetFunc("GenControl");
                     for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-                    code += ("t" + std::to_string(t_num++) + " = " + ret + "\n");
-                    ret = ("t" + std::to_string(t_num - 1));
+                    code += ("t" + std::to_string(t_num) + " = " + ret + "\n");
+                    ret = ("t" + std::to_string(t_num));
+                    t_num++;
                     for (int j = 0; j < currentDepth; j++) { code += "\t"; }
                     code += ("return " + ret + "\n");
                 } else {
@@ -541,16 +552,18 @@ namespace SysYToEeyore {
         std::string t1 = exp.getLHS()->GenerateIR(*this, code);
         logger.UnSetFunc("GenLAndExp");
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-        code += ("t" + std::to_string(t_num++) + " = " + t1 + "\n");
-        t1 = "t" + std::to_string(t_num - 1);
+        code += ("t" + std::to_string(t_num) + " = " + t1 + "\n");
+        t1 = "t" + std::to_string(t_num);
+        t_num++;
         int shorthand = l_num;
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
         code += ("if " + t1 + " == 0 goto l" + std::to_string(l_num++) + "\n");
         std::string t2 = exp.getRHS()->GenerateIR(*this, code);
         logger.UnSetFunc("GenLAndExp");
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-        code += ("t" + std::to_string(t_num++) + " = " + t2 + "\n");
-        t2 = "t" + std::to_string(t_num - 1);
+        code += ("t" + std::to_string(t_num) + " = " + t2 + "\n");
+        t2 = "t" + std::to_string(t_num);
+        t_num++;
         code += ("goto l" + std::to_string(l_num++) + "\n");
         code += ("l" + std::to_string(shorthand) + ":\n");
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
@@ -565,16 +578,18 @@ namespace SysYToEeyore {
         std::string t1 = exp.getLHS()->GenerateIR(*this, code);
         logger.UnSetFunc("GenLOrExp");
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-        code += ("t" + std::to_string(t_num++) + " = " + t1 + "\n");
-        t1 = "t" + std::to_string(t_num - 1);
+        code += ("t" + std::to_string(t_num) + " = " + t1 + "\n");
+        t1 = "t" + std::to_string(t_num);
+        t_num++;
         int shorthand = l_num;
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
         code += ("if " + t1 + " == 1 goto l" + std::to_string(l_num++) + "\n");
         std::string t2 = exp.getRHS()->GenerateIR(*this, code);
         logger.UnSetFunc("GenLOrExp");
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
-        code += ("t" + std::to_string(t_num++) + " = " + t2 + "\n");
-        t2 = "t" + std::to_string(t_num - 1);
+        code += ("t" + std::to_string(t_num) + " = " + t2 + "\n");
+        t2 = "t" + std::to_string(t_num);
+        t_num++;
         code += ("goto l" + std::to_string(l_num++) + "\n");
         code += ("l" + std::to_string(shorthand) + ":\n");
         for (int j = 0; j < currentDepth; j++) { code += "\t"; }
