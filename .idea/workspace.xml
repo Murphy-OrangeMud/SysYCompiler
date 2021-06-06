@@ -32,13 +32,6 @@
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/00_arr_defn2.sy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/02_arr_defn4.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/02_arr_defn4.sy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/23_if_test2.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/23_if_test2.sy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/24_if_test3.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/24_if_test3.sy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/33_func_test1.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/33_func_test1.sy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/36_domain_test.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/36_domain_test.sy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/47_minus_with_sub.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/47_minus_with_sub.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/76_int_factor_sum.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/76_int_factor_sum.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/00_bitset1.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/00_bitset1.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/01_mm1.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/01_mm1.sy" afterDir="false" />
@@ -51,6 +44,8 @@
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/back/gen_riscv.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/gen_riscv.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mid/genIR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/oj.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/oj.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,7 +125,7 @@
       <workItem from="1622281009027" duration="48382000" />
       <workItem from="1622685814932" duration="66067000" />
       <workItem from="1622981399828" duration="860000" />
-      <workItem from="1622982681412" duration="6001000" />
+      <workItem from="1622982681412" duration="8330000" />
     </task>
     <task id="LOCAL-00001" summary="solve part of the bugs before doing if/else modification">
       <created>1619585423123</created>
@@ -179,10 +174,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="371" y="127" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1280.760@0.0.1280.760" timestamp="1622619652103" />
-    <state x="93" y="93" width="1093" height="573" key="DiffContextDialog" timestamp="1622980581722">
+    <state x="93" y="93" width="1093" height="573" key="DiffContextDialog" timestamp="1622989427245">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="93" y="93" width="1093" height="573" key="DiffContextDialog/0.0.1280.760@0.0.1280.760" timestamp="1622980581722" />
+    <state x="93" y="93" width="1093" height="573" key="DiffContextDialog/0.0.1280.760@0.0.1280.760" timestamp="1622989427245" />
     <state x="421" y="135" key="FileChooserDialogImpl" timestamp="1619743766941">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
@@ -235,6 +230,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="233" y="113" key="Vcs.Push.Dialog.v2/0.0.1280.760@0.0.1280.760" timestamp="1619585440435" />
+    <state x="368" y="114" key="VcsDiffUtil.ChangesDialog" timestamp="1622989126235">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state x="368" y="114" key="VcsDiffUtil.ChangesDialog/0.0.1280.760@0.0.1280.760" timestamp="1622989126235" />
     <state x="448" y="293" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1619421626079">
       <screen x="0" y="0" width="1280" height="760" />
     </state>

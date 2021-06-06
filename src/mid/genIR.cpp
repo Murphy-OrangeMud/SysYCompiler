@@ -176,14 +176,14 @@ namespace SysYToEeyore {
                     for (int i = 0; i < currentDepth; i++) { code += "\t"; }
                     code += (var + " = 0\n");
                 }
-            } else {
+            } /* else {
                 if (currentFunc.empty()) {
                     int idx = 0;
                     GenerateValue(var, idx, 0, nullptr, dynamic_cast<ProcessedIdAST *>(varDef.getVar().get())->getDim(),
                                   0, code);
                     logger.UnSetFunc("GenVarDef");
                 }
-            }
+            }*/
         }
         return {};
     }
