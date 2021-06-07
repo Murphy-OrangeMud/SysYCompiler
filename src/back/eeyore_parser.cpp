@@ -147,7 +147,7 @@ namespace EeyoreToTigger {
         logger.UnSetFunc("ParseFuncDef");
         if (current != Token::FUNCEND) {
             logger.Error("function end wrong lacked end");
-            exit(std::stoi(lexer.getName().substr(1, lexer.getName().length() - 1)));
+            exit(lexer.getName()[0]);
         }
         NextToken();
         if (current != Token::SYMBOL || lexer.getName() != funcName) {
