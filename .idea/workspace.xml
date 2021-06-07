@@ -30,8 +30,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d0aea3e8-7e3a-439b-be21-34ef2dbc0c8a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/76_int_factor_sum.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/functional_test/76_int_factor_sum.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/00_bitset1.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section1/performance_test/00_bitset1.sy" afterDir="false" />
@@ -44,8 +44,7 @@
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/back/eeyore_parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/eeyore_parser.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,11 +98,6 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="compiler" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SysYCompiler" TARGET_NAME="compiler" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SysYCompiler" RUN_TARGET_NAME="compiler">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -125,7 +119,8 @@
       <workItem from="1622281009027" duration="48382000" />
       <workItem from="1622685814932" duration="66067000" />
       <workItem from="1622981399828" duration="860000" />
-      <workItem from="1622982681412" duration="18782000" />
+      <workItem from="1622982681412" duration="19392000" />
+      <workItem from="1623032255628" duration="475000" />
     </task>
     <task id="LOCAL-00001" summary="solve part of the bugs before doing if/else modification">
       <created>1619585423123</created>
