@@ -274,15 +274,15 @@ namespace TiggerToRiscV {
                         }
                     } else if (op == "<=") {
                         if (!(var2[0] >= 'a'  && var2[0] <= 'z')) {
-                            code += "\tli s0, " + var2 + "\n\tslt " +  lhs + ", "  + var1 + ", s0\n\tseqz " + lhs + ", " + lhs + "\n";
-                        } else {
-                            code += "\tslt " +  lhs + ", "  + var1 + ", " + var2 + "\n\tseqz " + lhs + ", " + lhs + "\n";
-                        }
-                    } else if (op == ">=") {
-                        if (!(var2[0] >= 'a'  && var2[0] <= 'z')) {
                             code += "\tli s0, " + var2 + "\n\tsgt " +  lhs + ", "  + var1 + ", s0\n\tseqz " + lhs + ", " + lhs + "\n";
                         } else {
                             code += "\tsgt " +  lhs + ", "  + var1 + ", " + var2 + "\n\tseqz " + lhs + ", " + lhs + "\n";
+                        }
+                    } else if (op == ">=") {
+                        if (!(var2[0] >= 'a'  && var2[0] <= 'z')) {
+                            code += "\tli s0, " + var2 + "\n\tslt " +  lhs + ", "  + var1 + ", s0\n\tseqz " + lhs + ", " + lhs + "\n";
+                        } else {
+                            code += "\tslt " +  lhs + ", "  + var1 + ", " + var2 + "\n\tseqz " + lhs + ", " + lhs + "\n";
                         }
                     } else if (op == "&&") {
                         if (!(var2[0] >= 'a' && var2[0] <= 'z')) {

@@ -310,7 +310,9 @@ namespace SysYToEeyore {
         } else {
             for (int j = 0; j < currentDepth; j++) { code += "\t"; }
             code += ("t" + std::to_string(t_num) + " = call f_" + func.getName() + "\n");
-            return ("t" + std::to_string(t_num++));
+            std::string res = "t" + std::to_string(t_num);
+            t_num++;
+            return res;
         }
     }
 

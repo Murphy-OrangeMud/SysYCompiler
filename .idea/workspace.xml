@@ -44,6 +44,7 @@
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/back/gen_riscv.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/gen_riscv.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mid/genIR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +120,7 @@
       <workItem from="1622685814932" duration="66067000" />
       <workItem from="1622981399828" duration="860000" />
       <workItem from="1622982681412" duration="19392000" />
-      <workItem from="1623032255628" duration="2161000" />
+      <workItem from="1623032255628" duration="3017000" />
     </task>
     <task id="LOCAL-00001" summary="solve part of the bugs before doing if/else modification">
       <created>1619585423123</created>
