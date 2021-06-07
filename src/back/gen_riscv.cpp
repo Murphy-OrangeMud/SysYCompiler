@@ -202,7 +202,10 @@ namespace TiggerToRiscV {
                             if (offset >= -2048 && offset <= 2047) {
                                 code += "\tlw " + lhs + ", " + std::to_string(offset) + "(" +  var1.substr(0, rlidx) + ")\n";
                             } else {
-                                code += "\tli s0, " + std::to_string(offset) + "\n\tlw " + lhs + ", s0(" + var1.substr(0, rlidx) + ")\n";
+                                std::string array = var1.substr(0, rlidx);
+                                code += "\tli s0, " + std::to_string(offset) + "\n\tadd " + var1.substr(0, rlidx)
+                                        + ", " + var1.substr(0, rlidx) + ", s0\n\tlw " + lhs + ", 0(" + var1.substr(0, rlidx) + ")\n\tsub "
+                                        + var1.substr(0, rlidx) + ", " + var1.substr(0, rlidx) + ", s0\n";
                             }
                         } else if (rlidx == std::string::npos) {
                             int lridx = lhs.find("]");
@@ -210,7 +213,9 @@ namespace TiggerToRiscV {
                             if (offset >= -2048 && offset <= 2047) {
                                 code += "\tsw " + var1 + ", " + std::to_string(offset) + "(" + lhs.substr(0, llidx) + ")\n";
                             } else {
-                                code += "\tli s0, " + std::to_string(offset) + "\n\tsw " + var1 + ", s0(" + lhs.substr(0, llidx) + ")\n";
+                                code += "\tli s0, " + std::to_string(offset) + "\n\tadd " + lhs.substr(0, llidx)
+                                        + ", " + lhs.substr(0, llidx) + ", s0\n\tsw " + var1 + ", 0(" + lhs.substr(0, llidx) + ")\n\tsub "
+                                        + lhs.substr(0, llidx) + ", " + lhs.substr(0, llidx) + ", s0\n";
                             }
                         }
                     }
