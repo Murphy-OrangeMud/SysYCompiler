@@ -43,8 +43,7 @@
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/median0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/shuffle0.sy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" beforeDir="false" afterPath="$PROJECT_DIR$/open-test-cases/sysy/section2/performance_test/transpose0.sy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/back/gen_riscv.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/back/gen_riscv.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mid/genIR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mid/genIR.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/oj.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/oj.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,6 +85,9 @@
     <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\cheng\SysYCompiler" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\cheng\SysYCompiler" />
       <recent name="C:\Users\cheng\SysYCompiler\src\utils" />
@@ -93,14 +95,16 @@
       <recent name="C:\Users\cheng\SysYCompiler\src\define" />
       <recent name="C:\Users\cheng\SysYCompiler\src\front" />
     </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\cheng\SysYCompiler" />
-    </key>
   </component>
   <component name="RunManager">
     <configuration name="compiler" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SysYCompiler" TARGET_NAME="compiler" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SysYCompiler" RUN_TARGET_NAME="compiler">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -120,7 +124,7 @@
       <workItem from="1622685814932" duration="66067000" />
       <workItem from="1622981399828" duration="860000" />
       <workItem from="1622982681412" duration="19392000" />
-      <workItem from="1623032255628" duration="3017000" />
+      <workItem from="1623032255628" duration="8120000" />
     </task>
     <task id="LOCAL-00001" summary="solve part of the bugs before doing if/else modification">
       <created>1619585423123</created>
@@ -233,10 +237,10 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="448" y="293" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1280.760@0.0.1280.760" timestamp="1619421626079" />
-    <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1622996518724">
+    <state x="342" y="0" width="594" height="760" key="find.popup" timestamp="1623038402047">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1622996518724" />
+    <state x="342" y="0" width="594" height="760" key="find.popup/0.0.1280.760@0.0.1280.760" timestamp="1623038402047" />
     <state x="301" y="174" key="run.anything.popup" timestamp="1619433496345">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
