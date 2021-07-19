@@ -277,6 +277,12 @@ namespace EeyoreToTigger {
             reg_num++;
         }
         if (dynamic_cast<RightValIR*>(binary.getLHS().get())->getType() == Token::NUMBER
+        && logicOp.find(op2char(binary.getOp())) != logicOp.end()) {
+            code += "\ts" + std::to_string(reg_num) + " = " + lhs + "\n";
+            lhs = "s" + std::to_string(reg_num);
+            reg_num++;
+        }
+        if (dynamic_cast<RightValIR*>(binary.getLHS().get())->getType() == Token::NUMBER
         && dynamic_cast<RightValIR*>(binary.getRHS().get())->getType() == Token::SYMBOL) {
             code += "\ts" + std::to_string(reg_num) + " = " + lhs + "\n";
             lhs = "s" + std::to_string(reg_num);
