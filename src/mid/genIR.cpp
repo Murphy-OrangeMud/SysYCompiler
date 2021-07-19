@@ -344,7 +344,7 @@ namespace SysYToEeyore {
         int tmpCurrentBlock = currentBlock;
         while (tmpCurrentBlock != -1) {
             iter = BlockSymbolTable[tmpCurrentBlock].find(lval.getName());
-            if (iter != BlockSymbolTable[tmpCurrentBlock].end()) {
+            if (iter != BlockSymbolTable[tmpCurrentBlock].end() && !iter->second.id.empty()) {
                 break;
             }
             tmpCurrentBlock = parentBlock[tmpCurrentBlock];
