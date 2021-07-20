@@ -42,7 +42,7 @@ namespace TiggerToRiscV {
                             std::to_string(16 * (int2 / 4 + 1) - 4) + "(sp)\n";
                 } else {
                     code += "\t.text\n\t.align 2\n\t.global " + func_name + "\n\t.type " + func_name + ", @function\n" + func_name +
-                            ":\n\tli s0, " + std::to_string(16 * (int2 / 4 + 1) - 4) + "\n\tsw ra, 0(sp)\n\taddi s0, s0, 4\n\tsub sp, sp, s0\n";
+                            ":\n\taddi sp, sp, -4\n\tsw ra, 0(sp)\n\tli s0, " + std::to_string(16 * (int2 / 4 + 1) - 4) + "\n\tsub sp, sp, s0\n";
                 }
                 currentFunc = func_name;
             } else if (first == "end") {
